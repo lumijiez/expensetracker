@@ -1,12 +1,25 @@
-package entities;
+package com.faf223.expensetrackerfaf.entities;
+
+import jakarta.persistence.*;
 
 import java.util.List;
 
+@Entity
+@Table(name = "User")
 public class User {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    private String name, email, login, password;
+    private String name;
+    private String email;
+    private String login;
+    private String password;
     private Role role;
+
+    @OneToMany(mappedBy = "user")
     private List<Expense> expenses;
+
+    @OneToMany(mappedBy = "user")
     private List<Income> incomes;
 
     public User(long id, String name, String email, String login, String password, Role role, List<Expense> expenses, List<Income> incomes) {
