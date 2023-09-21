@@ -1,4 +1,5 @@
-package entities;
+
+package com.faf223.expensetrackerfaf.model;
 
 public class Categories {
 
