@@ -18,7 +18,7 @@ public class MainController {
 
     @GetMapping("/users/get/{id}")
     public User getUser(@PathVariable int id) {
-        return new User(id, "Test", null, null, null, null, null, null);
+        return new User(id, "Test", null, null, null, null, null);
     }
 
     @PostMapping("/users/set/{id}/name")

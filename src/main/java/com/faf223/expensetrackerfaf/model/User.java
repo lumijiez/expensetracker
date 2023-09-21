@@ -12,8 +12,8 @@ public class User {
     private long id;
     private String name;
     private String email;
-    private String login;
     private String password;
+    @Enumerated(EnumType.STRING)
     private Role role;
 
     @OneToMany(mappedBy = "user")
@@ -22,11 +22,10 @@ public class User {
     @OneToMany(mappedBy = "user")
     private List<Income> incomes;
 
-    public User(long id, String name, String email, String login, String password, Role role, List<Expense> expenses, List<Income> incomes) {
+    public User(long id, String name, String email, String password, Role role, List<Expense> expenses, List<Income> incomes) {
         this.id = id;
         this.name = name;
         this.email = email;
-        this.login = login;
         this.password = password;
         this.role = role;
         this.expenses = expenses;
@@ -57,14 +56,6 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public String getLogin() {
-        return login;
-    }
-
-    public void setLogin(String login) {
-        this.login = login;
     }
 
     public String getPassword() {
