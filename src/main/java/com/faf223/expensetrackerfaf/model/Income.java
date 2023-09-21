@@ -53,10 +53,6 @@ public class Income implements IMoneyTransaction {
         return category.getEffectiveName();
     }
 
-    public void setUserId(User user) {
-        this.user = user;
-    }
-
     public void setAmount(int amount) {
         this.amount = amount;
     }
