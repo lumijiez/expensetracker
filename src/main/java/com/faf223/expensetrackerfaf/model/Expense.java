@@ -26,18 +26,21 @@ public class Expense implements IMoneyTransaction {
 
     public Expense() {}
 
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
     @Override
     public User getUser() {
         return user;
     }
 
-    public void setUserId(int userId) {
+    public void setUser(User user) {
         this.user = user;
-    }
-
-    @Override
-    public long getUserId() {
-        return 0;
     }
 
     @Override

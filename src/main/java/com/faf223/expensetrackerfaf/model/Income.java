@@ -26,14 +26,21 @@ public class Income implements IMoneyTransaction {
 
     public Income() {}
 
-    @Override
-    public User getUser() {
-        return user;
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     @Override
-    public long getUserId() {
-        return 0;
+    public User getUser() {
+        return user;
     }
 
     @Override
