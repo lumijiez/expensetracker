@@ -13,9 +13,9 @@ public class MainController {
         return "Hello, World!";
     }
 
-    @GetMapping("/users/{id}")
+    @GetMapping("/users/get/{id}")
     public User getUser(@PathVariable int id) {
-        return new User(id, "Test");
+        return new User(id, "Test", null, null, null, null, null, null);
     }
 
 }
