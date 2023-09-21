@@ -1,4 +1,4 @@
-package entities;
+package com.faf223.expensetrackerfaf.model;
 
 import java.util.List;
 

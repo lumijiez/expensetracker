@@ -1,4 +1,6 @@
-package entities;
+package com.faf223.expensetrackerfaf.model;
+
+import com.faf223.expensetrackerfaf.util.IMoneyTransaction;
 
 public class Expense implements IMoneyTransaction {
 

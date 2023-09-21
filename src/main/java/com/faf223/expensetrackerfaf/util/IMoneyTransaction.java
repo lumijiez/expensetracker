@@ -1,4 +1,4 @@
-package entities;
+package com.faf223.expensetrackerfaf.util;
 
 public interface IMoneyTransaction {
 
