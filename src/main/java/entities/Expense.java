@@ -1,12 +1,12 @@
 package entities;
 
-public class Expense extends MoneyTransaction {
+public class Expense implements IMoneyTransaction {
 
     private int userId;
     private int amount;
-    private ExpensesCategory category;
+    private Categories.ExpenseCategory category;
 
-    public Expense(int userId, int amount, ExpensesCategory category) {
+    public Expense(int userId, int amount, Categories.ExpenseCategory category) {
         this.userId = userId;
         this.amount = amount;
         this.category = category;
@@ -32,10 +32,10 @@ public class Expense extends MoneyTransaction {
 
     @Override
     public String getCategory() {
-        return category.toString();
+        return category.getEffectiveName();
     }
 
-    public void setCategory(ExpensesCategory category) {
+    public void setCategory(Categories.ExpenseCategory category) {
         this.category = category;
     }
 }
