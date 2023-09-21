@@ -1,12 +1,12 @@
 package entities;
 
-public class Income extends MoneyTransaction {
+public class Income implements IMoneyTransaction {
 
     private long userId;
     private int amount;
-    private IncomeCategory category;
+    private Categories.IncomeCategory category;
 
-    public Income(long userId, int amount, IncomeCategory category) {
+    public Income(long userId, int amount, Categories.IncomeCategory category) {
         this.userId = userId;
         this.amount = amount;
         this.category = category;
@@ -24,7 +24,7 @@ public class Income extends MoneyTransaction {
 
     @Override
     public String getCategory() {
-        return category.toString();
+        return category.getEffectiveName();
     }
 
     public void setUserId(long userId) {
@@ -35,7 +35,7 @@ public class Income extends MoneyTransaction {
         this.amount = amount;
     }
 
-    public void setCategory(IncomeCategory category) {
+    public void setCategory(Categories.IncomeCategory category) {
         this.category = category;
     }
 }
