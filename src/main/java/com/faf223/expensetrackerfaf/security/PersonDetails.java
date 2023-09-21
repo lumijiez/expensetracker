@@ -1,6 +1,6 @@
 package com.faf223.expensetrackerfaf.security;
 
-import com.faf223.expensetrackerfaf.entities.Role;
+import com.faf223.expensetrackerfaf.model.Role;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import org.springframework.security.core.GrantedAuthority;
