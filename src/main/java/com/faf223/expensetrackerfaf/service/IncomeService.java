@@ -17,6 +17,14 @@ public class IncomeService {
         this.incomeRepository = incomeRepository;
     }
 
+    public void createOrUpdateIncome(Income income) {
+        incomeRepository.save(income);
+    }
+
+    public List<Income> getIncomes() {
+        return incomeRepository.findAll();
+    }
+
     public List<Income> getIncomesByUserId(String userUuid) {
         return incomeRepository.findByUserUserUuid(userUuid);
     }

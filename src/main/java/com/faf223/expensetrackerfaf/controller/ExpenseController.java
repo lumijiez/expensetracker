@@ -49,7 +49,7 @@ public class ExpenseController {
         }
     }
 
-    @GetMapping("/user/{userUuid}")
+    @GetMapping("/{userUuid}")
     public ResponseEntity<List<Expense>> getExpensesByUser(@PathVariable String userUuid) {
         List<Expense> expenses = expenseService.getExpensesByUserId(userUuid);
         if (!expenses.isEmpty()) return ResponseEntity.ok(expenses);
