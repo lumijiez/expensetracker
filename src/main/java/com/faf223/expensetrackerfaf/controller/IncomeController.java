@@ -14,8 +14,13 @@ import java.util.List;
 @RestController
 @RequestMapping("/incomes")
 public class IncomeController {
+
+    private final IncomeService incomeService;
+
     @Autowired
-    private IncomeService incomeService;
+    public IncomeController(IncomeService incomeService) {
+        this.incomeService = incomeService;
+    }
 
     @GetMapping("/user/{userUuid}")
     public ResponseEntity<List<Income>> getIncomesByUser(@PathVariable String userUuid) {

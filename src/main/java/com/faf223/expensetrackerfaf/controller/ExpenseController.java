@@ -15,8 +15,12 @@ import java.util.List;
 @RequestMapping("/expenses")
 public class ExpenseController {
 
+    private final ExpenseService expenseService;
+
     @Autowired
-    private ExpenseService expenseService;
+    public ExpenseController(ExpenseService expenseService) {
+        this.expenseService = expenseService;
+    }
 
     @GetMapping("/user/{userUuid}")
     public ResponseEntity<List<Expense>> getExpensesByUser(@PathVariable String userUuid) {

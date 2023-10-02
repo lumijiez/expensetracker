@@ -9,8 +9,13 @@ import java.util.List;
 
 @Service
 public class IncomeService {
-    @Autowired
+
     private IncomeRepository incomeRepository;
+
+    @Autowired
+    public IncomeService(IncomeRepository incomeRepository) {
+        this.incomeRepository = incomeRepository;
+    }
 
     public List<Income> getIncomesByUserId(String userUuid) {
         return incomeRepository.findByUserUserUuid(userUuid);
