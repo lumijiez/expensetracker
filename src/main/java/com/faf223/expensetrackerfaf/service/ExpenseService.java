@@ -17,7 +17,15 @@ public class ExpenseService {
         this.expenseRepository = expenseRepository;
     }
 
+    public void createOrUpdateExpense(Expense expense) {
+        expenseRepository.save(expense);
+    }
+
     public List<Expense> getExpensesByUserId(String userUuid) {
         return expenseRepository.findByUserUserUuid(userUuid);
+    }
+
+    public List<Expense> getExpenses() {
+        return expenseRepository.findAll();
     }
 }

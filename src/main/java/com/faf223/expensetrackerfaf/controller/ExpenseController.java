@@ -4,10 +4,8 @@ import com.faf223.expensetrackerfaf.model.Expense;
 import com.faf223.expensetrackerfaf.service.ExpenseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -22,14 +20,40 @@ public class ExpenseController {
         this.expenseService = expenseService;
     }
 
-    @GetMapping("/user/{userUuid}")
-    public ResponseEntity<List<Expense>> getExpensesByUser(@PathVariable String userUuid) {
-        List<Expense> expenses = expenseService.getExpensesByUserId(userUuid);
-        if (!expenses.isEmpty()) {
-            return ResponseEntity.ok(expenses);
+    @GetMapping()
+    public ResponseEntity<List<Expense>> getAllExpenses() {
+        List<Expense> expenses = expenseService.getExpenses();
+        if (!expenses.isEmpty()) return ResponseEntity.ok(expenses);
+        else return ResponseEntity.notFound().build();
+    }
+
+    @PostMapping()
+    public ResponseEntity<Expense> createNewExpense(@ModelAttribute("expense") Expense expense,
+                         BindingResult bindingResult) {
+        if (!bindingResult.hasErrors()) {
+            expenseService.createOrUpdateExpense(expense);
+            return ResponseEntity.ok(expense);
         } else {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @PatchMapping()
+    public ResponseEntity<Expense> updateExpense(@ModelAttribute("expense") Expense expense,
+                                                 BindingResult bindingResult) {
+        if (!bindingResult.hasErrors()) {
+            expenseService.createOrUpdateExpense(expense);
+            return ResponseEntity.ok(expense);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @GetMapping("/user/{userUuid}")
+    public ResponseEntity<List<Expense>> getExpensesByUser(@PathVariable String userUuid) {
+        List<Expense> expenses = expenseService.getExpensesByUserId(userUuid);
+        if (!expenses.isEmpty()) return ResponseEntity.ok(expenses);
+        else return ResponseEntity.notFound().build();
     }
 }
 
