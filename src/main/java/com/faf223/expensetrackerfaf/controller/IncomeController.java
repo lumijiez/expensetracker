@@ -28,7 +28,7 @@ public class IncomeController {
     }
 
     @PostMapping()
-    public ResponseEntity<Income> createNewIncome(@ModelAttribute("income") Income income,
+    public ResponseEntity<Income> createNewIncome(@RequestBody Income income,
                                                     BindingResult bindingResult) {
         if (!bindingResult.hasErrors()) {
             incomeService.createOrUpdateIncome(income);
@@ -39,9 +39,10 @@ public class IncomeController {
     }
 
     @PatchMapping()
-    public ResponseEntity<Income> updateIncome(@ModelAttribute("income") Income income,
+    public ResponseEntity<Income> updateIncome(@RequestBody Income income,
                                                  BindingResult bindingResult) {
         if (!bindingResult.hasErrors()) {
+            System.out.println("amount: " + income.getAmount());
             incomeService.createOrUpdateIncome(income);
             return ResponseEntity.ok(income);
         } else {

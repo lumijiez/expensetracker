@@ -28,7 +28,7 @@ public class UserController {
     }
 
     @PostMapping()
-    public ResponseEntity<User> createNewUser(@ModelAttribute("user") User user,
+    public ResponseEntity<User> createNewUser(@RequestBody User user,
                                                   BindingResult bindingResult) {
         if (!bindingResult.hasErrors()) {
             userService.createOrUpdateUser(user);
@@ -39,7 +39,7 @@ public class UserController {
     }
 
     @PatchMapping()
-    public ResponseEntity<User> updateUser(@ModelAttribute("user") User user,
+    public ResponseEntity<User> updateUser(@RequestBody User user,
                                                BindingResult bindingResult) {
         if (!bindingResult.hasErrors()) {
             userService.createOrUpdateUser(user);

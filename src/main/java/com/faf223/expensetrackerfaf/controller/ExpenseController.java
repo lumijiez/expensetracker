@@ -28,7 +28,7 @@ public class ExpenseController {
     }
 
     @PostMapping()
-    public ResponseEntity<Expense> createNewExpense(@ModelAttribute("expense") Expense expense,
+    public ResponseEntity<Expense> createNewExpense(@RequestBody Expense expense,
                          BindingResult bindingResult) {
         if (!bindingResult.hasErrors()) {
             expenseService.createOrUpdateExpense(expense);
@@ -39,7 +39,7 @@ public class ExpenseController {
     }
 
     @PatchMapping()
-    public ResponseEntity<Expense> updateExpense(@ModelAttribute("expense") Expense expense,
+    public ResponseEntity<Expense> updateExpense(@RequestBody Expense expense,
                                                  BindingResult bindingResult) {
         if (!bindingResult.hasErrors()) {
             expenseService.createOrUpdateExpense(expense);
