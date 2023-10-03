@@ -42,7 +42,6 @@ public class IncomeController {
     public ResponseEntity<Income> updateIncome(@RequestBody Income income,
                                                  BindingResult bindingResult) {
         if (!bindingResult.hasErrors()) {
-            System.out.println("amount: " + income.getAmount());
             incomeService.createOrUpdateIncome(income);
             return ResponseEntity.ok(income);
         } else {
