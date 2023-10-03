@@ -13,10 +13,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class RegisterRequest {
 
-    private String firstName;
-    private String lastName;
-
-    private String email;
+    private String firstname;  // Change field name to match JSON
+    private String lastname;   // Change field name to match JSON
+    private String username;   // Change field name to match JSON
+    private String email;      // Change field name to match JSON
     private String password;
     private Role role;
 }

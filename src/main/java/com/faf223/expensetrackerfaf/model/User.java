@@ -9,28 +9,32 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
-@Entity
+@Entity(name = "users")
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "User")
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
-    private String firstName;
-    private String lastName;
-    private String email;
-    private String password;
+    @Column(name = "user_uuid")
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String userUuid;
 
-    @Enumerated(EnumType.STRING)
-    private Role role;
+    @Column(name = "name")
+    private String firstName;
+
+    @Column(name = "surname")
+    private String lastName;
+
+    @Column(name = "username")
+    private String username;
+
+    @Transient
+    private String password;
 
     @OneToMany(mappedBy = "user")
     private List<Expense> expenses;
 
     @OneToMany(mappedBy = "user")
     private List<Income> incomes;
-
 }

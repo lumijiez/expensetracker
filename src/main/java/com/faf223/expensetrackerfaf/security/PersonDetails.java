@@ -1,10 +1,6 @@
 package com.faf223.expensetrackerfaf.security;
 
-import com.faf223.expensetrackerfaf.model.Role;
-import com.faf223.expensetrackerfaf.model.User;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import lombok.AllArgsConstructor;
+import com.faf223.expensetrackerfaf.model.Credential;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,31 +14,28 @@ import java.util.List;
 @Data
 @Builder
 @NoArgsConstructor(force = true)
-@AllArgsConstructor
+//@AllArgsConstructor
 public class PersonDetails implements UserDetails {
 
-    private final User user;
+    private final Credential credential;
 
-    @Enumerated(EnumType.STRING)
-    private Role role;
-
-    public PersonDetails(User user) {
-        this.user = user;
+    public PersonDetails(Credential credential) {
+        this.credential = credential;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(role.name()));
+        return List.of(new SimpleGrantedAuthority(credential.getRole().name()));
     }
 
     @Override
     public String getPassword() {
-        return user.getPassword();
+        return credential.getPassword();
     }
 
     @Override
     public String getUsername() {
-        return user.getEmail();
+        return credential.getEmail();
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.faf223.expensetrackerfaf.config;
 
+import com.faf223.expensetrackerfaf.repository.CredentialRepository;
 import com.faf223.expensetrackerfaf.repository.UserRepository;
 import com.faf223.expensetrackerfaf.security.PersonDetails;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,17 +18,18 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Configuration
 public class ApplicationConfig {
 
-    private final UserRepository repository;
+    private final UserRepository userRepository;
+    private final CredentialRepository credentialRepository;
 
     @Autowired
-    public ApplicationConfig(UserRepository repository) {
-        this.repository = repository;
+    public ApplicationConfig(UserRepository userRepository, CredentialRepository credentialRepository) {
+        this.userRepository = userRepository;
+        this.credentialRepository = credentialRepository;
     }
 
     @Bean
     public UserDetailsService userDetailsService() {
-        return username -> new PersonDetails(repository.findByEmail(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found")));
+        return username -> new PersonDetails(credentialRepository.findByEmail(username).orElseThrow((() -> new UsernameNotFoundException("User not found"))));
     }
 
     @Bean
