@@ -10,7 +10,7 @@ import java.util.List;
 @Service
 public class IncomeService {
 
-    private IncomeRepository incomeRepository;
+    private final IncomeRepository incomeRepository;
 
     @Autowired
     public IncomeService(IncomeRepository incomeRepository) {
