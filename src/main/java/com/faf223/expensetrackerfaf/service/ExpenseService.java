@@ -10,10 +10,22 @@ import java.util.List;
 @Service
 public class ExpenseService {
 
+    private final ExpenseRepository expenseRepository;
+
     @Autowired
-    private ExpenseRepository expenseRepository;
+    public ExpenseService(ExpenseRepository expenseRepository) {
+        this.expenseRepository = expenseRepository;
+    }
+
+    public void createOrUpdateExpense(Expense expense) {
+        expenseRepository.save(expense);
+    }
 
     public List<Expense> getExpensesByUserId(String userUuid) {
         return expenseRepository.findByUserUserUuid(userUuid);
+    }
+
+    public List<Expense> getExpenses() {
+        return expenseRepository.findAll();
     }
 }
