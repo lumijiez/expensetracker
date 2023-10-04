@@ -1,7 +1,9 @@
 package com.faf223.expensetrackerfaf.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.ToString;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -15,6 +17,8 @@ public class Income {
 
     @ManyToOne
     @JoinColumn(name = "user_uuid")
+    @ToString.Exclude
+    @JsonIgnore
     private User user;
 
     @ManyToOne

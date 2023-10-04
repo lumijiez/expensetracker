@@ -3,7 +3,7 @@ package com.faf223.expensetrackerfaf.config;
 import com.faf223.expensetrackerfaf.repository.CredentialRepository;
 import com.faf223.expensetrackerfaf.repository.UserRepository;
 import com.faf223.expensetrackerfaf.security.PersonDetails;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -16,16 +16,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
+@RequiredArgsConstructor
 public class ApplicationConfig {
 
     private final UserRepository userRepository;
     private final CredentialRepository credentialRepository;
-
-    @Autowired
-    public ApplicationConfig(UserRepository userRepository, CredentialRepository credentialRepository) {
-        this.userRepository = userRepository;
-        this.credentialRepository = credentialRepository;
-    }
 
     @Bean
     public UserDetailsService userDetailsService() {

@@ -1,6 +1,7 @@
 package com.faf223.expensetrackerfaf.security;
 
 import com.faf223.expensetrackerfaf.model.Credential;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,14 +15,10 @@ import java.util.List;
 @Data
 @Builder
 @NoArgsConstructor(force = true)
-//@AllArgsConstructor
+@AllArgsConstructor
 public class PersonDetails implements UserDetails {
 
     private final Credential credential;
-
-    public PersonDetails(Credential credential) {
-        this.credential = credential;
-    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

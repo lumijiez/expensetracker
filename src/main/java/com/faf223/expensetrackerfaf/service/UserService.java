@@ -2,14 +2,14 @@ package com.faf223.expensetrackerfaf.service;
 
 import com.faf223.expensetrackerfaf.model.User;
 import com.faf223.expensetrackerfaf.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
     public User getUserById(String userUuid) {
         return userRepository.findById(userUuid).orElse(null);

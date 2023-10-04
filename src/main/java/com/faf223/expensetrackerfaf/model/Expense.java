@@ -1,6 +1,8 @@
 package com.faf223.expensetrackerfaf.model;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.ToString;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -12,8 +14,10 @@ public class Expense {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long expenseId;
 
-    @ManyToOne
+    @ManyToOne()
     @JoinColumn(name = "user_uuid")
+    @ToString.Exclude
+    @JsonIgnore
     private User user;
 
     @ManyToOne

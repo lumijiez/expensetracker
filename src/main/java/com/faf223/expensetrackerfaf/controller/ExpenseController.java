@@ -2,7 +2,7 @@ package com.faf223.expensetrackerfaf.controller;
 
 import com.faf223.expensetrackerfaf.model.Expense;
 import com.faf223.expensetrackerfaf.service.ExpenseService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,10 +13,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/expenses")
+@RequiredArgsConstructor
 public class ExpenseController {
 
-    @Autowired
-    private ExpenseService expenseService;
+    private final ExpenseService expenseService;
 
     @GetMapping("/user/{userUuid}")
     public ResponseEntity<List<Expense>> getExpensesByUser(@PathVariable String userUuid) {
