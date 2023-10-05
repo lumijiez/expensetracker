@@ -1,13 +1,15 @@
 package com.faf223.expensetrackerfaf.controller;
 
+import com.faf223.expensetrackerfaf.dto.UserCreationDTO;
+import com.faf223.expensetrackerfaf.dto.UserDTO;
+import com.faf223.expensetrackerfaf.dto.mappers.UserMapper;
 import com.faf223.expensetrackerfaf.model.User;
 import com.faf223.expensetrackerfaf.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/users")
@@ -15,16 +17,37 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
 
     private final UserService userService;
+    private final UserMapper userMapper;
 
-    @GetMapping("/{userUuid}")
-    public ResponseEntity<User> getUser(@PathVariable String userUuid) {
-        // TODO: Create a DTO class that will be returned instead of User(password: null and uuid are returned inside of the user object)
-        User user = userService.getUserById(userUuid);
-        if (user != null) {
-            return ResponseEntity.ok(user);
+    @PostMapping()
+    public ResponseEntity<UserDTO> createNewUser(@RequestBody UserCreationDTO userDTO,
+                                                 BindingResult bindingResult) {
+        User user = userMapper.toUser(userDTO);
+        if (!bindingResult.hasErrors()) {
+            userService.createOrUpdateUser(user);
+            return ResponseEntity.ok(userMapper.toDto(user));
         } else {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @PatchMapping()
+    public ResponseEntity<UserDTO> updateUser(@RequestBody UserCreationDTO userDTO,
+                                              BindingResult bindingResult) {
+        User user = userMapper.toUser(userDTO);
+        if (!bindingResult.hasErrors()) {
+            userService.createOrUpdateUser(user);
+            return ResponseEntity.ok(userMapper.toDto(user));
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @GetMapping("/{userUuid}")
+    public ResponseEntity<UserDTO> getUser(@PathVariable String userUuid) {
+        User user = userService.getUserById(userUuid);
+        if (user != null) return ResponseEntity.ok(userMapper.toDto(user));
+        else return ResponseEntity.notFound().build();
     }
 }
 

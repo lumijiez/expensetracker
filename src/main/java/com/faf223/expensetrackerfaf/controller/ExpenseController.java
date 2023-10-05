@@ -1,15 +1,18 @@
 package com.faf223.expensetrackerfaf.controller;
 
+import com.faf223.expensetrackerfaf.dto.ExpenseCreationDTO;
+import com.faf223.expensetrackerfaf.dto.ExpenseDTO;
+import com.faf223.expensetrackerfaf.dto.mappers.ExpenseMapper;
 import com.faf223.expensetrackerfaf.model.Expense;
 import com.faf223.expensetrackerfaf.service.ExpenseService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/expenses")
@@ -17,15 +20,44 @@ import java.util.List;
 public class ExpenseController {
 
     private final ExpenseService expenseService;
+    private final ExpenseMapper expenseMapper;
 
-    @GetMapping("/user/{userUuid}")
-    public ResponseEntity<List<Expense>> getExpensesByUser(@PathVariable String userUuid) {
-        List<Expense> expenses = expenseService.getExpensesByUserId(userUuid);
-        if (!expenses.isEmpty()) {
-            return ResponseEntity.ok(expenses);
+    @GetMapping()
+    public ResponseEntity<List<ExpenseDTO>> getAllExpenses() {
+        List<ExpenseDTO> expenses = expenseService.getExpenses().stream().map(expenseMapper::toDto).collect(Collectors.toList());
+        if (!expenses.isEmpty()) return ResponseEntity.ok(expenses);
+        else return ResponseEntity.notFound().build();
+    }
+
+    @PostMapping()
+    public ResponseEntity<ExpenseDTO> createNewExpense(@RequestBody ExpenseCreationDTO expenseDTO,
+                                                       BindingResult bindingResult) {
+        Expense expense = expenseMapper.toExpense(expenseDTO);
+        if (!bindingResult.hasErrors()) {
+            expenseService.createOrUpdateExpense(expense);
+            return ResponseEntity.ok(expenseMapper.toDto(expense));
         } else {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @PatchMapping()
+    public ResponseEntity<ExpenseDTO> updateExpense(@RequestBody ExpenseCreationDTO expenseDTO,
+                                                    BindingResult bindingResult) {
+        Expense expense = expenseMapper.toExpense(expenseDTO);
+        if (!bindingResult.hasErrors()) {
+            expenseService.createOrUpdateExpense(expense);
+            return ResponseEntity.ok(expenseMapper.toDto(expense));
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @GetMapping("/{userUuid}")
+    public ResponseEntity<List<ExpenseDTO>> getExpensesByUser(@PathVariable String userUuid) {
+        List<ExpenseDTO> expenses = expenseService.getExpensesByUserId(userUuid).stream().map(expenseMapper::toDto).collect(Collectors.toList());
+        if (!expenses.isEmpty()) return ResponseEntity.ok(expenses);
+        else return ResponseEntity.notFound().build();
     }
 }
 
