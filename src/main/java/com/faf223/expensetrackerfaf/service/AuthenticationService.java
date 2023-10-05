@@ -31,10 +31,9 @@ public class AuthenticationService {
         User user = User.builder()
                 .firstName(request.getFirstname())
                 .lastName(request.getLastname())
-                .password(passwordEncoder.encode(request.getPassword()))
                 .username(request.getUsername())
                 .build();
-//        System.out.println(user);
+
         userRepository.save(user);
         Credential credential = new Credential(user, request.getEmail(), passwordEncoder.encode(request.getPassword()));
         credentialRepository.save(credential);
