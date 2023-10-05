@@ -15,11 +15,11 @@ public class UserMapper {
     }
 
     public User toUser(UserCreationDTO userDTO) {
+      
         User user = new User();
         user.setFirstName(userDTO.getFirstname());
         user.setLastName(userDTO.getLastname());
         user.setUsername(userDTO.getUsername());
-
         return user;
     }
 
