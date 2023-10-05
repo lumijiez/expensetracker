@@ -34,7 +34,7 @@ public class AuthenticationService {
                 .password(passwordEncoder.encode(request.getPassword()))
                 .username(request.getUsername())
                 .build();
-        System.out.println(user);
+//        System.out.println(user);
         userRepository.save(user);
         Credential credential = new Credential(user, request.getEmail(), passwordEncoder.encode(request.getPassword()));
         credentialRepository.save(credential);
@@ -48,7 +48,7 @@ public class AuthenticationService {
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
 
-         Credential credential = credentialRepository.findByEmail(request.getEmail()).orElseThrow((() -> new UsernameNotFoundException("User not found")));
+        Credential credential = credentialRepository.findByEmail(request.getEmail()).orElseThrow((() -> new UsernameNotFoundException("User not found")));
 
         String jwtToken = jwtService.generateToken(new PersonDetails(credential));
         return AuthenticationResponse.builder()
