@@ -22,7 +22,10 @@ public class UserMapper {
     }
 
     public User toUser(UserCreationDTO userDTO) {
-        return userService.getUserById(userDTO.getUuid());
+        User user = userService.getUserById(userDTO.getUuid());
+        if(user == null) return new User(userDTO.getUuid(), userDTO.getName(),
+                userDTO.getSurname(), userDTO.getUsername());
+        return user;
     }
 
 }
