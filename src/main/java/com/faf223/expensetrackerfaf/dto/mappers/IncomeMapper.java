@@ -2,6 +2,7 @@ package com.faf223.expensetrackerfaf.dto.mappers;
 
 import com.faf223.expensetrackerfaf.dto.IncomeCreationDTO;
 import com.faf223.expensetrackerfaf.dto.IncomeDTO;
+import com.faf223.expensetrackerfaf.model.Expense;
 import com.faf223.expensetrackerfaf.model.Income;
 import com.faf223.expensetrackerfaf.service.IncomeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,10 @@ public class IncomeMapper {
     }
 
     public Income toIncome(IncomeCreationDTO incomeDTO) {
-        return incomeService.getIncomeById(incomeDTO.getIncomeId());
+        Income income = incomeService.getIncomeById(incomeDTO.getIncomeId());
+        if(income == null) return new Income(incomeDTO.getIncomeId(), incomeDTO.getUser(),
+                incomeDTO.getCategory(), incomeDTO.getDate(), incomeDTO.getAmount());
+        return income;
     }
 
 }

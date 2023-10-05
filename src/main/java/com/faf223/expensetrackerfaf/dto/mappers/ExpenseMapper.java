@@ -25,7 +25,10 @@ public class ExpenseMapper {
     }
 
     public Expense toExpense(ExpenseCreationDTO expenseDTO) {
-        return expenseService.getExpenseById(expenseDTO.getExpenseId());
+        Expense expense = expenseService.getExpenseById(expenseDTO.getExpenseId());
+        if(expense == null) return new Expense(expenseDTO.getExpenseId(), expenseDTO.getUser(),
+                expenseDTO.getExpenseCategory(), expenseDTO.getDate(), expenseDTO.getAmount());
+        return expense;
     }
 
 }
