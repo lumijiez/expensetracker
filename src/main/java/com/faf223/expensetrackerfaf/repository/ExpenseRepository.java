@@ -8,5 +8,5 @@ import java.util.List;
 
 @Repository
 public interface ExpenseRepository extends JpaRepository<Expense, Long> {
-    List<Expense> findByUserUserUuid(String userUuid);
+    List<Expense> findByUserUuid(String userUuid);
 }

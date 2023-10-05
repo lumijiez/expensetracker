@@ -10,7 +10,7 @@ import lombok.Data;
 public class User {
     @Id
     @Column(table = "users", name = "user_uuid")
-    private String userUuid;
+    private String uuid;
 
     private String name;
     private String surname;

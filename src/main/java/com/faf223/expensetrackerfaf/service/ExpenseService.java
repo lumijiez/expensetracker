@@ -22,10 +22,14 @@ public class ExpenseService {
     }
 
     public List<Expense> getExpensesByUserId(String userUuid) {
-        return expenseRepository.findByUserUserUuid(userUuid);
+        return expenseRepository.findByUserUuid(userUuid);
     }
 
     public List<Expense> getExpenses() {
         return expenseRepository.findAll();
+    }
+
+    public Expense getExpenseById(long id) {
+        return expenseRepository.findById(id).orElse(null);
     }
 }

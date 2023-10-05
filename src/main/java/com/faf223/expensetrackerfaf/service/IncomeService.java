@@ -26,6 +26,10 @@ public class IncomeService {
     }
 
     public List<Income> getIncomesByUserId(String userUuid) {
-        return incomeRepository.findByUserUserUuid(userUuid);
+        return incomeRepository.findByUserUuid(userUuid);
+    }
+
+    public Income getIncomeById(long id) {
+        return incomeRepository.findById(id).orElse(null);
     }
 }
