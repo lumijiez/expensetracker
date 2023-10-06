@@ -5,6 +5,7 @@ import com.faf223.expensetrackerfaf.dto.IncomeDTO;
 import com.faf223.expensetrackerfaf.dto.mappers.IncomeMapper;
 import com.faf223.expensetrackerfaf.model.Income;
 import com.faf223.expensetrackerfaf.service.IncomeService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -15,16 +16,11 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/incomes")
+@RequiredArgsConstructor
 public class IncomeController {
 
     private final IncomeService incomeService;
     private final IncomeMapper incomeMapper;
-
-    @Autowired
-    public IncomeController(IncomeService incomeService, IncomeMapper incomeMapper) {
-        this.incomeService = incomeService;
-        this.incomeMapper = incomeMapper;
-    }
 
     @GetMapping()
     public ResponseEntity<List<IncomeDTO>> getAllIncomes() {
@@ -35,7 +31,7 @@ public class IncomeController {
 
     @PostMapping()
     public ResponseEntity<IncomeDTO> createNewIncome(@RequestBody IncomeCreationDTO incomeDTO,
-                                                    BindingResult bindingResult) {
+                                                     BindingResult bindingResult) {
         Income income = incomeMapper.toIncome(incomeDTO);
         if (!bindingResult.hasErrors()) {
             incomeService.createOrUpdateIncome(income);
@@ -47,7 +43,7 @@ public class IncomeController {
 
     @PatchMapping()
     public ResponseEntity<IncomeDTO> updateIncome(@RequestBody IncomeCreationDTO incomeDTO,
-                                                 BindingResult bindingResult) {
+                                                  BindingResult bindingResult) {
         Income income = incomeMapper.toIncome(incomeDTO);
         if (!bindingResult.hasErrors()) {
             incomeService.createOrUpdateIncome(income);

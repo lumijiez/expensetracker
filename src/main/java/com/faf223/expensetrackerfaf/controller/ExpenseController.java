@@ -5,6 +5,7 @@ import com.faf223.expensetrackerfaf.dto.ExpenseDTO;
 import com.faf223.expensetrackerfaf.dto.mappers.ExpenseMapper;
 import com.faf223.expensetrackerfaf.model.Expense;
 import com.faf223.expensetrackerfaf.service.ExpenseService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -15,16 +16,11 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/expenses")
+@RequiredArgsConstructor
 public class ExpenseController {
 
     private final ExpenseService expenseService;
     private final ExpenseMapper expenseMapper;
-
-    @Autowired
-    public ExpenseController(ExpenseService expenseService, ExpenseMapper expenseMapper) {
-        this.expenseService = expenseService;
-        this.expenseMapper = expenseMapper;
-    }
 
     @GetMapping()
     public ResponseEntity<List<ExpenseDTO>> getAllExpenses() {
@@ -35,7 +31,7 @@ public class ExpenseController {
 
     @PostMapping()
     public ResponseEntity<ExpenseDTO> createNewExpense(@RequestBody ExpenseCreationDTO expenseDTO,
-                         BindingResult bindingResult) {
+                                                       BindingResult bindingResult) {
         Expense expense = expenseMapper.toExpense(expenseDTO);
         if (!bindingResult.hasErrors()) {
             expenseService.createOrUpdateExpense(expense);
@@ -47,7 +43,7 @@ public class ExpenseController {
 
     @PatchMapping()
     public ResponseEntity<ExpenseDTO> updateExpense(@RequestBody ExpenseCreationDTO expenseDTO,
-                                                 BindingResult bindingResult) {
+                                                    BindingResult bindingResult) {
         Expense expense = expenseMapper.toExpense(expenseDTO);
         if (!bindingResult.hasErrors()) {
             expenseService.createOrUpdateExpense(expense);

@@ -1,40 +1,38 @@
 package com.faf223.expensetrackerfaf.security;
 
-import com.faf223.expensetrackerfaf.model.Role;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
+import com.faf223.expensetrackerfaf.model.Credential;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
-import java.util.List;
+import java.util.Collections;
 
+@Data
+@Builder
+@NoArgsConstructor(force = true)
+@AllArgsConstructor
 public class PersonDetails implements UserDetails {
 
-    private final User user;
-
-    @Enumerated(EnumType.STRING)
-    private Role role;
-
-    public PersonDetails(User user) {
-        this.user = user;
-    }
+    private final Credential credential;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(role.name()));
+        return Collections.singletonList(new SimpleGrantedAuthority(credential.getRole().toString()));
     }
 
     @Override
     public String getPassword() {
-        return user.getPassword();
+        return credential.getPassword();
     }
 
     @Override
     public String getUsername() {
-        return user.getUsername();
+        return credential.getEmail();
     }
 
     @Override

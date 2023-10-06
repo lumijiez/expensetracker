@@ -10,21 +10,16 @@ import org.springframework.stereotype.Component;
 @Component
 public class UserMapper {
 
-    private final UserService userService;
-
-    @Autowired
-    public UserMapper(UserService userService) {
-        this.userService = userService;
-    }
-
     public UserDTO toDto(User user) {
-        return new UserDTO(user.getUuid(), user.getName(), user.getSurname(), user.getUsername());
+        return new UserDTO(user.getFirstName(), user.getLastName(), user.getUsername());
     }
 
     public User toUser(UserCreationDTO userDTO) {
-        User user = userService.getUserById(userDTO.getUuid());
-        if(user == null) return new User(userDTO.getUuid(), userDTO.getName(),
-                userDTO.getSurname(), userDTO.getUsername());
+      
+        User user = new User();
+        user.setFirstName(userDTO.getFirstname());
+        user.setLastName(userDTO.getLastname());
+        user.setUsername(userDTO.getUsername());
         return user;
     }
 

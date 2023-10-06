@@ -1,22 +1,39 @@
+
 package com.faf223.expensetrackerfaf.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.persistence.*;
+import lombok.*;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
+import java.util.List;
+
 @Entity(name = "users")
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class User {
     @Id
-    @Column(table = "users", name = "user_uuid")
-    private String uuid;
+    @Column(name = "user_uuid")
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String userUuid;
 
-    private String name;
-    private String surname;
+    @Column(name = "name")
+    private String firstName;
+
+    @Column(name = "surname")
+    private String lastName;
+
+    @Column(name = "username")
     private String username;
+
+    @Transient
+    private String password;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @ToString.Exclude
+    private List<Expense> expenses;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @ToString.Exclude
+    private List<Income> incomes;
 }
