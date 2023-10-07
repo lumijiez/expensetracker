@@ -6,8 +6,8 @@ import com.faf223.expensetrackerfaf.dto.mappers.IncomeMapper;
 import com.faf223.expensetrackerfaf.model.Income;
 import com.faf223.expensetrackerfaf.service.IncomeService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,6 +23,7 @@ public class IncomeController {
     private final IncomeMapper incomeMapper;
 
     @GetMapping()
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<IncomeDTO>> getAllIncomes() {
         List<IncomeDTO> incomes = incomeService.getIncomes().stream().map(incomeMapper::toDto).collect(Collectors.toList());
         if (!incomes.isEmpty()) return ResponseEntity.ok(incomes);

@@ -6,8 +6,8 @@ import com.faf223.expensetrackerfaf.dto.mappers.ExpenseMapper;
 import com.faf223.expensetrackerfaf.model.Expense;
 import com.faf223.expensetrackerfaf.service.ExpenseService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,6 +23,7 @@ public class ExpenseController {
     private final ExpenseMapper expenseMapper;
 
     @GetMapping()
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<ExpenseDTO>> getAllExpenses() {
         List<ExpenseDTO> expenses = expenseService.getExpenses().stream().map(expenseMapper::toDto).collect(Collectors.toList());
         if (!expenses.isEmpty()) return ResponseEntity.ok(expenses);
