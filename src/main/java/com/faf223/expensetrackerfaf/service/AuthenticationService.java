@@ -44,7 +44,7 @@ public class AuthenticationService {
 
         UserDetails userDetails = new PersonDetails(credential);
         String jwtToken = jwtService.generateToken(userDetails);
-        String refreshToken = jwtService.generateToken(userDetails);
+        String refreshToken = jwtService.generateRefreshToken(userDetails);
 
         return AuthenticationResponse.builder()
                 .accessToken(jwtToken)
@@ -59,7 +59,7 @@ public class AuthenticationService {
 
         UserDetails userDetails = new PersonDetails(credential);
         String jwtToken = jwtService.generateToken(userDetails);
-        String refreshToken = jwtService.generateToken(userDetails);
+        String refreshToken = jwtService.generateRefreshToken(userDetails);
         return AuthenticationResponse.builder()
                 .accessToken(jwtToken)
                 .refreshToken(refreshToken)
@@ -76,9 +76,9 @@ public class AuthenticationService {
             String jwtToken = jwtService.generateToken(userDetails);
             return AuthenticationResponse.builder()
                     .accessToken(jwtToken)
-                    .refreshToken(refreshToken) // Return the same refresh token
+                    .refreshToken(refreshToken)
                     .build();
-        }else {
+        } else {
             throw new RuntimeException("Invalid or expired refresh token");
         }
     }
