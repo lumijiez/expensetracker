@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@CrossOrigin
 @RestController
 @RequestMapping("/incomes")
 @RequiredArgsConstructor
@@ -54,6 +55,7 @@ public class IncomeController {
         }
     }
 
+    @CrossOrigin
     @GetMapping("/{userUuid}")
     public ResponseEntity<List<IncomeDTO>> getIncomesByUser(@PathVariable String userUuid) {
         List<IncomeDTO> incomes = incomeService.getIncomesByUserId(userUuid).stream().map(incomeMapper::toDto).collect(Collectors.toList());
