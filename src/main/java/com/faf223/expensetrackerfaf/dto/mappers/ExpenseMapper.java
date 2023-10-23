@@ -20,7 +20,7 @@ public class ExpenseMapper {
     }
 
     public ExpenseDTO toDto(Expense expense) {
-        return new ExpenseDTO(expense.getExpenseId(), userMapper.toDto(expense.getUser()),
+        return new ExpenseDTO(expense.getId(), userMapper.toDto(expense.getUser()),
                 expense.getCategory(), expense.getDate(), expense.getAmount());
     }
 
