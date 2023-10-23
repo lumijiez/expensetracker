@@ -1,11 +1,14 @@
 package com.faf223.expensetrackerfaf.model;
 
-import com.faf223.expensetrackerfaf.model.User;
+import java.math.BigDecimal;
+import java.time.LocalDate;
 
 public interface IMoneyTransaction {
 
+    Long getId();
+    LocalDate getDate();
     User getUser();
-    int getAmount();
-    String getCategory();
+    BigDecimal getAmount();
+    IMoneyTransactionCategory getCategory();
 
 }
