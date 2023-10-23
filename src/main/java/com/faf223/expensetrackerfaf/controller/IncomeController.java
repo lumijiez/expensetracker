@@ -8,6 +8,9 @@ import com.faf223.expensetrackerfaf.service.IncomeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -54,11 +57,22 @@ public class IncomeController {
         }
     }
 
-    @GetMapping("/{userUuid}")
-    public ResponseEntity<List<IncomeDTO>> getIncomesByUser(@PathVariable String userUuid) {
-        List<IncomeDTO> incomes = incomeService.getIncomesByUserId(userUuid).stream().map(incomeMapper::toDto).collect(Collectors.toList());
-        if (!incomes.isEmpty()) return ResponseEntity.ok(incomes);
-        else return ResponseEntity.notFound().build();
+    @GetMapping("/personal-incomes")
+    public ResponseEntity<List<IncomeDTO>> getIncomesByUser() {
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication != null && authentication.getPrincipal() instanceof UserDetails userDetails) {
+
+            String email = userDetails.getUsername();
+            List<IncomeDTO> expenses = incomeService.getIncomesByEmail(email).stream().map(incomeMapper::toDto).collect(Collectors.toList());
+
+            if (!expenses.isEmpty()) {
+                return ResponseEntity.ok(expenses);
+            }
+        }
+
+        return ResponseEntity.notFound().build();
     }
 }
 
