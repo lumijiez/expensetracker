@@ -1,4 +1,5 @@
 package com.faf223.expensetrackerfaf.model;
+import com.faf223.expensetrackerfaf.util.IMoneyTransaction;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -13,7 +14,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity(name = "expenses")
-public class Expense {
+public class Expense implements IMoneyTransaction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long expenseId;
