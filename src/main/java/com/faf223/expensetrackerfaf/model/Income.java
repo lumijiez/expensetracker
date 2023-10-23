@@ -1,6 +1,5 @@
 package com.faf223.expensetrackerfaf.model;
 
-import com.faf223.expensetrackerfaf.util.IMoneyTransaction;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

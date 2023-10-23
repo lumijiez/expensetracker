@@ -1,4 +1,4 @@
-package com.faf223.expensetrackerfaf.util;
+package com.faf223.expensetrackerfaf.model;
 
 import com.faf223.expensetrackerfaf.model.User;
 
