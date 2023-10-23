@@ -1,32 +1,17 @@
 package com.faf223.expensetrackerfaf.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import lombok.AccessLevel;
+import jakarta.persistence.*;
 import lombok.Data;
-import lombok.Getter;
 
 @Data
 @Entity(name = "income_categories")
 public class IncomeCategory implements IMoneyTransactionCategory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Getter(AccessLevel.NONE)
-    private Long categoryId;
+    @Column(name = "category_id")
+    private Long id;
 
-    @Getter(AccessLevel.NONE)
-    private String categoryName;
-
-    @Override
-    public Long getId() {
-        return categoryId;
-    }
-
-    @Override
-    public String getName() {
-        return categoryName;
-    }
+    @Column(name = "category_name")
+    private String name;
 }
 

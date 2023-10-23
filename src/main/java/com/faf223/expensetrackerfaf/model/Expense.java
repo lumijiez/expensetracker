@@ -13,8 +13,8 @@ import java.time.LocalDate;
 public class Expense implements IMoneyTransaction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Getter(AccessLevel.NONE)
-    private Long expenseId;
+    @Column(name = "expense_id")
+    private Long id;
 
     @ManyToOne()
     @JoinColumn(name = "user_uuid")
@@ -28,11 +28,5 @@ public class Expense implements IMoneyTransaction {
 
     private LocalDate date;
     private BigDecimal amount;
-
-    @Override
-    public Long getId() {
-        return expenseId;
-    }
-
 }
 
