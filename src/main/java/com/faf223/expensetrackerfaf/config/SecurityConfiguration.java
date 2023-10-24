@@ -43,34 +43,7 @@ public class SecurityConfiguration {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class); // will be executed before UsernamePasswordAuthenticationFilter
-//                .oauth2Login(Customizer.withDefaults());
-
         return http.build();
     }
 
-    @Bean
-    public ClientRegistrationRepository clientRegistrationRepository(
-            @Value("${spring.security.oauth2.client.registration.google.client-id}") String clientId,
-            @Value("${spring.security.oauth2.client.registration.google.client-secret}") String clientSecret) {
-
-        ClientRegistration registration = ClientRegistration.withRegistrationId("google")
-                .clientId(clientId)
-                .clientSecret(clientSecret)
-                .clientName("Google")
-                .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
-                .redirectUri("http://localhost:8081/login/oauth2/code/{registrationId}")
-                .scope("openid", "profile", "email")
-                .authorizationUri("https://accounts.google.com/o/oauth2/auth")
-                .tokenUri("https://accounts.google.com/o/oauth2/token")
-                .userInfoUri("https://www.googleapis.com/oauth2/v3/userinfo")
-                .userNameAttributeName(IdTokenClaimNames.SUB)
-                .build();
-
-        return new InMemoryClientRegistrationRepository(registration);
-    }
-
-    @Bean
-    public OAuth2UserService<OAuth2UserRequest, OAuth2User> oAuth2UserService() {
-        return new DefaultOAuth2UserService();
-    }
 }
