@@ -64,7 +64,7 @@
     <div id="profileSpace">
         <div id="profileInfo">Hello, {username}</div>
         <div id="logout" role="button"
-        tabindex="0"  
+        tabindex="0"
         on:click={() => {
         deleteCookie('access_token');
         deleteCookie('refresh_token');
@@ -76,12 +76,11 @@
             deleteCookie('refresh_token');
             window.location.href = '/auth/login';
         }
-    }}
-        >
+    }}>
         Log out
-    </div>
+        </div>
 
-</div>
+    </div>
 </div>
 
 <style>
@@ -130,10 +129,22 @@
     #profileSpace {
         margin-bottom: 20px;
         display: flex;
-        flex-direction: row;
-        justify-content: center;
-        color:white;
+        flex-direction: column;
+        align-items: center;
+        color: white;
         font-weight: 900;
         font-size: larger;
+    }
+
+    #logout {
+        background: none;
+        cursor: pointer;
+        border-radius: 10px;
+        transition: background 0.3s ease;
+        padding: 5px;
+    }
+
+    #logout:hover {
+        background: rgba(128, 128, 128, 0.5);
     }
 </style>
