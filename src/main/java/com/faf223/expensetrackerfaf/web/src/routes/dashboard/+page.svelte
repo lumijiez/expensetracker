@@ -16,5 +16,6 @@
         display: flex;
         align-items: stretch;
         min-height: 100vh;
+        max-height: 100%;
     }
 </style>

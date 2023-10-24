@@ -8,7 +8,7 @@
     function submitForm(event) {
         event.preventDefault();
         console.log("Tried to submit!");
-        console.log("Valid? ", (validateEmail() && validateUsername() && va && validatePassword() ? "Yes" : "No"));
+        console.log("Valid? ", (validateEmail() && validateUsername() && validatePassword() ? "Yes" : "No"));
     }
 
     function validateEmail() {

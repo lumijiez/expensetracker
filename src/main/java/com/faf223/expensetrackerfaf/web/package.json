@@ -26,8 +26,12 @@
 	"dependencies": {
 		"@fortawesome/free-brands-svg-icons": "^6.4.2",
 		"@fortawesome/free-solid-svg-icons": "^6.4.2",
+		"axios": "^1.5.1",
 		"chart.js": "^4.4.0",
 		"email-validator": "^2.0.4",
-		"svelte-fa": "^3.0.4"
+		"js-cookie": "^3.0.5",
+		"svelte-cookie": "^1.0.1",
+		"svelte-fa": "^3.0.4",
+		"svelte-spa-router": "^3.3.0"
 	}
 }

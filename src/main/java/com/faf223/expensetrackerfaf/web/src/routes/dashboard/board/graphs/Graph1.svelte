@@ -1,30 +1,49 @@
 <script>
 	import Chart from 'chart.js/auto';
 	import { onMount } from 'svelte';
+	import axios from 'axios';
+	import {getCookie} from "svelte-cookie";
 
-	let chartValues = [20, 10, 5, 2, 20, 30, 45];
-	let chartLabels = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
 	let ctx;
 	let chartCanvas;
 
 	onMount(async () => {
-		  ctx = chartCanvas.getContext('2d');
+
+		const token = getCookie('access_token');
+
+		const config = {
+			headers: {
+				'Authorization': `Bearer ${token}`
+			}
+		};
+
+		try {
+			const response = await axios.get('http://localhost:8081/incomes/personal-incomes', config);
+			console.log(response.data);
+			const incomeData = response.data;
+
+			const chartLabels = incomeData.map(item => item.incomeCategory.name);
+			const chartValues = incomeData.map(item => item.amount);
+
+			ctx = chartCanvas.getContext('2d');
 			new Chart(ctx, {
-				type: 'line',
+				type: 'bar',
 				data: {
-						labels: chartLabels,
-						datasets: [{
-								label: 'Revenue',
-								backgroundColor: 'rgb(255, 99, 132)',
-								borderColor: 'rgb(255, 99, 132)',
-								data: chartValues
-						}]
+					labels: chartLabels,
+					datasets: [{
+						label: 'Revenue',
+						backgroundColor: 'rgb(255, 99, 132)',
+						data: chartValues
+					}]
 				},
-                options: {
-                        responsive: true,
-                        maintainAspectRatio: false
-                }
-		});
+				options: {
+					responsive: true,
+					maintainAspectRatio: false
+				}
+			});
+		} catch (error) {
+			console.error('Error:', error);
+		}
 	});
 </script>
 
@@ -34,15 +53,15 @@
 
 <style>
 	#chart {
-        box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
-        transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+		box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+		transition: all 0.3s cubic-bezier(.25,.8,.25,1);
 		flex: 1;
 		border-radius: 10px;
-		margin:10px;
-		background-color: #ffdde2;
-    }
+		margin: 10px;
+		background-color: #d3d3d3;
+	}
 
-    #chart:hover {
-        box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
-    }
+	#chart:hover {
+		box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+	}
 </style>
