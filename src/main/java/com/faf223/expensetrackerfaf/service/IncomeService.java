@@ -1,11 +1,10 @@
 package com.faf223.expensetrackerfaf.service;
 
+import com.faf223.expensetrackerfaf.model.Credential;
 import com.faf223.expensetrackerfaf.model.Income;
-import com.faf223.expensetrackerfaf.model.User;
+import com.faf223.expensetrackerfaf.repository.CredentialRepository;
 import com.faf223.expensetrackerfaf.repository.IncomeRepository;
-import com.faf223.expensetrackerfaf.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -17,7 +16,7 @@ import java.util.Optional;
 public class IncomeService {
 
     private final IncomeRepository incomeRepository;
-    private final UserRepository userRepository;
+    private final CredentialRepository credentialRepository;
 
     public void createOrUpdateIncome(Income income) {
         incomeRepository.save(income);
@@ -27,11 +26,11 @@ public class IncomeService {
         return incomeRepository.findAll();
     }
 
-    public List<Income> getIncomesByUserId(String userUuid) {
+    public List<Income> getIncomesByEmail(String email) {
 
-        Optional<User> user = userRepository.getUserByUserUuid(userUuid);
-        if (user.isPresent()) {
-            return incomeRepository.findByUser(user.get());
+        Optional<Credential> credential = credentialRepository.findByEmail(email);
+        if (credential.isPresent()) {
+            return incomeRepository.findByUser(credential.get().getUser());
         }
 
         return new ArrayList<>();
