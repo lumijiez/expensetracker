@@ -29,4 +29,10 @@ public class Income implements IMoneyTransaction {
 
     private LocalDate date;
     private BigDecimal amount;
+
+    public Income(IncomeCategory incomeCategory, LocalDate date, BigDecimal amount) {
+        this.category = incomeCategory;
+        this.date = date;
+        this.amount = amount;
+    }
 }

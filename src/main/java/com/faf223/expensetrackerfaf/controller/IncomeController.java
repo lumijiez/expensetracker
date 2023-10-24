@@ -1,11 +1,15 @@
 package com.faf223.expensetrackerfaf.controller;
 
+import com.faf223.expensetrackerfaf.dto.ExpenseDTO;
 import com.faf223.expensetrackerfaf.dto.IncomeCreationDTO;
 import com.faf223.expensetrackerfaf.dto.IncomeDTO;
 import com.faf223.expensetrackerfaf.dto.mappers.IncomeMapper;
 import com.faf223.expensetrackerfaf.model.Income;
+import com.faf223.expensetrackerfaf.model.User;
 import com.faf223.expensetrackerfaf.service.IncomeService;
+import com.faf223.expensetrackerfaf.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -23,6 +27,7 @@ import java.util.stream.Collectors;
 public class IncomeController {
 
     private final IncomeService incomeService;
+    private final UserService userService;
     private final IncomeMapper incomeMapper;
 
     @GetMapping()
@@ -37,12 +42,21 @@ public class IncomeController {
     public ResponseEntity<IncomeDTO> createNewIncome(@RequestBody IncomeCreationDTO incomeDTO,
                                                      BindingResult bindingResult) {
         Income income = incomeMapper.toIncome(incomeDTO);
-        if (!bindingResult.hasErrors()) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication != null && authentication.getPrincipal() instanceof UserDetails userDetails) {
+
+            String email = userDetails.getUsername();
+            User user = userService.getUserByEmail(email);
+            income.setUser(user);
+
+            System.out.println(income);
             incomeService.createOrUpdateIncome(income);
-            return ResponseEntity.ok(incomeMapper.toDto(income));
-        } else {
-            return ResponseEntity.notFound().build();
+            IncomeDTO createdIncomeDTO = incomeMapper.toDto(income);
+            return ResponseEntity.status(HttpStatus.CREATED).body(createdIncomeDTO);
         }
+
+        return ResponseEntity.notFound().build();
     }
 
     @PatchMapping()
@@ -65,14 +79,13 @@ public class IncomeController {
         if (authentication != null && authentication.getPrincipal() instanceof UserDetails userDetails) {
 
             String email = userDetails.getUsername();
-            List<IncomeDTO> expenses = incomeService.getIncomesByEmail(email).stream().map(incomeMapper::toDto).collect(Collectors.toList());
+            List<IncomeDTO> incomes = incomeService.getIncomesByEmail(email).stream().map(incomeMapper::toDto).collect(Collectors.toList());
 
-            if (!expenses.isEmpty()) {
-                return ResponseEntity.ok(expenses);
+            if (!incomes.isEmpty()) {
+                return ResponseEntity.ok(incomes);
             }
         }
 
         return ResponseEntity.notFound().build();
     }
 }
-

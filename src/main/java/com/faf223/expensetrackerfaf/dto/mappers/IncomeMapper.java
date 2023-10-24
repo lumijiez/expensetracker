@@ -2,20 +2,26 @@ package com.faf223.expensetrackerfaf.dto.mappers;
 
 import com.faf223.expensetrackerfaf.dto.IncomeCreationDTO;
 import com.faf223.expensetrackerfaf.dto.IncomeDTO;
+import com.faf223.expensetrackerfaf.model.Expense;
 import com.faf223.expensetrackerfaf.model.Income;
+import com.faf223.expensetrackerfaf.service.IncomeCategoryService;
 import com.faf223.expensetrackerfaf.service.IncomeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.time.LocalDate;
 
 @Component
 public class IncomeMapper {
 
     private final IncomeService incomeService;
+    private final IncomeCategoryService incomeCategoryService;
     private final UserMapper userMapper;
 
     @Autowired
-    public IncomeMapper(IncomeService incomeService, UserMapper userMapper) {
+    public IncomeMapper(IncomeService incomeService, IncomeCategoryService incomeCategoryService, UserMapper userMapper) {
         this.incomeService = incomeService;
+        this.incomeCategoryService = incomeCategoryService;
         this.userMapper = userMapper;
     }
 
@@ -25,10 +31,8 @@ public class IncomeMapper {
     }
 
     public Income toIncome(IncomeCreationDTO incomeDTO) {
-        Income income = incomeService.getIncomeById(incomeDTO.getIncomeId());
-        if(income == null) return new Income(incomeDTO.getIncomeId(), incomeDTO.getUser(),
-                incomeDTO.getCategory(), incomeDTO.getDate(), incomeDTO.getAmount());
-        return income;
+
+        return new Income(incomeCategoryService.getExpenseCategory(incomeDTO.getIncomeCategory()), LocalDate.now(), incomeDTO.getAmount());
     }
 
 }

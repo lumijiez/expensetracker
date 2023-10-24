@@ -4,8 +4,13 @@ import com.faf223.expensetrackerfaf.dto.ExpenseCreationDTO;
 import com.faf223.expensetrackerfaf.dto.ExpenseDTO;
 import com.faf223.expensetrackerfaf.dto.mappers.ExpenseMapper;
 import com.faf223.expensetrackerfaf.model.Expense;
+import com.faf223.expensetrackerfaf.model.ExpenseCategory;
+import com.faf223.expensetrackerfaf.model.User;
+import com.faf223.expensetrackerfaf.service.ExpenseCategoryService;
 import com.faf223.expensetrackerfaf.service.ExpenseService;
+import com.faf223.expensetrackerfaf.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -23,7 +28,9 @@ import java.util.stream.Collectors;
 public class ExpenseController {
 
     private final ExpenseService expenseService;
+    private final UserService userService;
     private final ExpenseMapper expenseMapper;
+    private final ExpenseCategoryService expenseCategoryService;
 
     @GetMapping()
     @PreAuthorize("hasRole('ADMIN')")
@@ -37,14 +44,24 @@ public class ExpenseController {
     public ResponseEntity<ExpenseDTO> createNewExpense(@RequestBody ExpenseCreationDTO expenseDTO,
                                                        BindingResult bindingResult) {
         Expense expense = expenseMapper.toExpense(expenseDTO);
-        if (!bindingResult.hasErrors()) {
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication != null && authentication.getPrincipal() instanceof UserDetails userDetails) {
+
+            String email = userDetails.getUsername();
+            User user = userService.getUserByEmail(email);
+            expense.setUser(user);
+
             expenseService.createOrUpdateExpense(expense);
-            return ResponseEntity.ok(expenseMapper.toDto(expense));
-        } else {
-            return ResponseEntity.notFound().build();
+            ExpenseDTO createdExpenseDTO = expenseMapper.toDto(expense);
+            return ResponseEntity.status(HttpStatus.CREATED).body(createdExpenseDTO);
         }
+
+        return ResponseEntity.notFound().build();
     }
 
+    // TODO: has to be checked on auto extracting Uuid
     @PatchMapping()
     public ResponseEntity<ExpenseDTO> updateExpense(@RequestBody ExpenseCreationDTO expenseDTO,
                                                     BindingResult bindingResult) {
@@ -75,4 +92,3 @@ public class ExpenseController {
         return ResponseEntity.notFound().build();
     }
 }
-
