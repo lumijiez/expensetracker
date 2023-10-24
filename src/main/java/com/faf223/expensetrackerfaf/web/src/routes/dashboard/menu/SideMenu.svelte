@@ -123,7 +123,7 @@
     }
 
     #iconImg {
-        max-width: 100px;
+        max-width: 150px;
     }
 
     #profileSpace {
