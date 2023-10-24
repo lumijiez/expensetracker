@@ -1,7 +1,7 @@
 <script>
     import { onMount } from 'svelte';
     import axios from 'axios';
-    import { getCookie } from "svelte-cookie";
+    import {deleteCookie, getCookie} from "svelte-cookie";
 
     let username;
 
@@ -63,6 +63,11 @@
 
     <div id="profileSpace">
         <div id="profileInfo">Hello, {username}</div>
+        <button id="logout" on:click={() => {
+            deleteCookie('access_token');
+            deleteCookie('refresh_token');
+            window.location.href = '/auth/login';
+        }}>Log out</button>
     </div>
 </div>
 
