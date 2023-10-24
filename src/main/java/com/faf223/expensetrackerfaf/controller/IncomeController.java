@@ -1,11 +1,12 @@
 package com.faf223.expensetrackerfaf.controller;
 
-import com.faf223.expensetrackerfaf.dto.ExpenseDTO;
 import com.faf223.expensetrackerfaf.dto.IncomeCreationDTO;
 import com.faf223.expensetrackerfaf.dto.IncomeDTO;
 import com.faf223.expensetrackerfaf.dto.mappers.IncomeMapper;
 import com.faf223.expensetrackerfaf.model.Income;
+import com.faf223.expensetrackerfaf.model.IncomeCategory;
 import com.faf223.expensetrackerfaf.model.User;
+import com.faf223.expensetrackerfaf.service.IncomeCategoryService;
 import com.faf223.expensetrackerfaf.service.IncomeService;
 import com.faf223.expensetrackerfaf.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -29,11 +30,12 @@ public class IncomeController {
     private final IncomeService incomeService;
     private final UserService userService;
     private final IncomeMapper incomeMapper;
+    private final IncomeCategoryService incomeCategoryService;
 
     @GetMapping()
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<IncomeDTO>> getAllIncomes() {
-        List<IncomeDTO> incomes = incomeService.getIncomes().stream().map(incomeMapper::toDto).collect(Collectors.toList());
+        List<IncomeDTO> incomes = incomeService.getTransactions().stream().map(incomeMapper::toDto).collect(Collectors.toList());
         if (!incomes.isEmpty()) return ResponseEntity.ok(incomes);
         else return ResponseEntity.notFound().build();
     }
@@ -51,7 +53,7 @@ public class IncomeController {
             income.setUser(user);
 
             System.out.println(income);
-            incomeService.createOrUpdateIncome(income);
+            incomeService.createOrUpdate(income);
             IncomeDTO createdIncomeDTO = incomeMapper.toDto(income);
             return ResponseEntity.status(HttpStatus.CREATED).body(createdIncomeDTO);
         }
@@ -64,7 +66,7 @@ public class IncomeController {
                                                   BindingResult bindingResult) {
         Income income = incomeMapper.toIncome(incomeDTO);
         if (!bindingResult.hasErrors()) {
-            incomeService.createOrUpdateIncome(income);
+            incomeService.createOrUpdate(income);
             return ResponseEntity.ok(incomeMapper.toDto(income));
         } else {
             return ResponseEntity.notFound().build();
@@ -79,7 +81,7 @@ public class IncomeController {
         if (authentication != null && authentication.getPrincipal() instanceof UserDetails userDetails) {
 
             String email = userDetails.getUsername();
-            List<IncomeDTO> incomes = incomeService.getIncomesByEmail(email).stream().map(incomeMapper::toDto).collect(Collectors.toList());
+            List<IncomeDTO> incomes = incomeService.getTransactionsByEmail(email).stream().map(incomeMapper::toDto).collect(Collectors.toList());
 
             if (!incomes.isEmpty()) {
                 return ResponseEntity.ok(incomes);
@@ -87,5 +89,12 @@ public class IncomeController {
         }
 
         return ResponseEntity.notFound().build();
+    }
+
+    @GetMapping("/categories")
+    public ResponseEntity<List<IncomeCategory>> getAllCategories() {
+        List<IncomeCategory> categories = incomeCategoryService.getAllCategories();
+        if (!categories.isEmpty()) return ResponseEntity.ok(categories);
+        else return ResponseEntity.notFound().build();
     }
 }

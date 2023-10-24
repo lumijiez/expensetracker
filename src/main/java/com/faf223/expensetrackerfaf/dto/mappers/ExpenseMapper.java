@@ -31,7 +31,7 @@ public class ExpenseMapper {
 
     public Expense toExpense(ExpenseCreationDTO expenseDTO) {
 
-        return new Expense(expenseCategoryService.getExpenseCategory(expenseDTO.getExpenseCategory()), LocalDate.now(), expenseDTO.getAmount());
+        return new Expense(expenseCategoryService.getCategoryById(expenseDTO.getExpenseCategory()), LocalDate.now(), expenseDTO.getAmount());
     }
 
 }
