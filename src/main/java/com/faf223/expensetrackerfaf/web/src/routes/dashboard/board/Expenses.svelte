@@ -30,25 +30,50 @@
 </script>
 
 <div id="expenseInfo" style="max-height: {parentHeight}px;">
-    <h2>Expenses</h2>
-    <ul>
-        {#each data as item}
-            <li>
-                {item.incomeCategory ? `${item.incomeCategory.name}: ` : `${item.expenseCategory.name}: `}
-                {item.incomeCategory ? `+${item.amount}$` : `-${item.amount}$`}
-                {`${item.date}`}
-            </li>
-        {/each}
-    </ul>
+    <h2 id="text">Expenses</h2>
+    <div id="expenseList">
+        <ul>
+            {#each data as item}
+                <li>
+                    {item.incomeCategory ? `${item.incomeCategory.name}: ` : `${item.expenseCategory.name}: `}
+                    {item.incomeCategory ? `+${item.amount}$` : `-${item.amount}$`}
+                    {`${item.date}`}
+                </li>
+            {/each}
+        </ul>
+    </div>
 </div>
 
 <style>
+    #text {
+        padding: 0 0 10px;
+        margin: 0;
+    }
+
     #expenseInfo {
         flex: 1;
         border-radius: 10px;
         margin: 10px;
         overflow-y: auto;
         max-height: 100%;
+    }
+
+    h2 {
+        position: sticky;
+        top: 0;
+        background-color: #f2f2f2;
+        padding: 10px;
+        border-radius: 10px 10px 0 0;
+        z-index: 1;
+    }
+
+    #expenseList {
+        margin-top: 10px;
+        scrollbar-width: none;
+    }
+
+    #expenseList::-webkit-scrollbar {
+        display: none;
     }
 
     ul {
