@@ -2,10 +2,8 @@ package com.faf223.expensetrackerfaf.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.ToString;
-import lombok.NoArgsConstructor;
+import lombok.*;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
@@ -13,10 +11,11 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity(name = "incomes")
-public class Income {
+public class Income implements IMoneyTransaction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long incomeId;
+    @Column(name = "income_id")
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "user_uuid")
@@ -30,4 +29,10 @@ public class Income {
 
     private LocalDate date;
     private BigDecimal amount;
+
+    public Income(IncomeCategory incomeCategory, LocalDate date, BigDecimal amount) {
+        this.category = incomeCategory;
+        this.date = date;
+        this.amount = amount;
+    }
 }

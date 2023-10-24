@@ -1,11 +1,11 @@
 package com.faf223.expensetrackerfaf.service;
 
+import com.faf223.expensetrackerfaf.model.Credential;
 import com.faf223.expensetrackerfaf.model.Expense;
-import com.faf223.expensetrackerfaf.model.User;
+import com.faf223.expensetrackerfaf.model.IMoneyTransaction;
+import com.faf223.expensetrackerfaf.repository.CredentialRepository;
 import com.faf223.expensetrackerfaf.repository.ExpenseRepository;
-import com.faf223.expensetrackerfaf.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -14,30 +14,30 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class ExpenseService {
+public class ExpenseService implements ITransactionService {
 
     private final ExpenseRepository expenseRepository;
-    private final UserRepository userRepository;
+    private final CredentialRepository credentialRepository;
 
-    public void createOrUpdateExpense(Expense expense) {
-        expenseRepository.save(expense);
+    public void createOrUpdate(IMoneyTransaction expense) {
+        expenseRepository.save((Expense) expense);
     }
 
-    public List<Expense> getExpensesByUserId(String userUuid) {
+    public List<Expense> getTransactionsByEmail(String email) {
 
-        Optional<User> user = userRepository.getUserByUserUuid(userUuid);
-        if (user.isPresent()) {
-            return expenseRepository.findByUser(user.get());
+        Optional<Credential> credential = credentialRepository.findByEmail(email);
+        if (credential.isPresent()) {
+            return expenseRepository.findByUser(credential.get().getUser());
         }
 
         return new ArrayList<>();
     }
 
-    public List<Expense> getExpenses() {
+    public List<Expense> getTransactions() {
         return expenseRepository.findAll();
     }
 
-    public Expense getExpenseById(long id) {
+    public Expense getTransactionById(long id) {
         return expenseRepository.findById(id).orElse(null);
     }
 }
