@@ -2,20 +2,23 @@
 	import Chart from 'chart.js/auto';
 	import { onMount } from 'svelte';
 	import axios from 'axios';
+	import {getCookie} from "svelte-cookie";
 
 	let ctx;
 	let chartCanvas;
 
 	onMount(async () => {
+
+		const token = getCookie('access_token');
 		const config = {
 			headers: {
-				'Authorization': `Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkYW4uYmFsYW5AZ21haWwuY29tIiwiaWF0IjoxNjk3NzQ0MjY3LCJleHAiOjE2OTc4MzA2Njd9.hzbEDDuOVCY_EQAA8xGlJskQ2FQjw8o0CtFKB1dKYOU`
+				'Authorization': `Bearer ${token}`
 			}
 		};
 
 		try {
 			const response = await axios.get('http://localhost:8081/incomes/00112233-4455-6677-8899-aabbccddeeaa', config);
-			const incomeData = response.data; // Assuming the response is an array of income data
+			const incomeData = response.data;
 
 			const chartLabels = incomeData.map(item => item.category.categoryName);
 			const chartValues = incomeData.map(item => item.amount);

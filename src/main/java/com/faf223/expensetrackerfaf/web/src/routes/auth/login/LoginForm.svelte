@@ -1,29 +1,57 @@
 <script>
     import * as EmailValidator from 'email-validator';
+    import axios from "axios";
+    import {onMount} from "svelte";
+    import { getCookie, setCookie } from 'svelte-cookie';
 
     let isErrorVisible = false;
     let username, password;
     let message = ""
 
-    function submitForm(event) {
+    onMount(async () => {
+        console.log("Mounted");
+        const access_token = getCookie('access_token');
+        const refresh_token = getCookie('refresh_token');
+        if (access_token && refresh_token) {
+            window.location.href = '/dashboard';
+        }
+    });
+
+    async function submitForm(event) {
         event.preventDefault();
         console.log("Tried to submit!");
-        console.log("Valid? ", (validateEmail() && validatePassword() ? "Yes" : "No"));
+        console.log(username);
+        console.log(password);
+        try {
+            const response = await axios.post('http://localhost:8081/api/v1/auth/authenticate', {
+                email: username,
+                password: password,
+            });
+
+            const { access_token, refresh_token } = response.data;
+
+            // Save the tokens in cookies
+            setCookie('access_token', access_token);
+            setCookie('refresh_token', refresh_token);
+            console.log(access_token, refresh_token);
+        } catch (error) {
+            console.error('Login failed:', error);
+        }
     }
 
-    function validateEmail() {
-        let valid = EmailValidator.validate(username);
-        isErrorVisible = valid ? false : true;
-        message = isErrorVisible ? "Invalid e-mail!" : "";
-        return valid;
-    }
-
-    function validatePassword() {
-        let valid = password.value != '';
-        isErrorVisible = valid ? false : true;
-        message = isErrorVisible ? "Invalid password!" : "";
-        return valid;
-    }
+    // function validateEmail() {
+    //     let valid = EmailValidator.validate(username);
+    //     isErrorVisible = !valid;
+    //     message = isErrorVisible ? "Invalid e-mail!" : "";
+    //     return valid;
+    // }
+    //
+    // function validatePassword() {
+    //     let valid = password.value !== '';
+    //     isErrorVisible = !valid;
+    //     message = isErrorVisible ? "Invalid password!" : "";
+    //     return valid;
+    // }
 
 </script>
 
@@ -39,7 +67,7 @@
                 event => {username = event.target.value}
             }>
             <input id="passwordInput" type="password" name="password" placeholder="Password" autocomplete="off" on:input={
-                event => {password = event.target.password}
+                event => {password = event.target.value}
             }>
             <a href="/auth/recovery" class="recoveryPass">Forgot your password?</a>
             <input type="submit" value="Sign in" class="submitButton">
