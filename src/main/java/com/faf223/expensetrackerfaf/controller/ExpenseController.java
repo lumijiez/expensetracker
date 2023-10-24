@@ -35,7 +35,7 @@ public class ExpenseController {
     @GetMapping()
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<ExpenseDTO>> getAllExpenses() {
-        List<ExpenseDTO> expenses = expenseService.getExpenses().stream().map(expenseMapper::toDto).collect(Collectors.toList());
+        List<ExpenseDTO> expenses = expenseService.getTransactions().stream().map(expenseMapper::toDto).collect(Collectors.toList());
         if (!expenses.isEmpty()) return ResponseEntity.ok(expenses);
         else return ResponseEntity.notFound().build();
     }
@@ -53,7 +53,7 @@ public class ExpenseController {
             User user = userService.getUserByEmail(email);
             expense.setUser(user);
 
-            expenseService.createOrUpdateExpense(expense);
+            expenseService.createOrUpdate(expense);
             ExpenseDTO createdExpenseDTO = expenseMapper.toDto(expense);
             return ResponseEntity.status(HttpStatus.CREATED).body(createdExpenseDTO);
         }
@@ -67,7 +67,7 @@ public class ExpenseController {
                                                     BindingResult bindingResult) {
         Expense expense = expenseMapper.toExpense(expenseDTO);
         if (!bindingResult.hasErrors()) {
-            expenseService.createOrUpdateExpense(expense);
+            expenseService.createOrUpdate(expense);
             return ResponseEntity.ok(expenseMapper.toDto(expense));
         } else {
             return ResponseEntity.notFound().build();
@@ -82,7 +82,7 @@ public class ExpenseController {
         if (authentication != null && authentication.getPrincipal() instanceof UserDetails userDetails) {
 
             String email = userDetails.getUsername();
-            List<ExpenseDTO> expenses = expenseService.getExpensesByEmail(email).stream().map(expenseMapper::toDto).collect(Collectors.toList());
+            List<ExpenseDTO> expenses = expenseService.getTransactionsByEmail(email).stream().map(expenseMapper::toDto).collect(Collectors.toList());
 
             if (!expenses.isEmpty()) {
                 return ResponseEntity.ok(expenses);
@@ -90,5 +90,12 @@ public class ExpenseController {
         }
 
         return ResponseEntity.notFound().build();
+    }
+
+    @GetMapping("/categories")
+    public ResponseEntity<List<ExpenseCategory>> getAllCategories() {
+        List<ExpenseCategory> categories = expenseCategoryService.getAllCategories();
+        if (!categories.isEmpty()) return ResponseEntity.ok(categories);
+        else return ResponseEntity.notFound().build();
     }
 }

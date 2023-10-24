@@ -1,6 +1,7 @@
 package com.faf223.expensetrackerfaf.service;
 
 import com.faf223.expensetrackerfaf.model.Credential;
+import com.faf223.expensetrackerfaf.model.IMoneyTransaction;
 import com.faf223.expensetrackerfaf.model.Income;
 import com.faf223.expensetrackerfaf.repository.CredentialRepository;
 import com.faf223.expensetrackerfaf.repository.IncomeRepository;
@@ -13,20 +14,20 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class IncomeService {
+public class IncomeService implements ITransactionService {
 
     private final IncomeRepository incomeRepository;
     private final CredentialRepository credentialRepository;
 
-    public void createOrUpdateIncome(Income income) {
-        incomeRepository.save(income);
+    public void createOrUpdate(IMoneyTransaction income) {
+        incomeRepository.save((Income) income);
     }
 
-    public List<Income> getIncomes() {
+    public List<Income> getTransactions() {
         return incomeRepository.findAll();
     }
 
-    public List<Income> getIncomesByEmail(String email) {
+    public List<Income> getTransactionsByEmail(String email) {
 
         Optional<Credential> credential = credentialRepository.findByEmail(email);
         if (credential.isPresent()) {
@@ -36,7 +37,7 @@ public class IncomeService {
         return new ArrayList<>();
     }
 
-    public Income getIncomeById(long id) {
+    public Income getTransactionById(long id) {
         return incomeRepository.findById(id).orElse(null);
     }
 }

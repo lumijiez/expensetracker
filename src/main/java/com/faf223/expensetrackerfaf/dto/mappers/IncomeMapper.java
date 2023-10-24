@@ -31,8 +31,7 @@ public class IncomeMapper {
     }
 
     public Income toIncome(IncomeCreationDTO incomeDTO) {
-
-        return new Income(incomeCategoryService.getExpenseCategory(incomeDTO.getIncomeCategory()), LocalDate.now(), incomeDTO.getAmount());
+        return new Income(incomeCategoryService.getCategoryById(incomeDTO.getIncomeCategory()), LocalDate.now(), incomeDTO.getAmount());
     }
 
 }

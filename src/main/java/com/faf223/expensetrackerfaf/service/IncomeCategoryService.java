@@ -5,13 +5,21 @@ import com.faf223.expensetrackerfaf.repository.IncomeCategoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
-public class IncomeCategoryService {
+public class IncomeCategoryService implements ICategoryService {
 
     private final IncomeCategoryRepository incomeCategoryRepository;
 
-    public IncomeCategory getExpenseCategory(long category) {
-        return incomeCategoryRepository.getReferenceById(category);
+    @Override
+    public List<IncomeCategory> getAllCategories() {
+        return incomeCategoryRepository.findAll();
+    }
+
+    @Override
+    public IncomeCategory getCategoryById(long id) {
+        return incomeCategoryRepository.getReferenceById(id);
     }
 }
