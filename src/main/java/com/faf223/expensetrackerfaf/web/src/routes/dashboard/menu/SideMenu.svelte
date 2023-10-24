@@ -1,4 +1,29 @@
 <script>
+    import { onMount } from 'svelte';
+    import axios from 'axios';
+    import { getCookie } from "svelte-cookie";
+
+    let username;
+
+    onMount(async () => {
+        const token = getCookie('access_token');
+
+        const config = {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        };
+
+        try {
+            const response = await axios.get('http://localhost:8081/users/getUserData', config);
+            const data = response.data;
+            username = data.username;
+            console.log(username)
+
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    });
 
 </script>
 
@@ -37,7 +62,7 @@
     </div>
 
     <div id="profileSpace">
-        <div id="profileInfo">Profile Info</div>
+        <div id="profileInfo">Hello, {username}</div>
     </div>
 </div>
 

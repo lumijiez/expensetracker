@@ -34,6 +34,7 @@
             setCookie('access_token', access_token);
             setCookie('refresh_token', refresh_token);
             console.log(access_token, refresh_token);
+            window.location.href = '/dashboard'
         } catch (error) {
             console.error('Login failed:', error);
         }

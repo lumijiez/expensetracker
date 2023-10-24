@@ -10,6 +10,7 @@
 	onMount(async () => {
 
 		const token = getCookie('access_token');
+
 		const config = {
 			headers: {
 				'Authorization': `Bearer ${token}`
@@ -17,21 +18,22 @@
 		};
 
 		try {
-			const response = await axios.get('http://localhost:8081/incomes/00112233-4455-6677-8899-aabbccddeeaa', config);
+			const response = await axios.get('http://localhost:8081/incomes/personal-incomes', config);
+			console.log(response.data);
 			const incomeData = response.data;
 
-			const chartLabels = incomeData.map(item => item.category.categoryName);
+			const chartLabels = incomeData.map(item => item.incomeCategory.name);
 			const chartValues = incomeData.map(item => item.amount);
 
 			ctx = chartCanvas.getContext('2d');
 			new Chart(ctx, {
-				type: 'bar', // Set chart type to 'bar' for a bar graph
+				type: 'bar',
 				data: {
 					labels: chartLabels,
 					datasets: [{
 						label: 'Revenue',
 						backgroundColor: 'rgb(255, 99, 132)',
-						data: chartValues // Changed from 'data' to 'chartValues'
+						data: chartValues
 					}]
 				},
 				options: {
@@ -56,7 +58,7 @@
 		flex: 1;
 		border-radius: 10px;
 		margin: 10px;
-		background-color: #ffdde2;
+		background-color: #d3d3d3;
 	}
 
 	#chart:hover {

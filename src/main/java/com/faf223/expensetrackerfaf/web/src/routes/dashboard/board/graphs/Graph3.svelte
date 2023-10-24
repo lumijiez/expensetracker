@@ -2,33 +2,44 @@
 	import chartjs from 'chart.js/auto';
 	import { onMount } from 'svelte';
 	import axios from 'axios';
+	import { getCookie } from "svelte-cookie";
 
 	let ctx;
 	let chartCanvas;
 
 	onMount(async () => {
+		const token = getCookie('access_token');
+
 		const config = {
 			headers: {
-				'Authorization': `Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkYW4uYmFsYW5AZ21haWwuY29tIiwiaWF0IjoxNjk3NzQ0MjY3LCJleHAiOjE2OTc4MzA2Njd9.hzbEDDuOVCY_EQAA8xGlJskQ2FQjw8o0CtFKB1dKYOU`
+				'Authorization': `Bearer ${token}`
 			}
 		};
 
 		try {
-			const response = await axios.get('http://localhost:8081/incomes/00112233-4455-6677-8899-aabbccddeeaa', config);
-			const incomeData = response.data; // Assuming the response is an array of income data
+			const [incomesResponse, expensesResponse] = await Promise.all([
+				axios.get('http://localhost:8081/incomes/personal-incomes', config),
+				axios.get('http://localhost:8081/expenses/personal-expenses', config)
+			]);
 
-			// Extract income categories and their values
-			const chartLabels = incomeData.map(item => item.category.categoryName);
-			const chartValues = incomeData.map(item => item.amount);
+			const incomesData = incomesResponse.data;
+			const expensesData = expensesResponse.data;
+
+			const totalIncomes = incomesData.reduce((total, item) => total + item.amount, 0);
+
+			const totalExpenses = expensesData.reduce((total, item) => total + item.amount, 0);
+
+			const chartLabels = ['Incomes', 'Expenses'];
+			const chartValues = [totalIncomes, totalExpenses];
 
 			ctx = chartCanvas.getContext('2d');
 			new chartjs(ctx, {
-				type: 'pie', // Set chart type to 'pie' for a pie chart
+				type: 'pie',
 				data: {
 					labels: chartLabels,
 					datasets: [{
 						data: chartValues,
-						backgroundColor: ['red', 'orange', 'yellow', 'green', 'blue'], // Customize colors as needed
+						backgroundColor: ['green', 'red'],
 					}]
 				},
 				options: {
@@ -53,7 +64,7 @@
 		flex: 1;
 		border-radius: 10px;
 		margin: 10px;
-		background-color: #ffdde2;
+		background-color: #d3d3d3;
 	}
 
 	#chart:hover {

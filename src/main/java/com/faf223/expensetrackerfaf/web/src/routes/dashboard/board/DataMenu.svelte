@@ -2,8 +2,8 @@
     import Graph1 from './graphs/Graph1.svelte';
     import Graph2 from './graphs/Graph2.svelte';
     import Graph3 from './graphs/Graph3.svelte';
-    import Graph4 from './graphs/Graph4.svelte';
-    import Graph5 from './graphs/Graph5.svelte';
+    import Expenses from "./Expenses.svelte";
+    import Incomes from "./Incomes.svelte";
 </script>
 
 <div id="dataMenu">
@@ -14,9 +14,9 @@
     <div id="oneVertical">
             <Graph3 />
     </div>
-    <div id="twoHorizontal">
-            <Graph4 />
-            <Graph5 />
+    <div id="dataPanel">
+            <Incomes />
+            <Expenses />
     </div>
 </div>
 
@@ -32,7 +32,6 @@
         align-items: stretch;
         flex-grow: 1;
     }
-
 
 
     #twoVertical {
@@ -53,9 +52,9 @@
         min-height:0;
     }
 
-    #twoHorizontal {
+    #dataPanel {
         display: flex;
-        flex-direction: column;
+        flex-direction: row;
         align-self: stretch;
         flex-grow: 1;
         min-width: 0;
