@@ -1,10 +1,8 @@
 <script>
-    import Modal from 'svelte-simple-modal';
-    import Content from "./contents/ContentExpense.svelte";
-
     import { onMount, afterUpdate } from 'svelte';
     import axios from 'axios';
     import { getCookie } from "svelte-cookie";
+    import ContentExpense from "./contents/ContentExpense.svelte";
 
     let data = [];
     let parentHeight;
@@ -35,9 +33,7 @@
 </script>
 
 <div id="expenseInfo" style="max-height: {parentHeight}px;">
-    <div id="modal">
-        <Modal><Content /></Modal>
-    </div>
+    <ContentExpense />
 
     <div id="expenseList" style="max-height: {listParentHeight}px;">
         <ul>
