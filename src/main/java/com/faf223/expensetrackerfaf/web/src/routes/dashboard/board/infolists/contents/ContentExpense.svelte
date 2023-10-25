@@ -1,6 +1,63 @@
 <script>
-    import Modal from '../modals/Modal.svelte'
+    import Modal from '../modals/Modal.svelte';
+    import { onMount } from 'svelte';
+    import { writable } from 'svelte/store';
+    import axios from 'axios';
+    import { getCookie } from "svelte-cookie";
+
     let showModal;
+    let amount = '';
+
+    const selectedExpenseId = writable('');
+
+    onMount(async () => {
+        try {
+            const token = getCookie('access_token');
+
+            const config = {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            };
+
+            const response = await axios.get('http://localhost:8081/expenses/categories', config);
+            expenseOptions.set(response.data);
+            console.log(response.data);
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    });
+
+    const expenseOptions = writable([]);
+
+    const createIncome = async () => {
+        const selectedExpense = $expenseOptions.find(expense => expense.id === $selectedExpenseId);
+        const data = {
+            expenseCategory: selectedExpense.id,
+            amount: amount,
+        };
+
+        try {
+            const token = getCookie('access_token');
+            console.log(token);
+            const response = await axios.post('http://localhost:8081/expenses', data, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            console.log(response.data);
+
+            if (response.status === 200) {
+                console.log("cool");
+            } else {
+                console.error('Error:', response.status);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    };
 </script>
 
 <div id="exp">
@@ -9,27 +66,21 @@
         +
     </div>
     <Modal bind:showModal>
-        <h2 slot="header">
-            modal
-            <small><em>adjective</em> mod·al \ˈmō-dəl\</small>
-        </h2>
+        <div>
+            <label for="amount">Amount:</label>
+            <input type="text" id="amount" bind:value={amount} />
 
-        <ol class="definition-list">
-            <li>of or relating to modality in logic</li>
-            <li>
-                containing provisions as to the mode of procedure or the manner of taking effect —used of a
-                contract or legacy
-            </li>
-            <li>of or relating to a musical mode</li>
-            <li>of or relating to structure as opposed to substance</li>
-            <li>
-                of, relating to, or constituting a grammatical form or category characteristically indicating
-                predication
-            </li>
-            <li>of or relating to a statistical mode</li>
-        </ol>
+            <label for="income">Select Income:</label>
+            <select id="income" bind:value={$selectedExpenseId}>
+                {#each $expenseOptions as expense (expense.id)}
+                    {#if expense.id !== undefined}
+                        <option value={expense.id}>{expense.name}</option>
+                    {/if}
+                {/each}
+            </select>
 
-        <a href="https://www.merriam-webster.com/dictionary/modal">merriam-webster.com</a>
+            <button on:click={createIncome}>Submit</button>
+        </div>
     </Modal>
 </div>
 

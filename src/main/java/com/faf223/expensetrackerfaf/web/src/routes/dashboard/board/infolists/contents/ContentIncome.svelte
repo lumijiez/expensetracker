@@ -6,7 +6,7 @@
     import { getCookie } from "svelte-cookie";
 
     let showModal;
-    let amount;
+    let amount = '';
 
     const selectedIncomeId = writable('');
 
@@ -34,7 +34,7 @@
         const selectedIncome = $incomeOptions.find(income => income.id === $selectedIncomeId);
         const data = {
             incomeCategory: selectedIncome.id,
-            amount: $amount,
+            amount: amount,
         };
 
         try {
@@ -62,7 +62,7 @@
 
 <div id="inc">
     <h2>Incomes</h2>
-    <div id="openModal" class="plus-button" role="button" tabindex="0" on:click={() => (showModal = true)} on:keydown={() => console.log("keydown")}>
+    <div id="openModal" class="plus-button" role="button" tabindex="1" on:click={() => (showModal = true)} on:keydown={() => console.log("keydown")}>
         +
     </div>
     <Modal bind:showModal>
