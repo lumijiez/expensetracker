@@ -1,61 +1,77 @@
 <script>
 	import Chart from 'chart.js/auto';
 	import { onMount } from 'svelte';
-	import { incomeData } from '../Dashboard.svelte';
+	import { incomeData } from "../../stores.js";
+
 	let ctx;
 	let chartCanvas;
+	let chart = null;
 
-	function groupAndSumByCategory(incomes) {
-		const groupedData = new Map();
-		incomes.forEach(income => {
-			const category = income.incomeCategory.name;
-			if (groupedData.has(category)) {
-				groupedData.set(category, groupedData.get(category) + income.amount);
-			} else {
-				groupedData.set(category, income.amount);
+	function createGraph(data) {
+		try {
+			function groupAndSumByCategory(incomes) {
+				const groupedData = new Map();
+				incomes.forEach(income => {
+							const category = income.incomeCategory.name;
+							if (groupedData.has(category)) {
+								groupedData.set(category, groupedData.get(category) + parseInt(income.amount));
+							} else {
+								groupedData.set(category, income.amount);
+							}
+						}
+				);
+				return groupedData;
 			}
-		});
-		return groupedData;
-	}
 
-	function updateGraph() {
-		const incomeDataArray = $incomeData;
-		const groupedIncomeData = groupAndSumByCategory(incomeDataArray);
+			const groupedIncomeData = groupAndSumByCategory(data);
 
-		const chartLabels = Array.from(groupedIncomeData.keys());
-		const chartValues = Array.from(groupedIncomeData.values());
+			const chartLabels = Array.from(groupedIncomeData.keys());
+			const chartValues = Array.from(groupedIncomeData.values());
 
-		if (chartCanvas) {
 			ctx = chartCanvas.getContext('2d');
-			if (ctx.chart) {
-				ctx.chart.destroy(); 
+
+			if (!chart) {
+				chart = new Chart(ctx, {
+					type: 'bar',
+					data: {
+						labels: chartLabels,
+						datasets: [{
+							label: 'Revenue',
+							backgroundColor: 'rgb(255, 99, 132)',
+							data: chartValues
+						}]
+					},
+					options: {
+						responsive: true,
+						maintainAspectRatio: false
+					}
+				});
+			} else {
+				chart.data.labels = chartLabels;
+				chart.data.datasets[0].data = chartValues;
+				console.log(chart.data.datasets[0].data);
+				chart.update();
 			}
-			new Chart(ctx, {
-				type: 'bar',
-				data: {
-					labels: chartLabels,
-					datasets: [{
-						label: 'Revenue',
-						backgroundColor: 'rgb(255, 99, 132)',
-						data: chartValues
-					}]
-				},
-				options: {
-					responsive: true,
-					maintainAspectRatio: false
-				}
-			});
+		} catch (error) {
+			console.error('Error:', error);
 		}
 	}
 
-	onMount(updateGraph);
+	$: {
+		if ($incomeData) {
+			createGraph($incomeData);
+			console.log($incomeData);
+		}
+	}
+
+	onMount(() => {
+		createGraph($incomeData);
+	});
 </script>
 
 <div id="chart">
 	<canvas bind:this={chartCanvas}></canvas>
 </div>
-
-
 
 <style>
 	#chart {
