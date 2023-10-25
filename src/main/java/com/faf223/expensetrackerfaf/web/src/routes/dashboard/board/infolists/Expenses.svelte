@@ -2,6 +2,7 @@
     import { onMount, afterUpdate } from 'svelte';
     import axios from 'axios';
     import { getCookie } from "svelte-cookie";
+    import Modal from 'svelte-simple-modal';
 
     let data = [];
     let parentHeight;

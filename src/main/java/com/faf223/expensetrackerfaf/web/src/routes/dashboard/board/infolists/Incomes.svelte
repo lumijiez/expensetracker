@@ -1,7 +1,12 @@
 <script>
     import { onMount, afterUpdate } from 'svelte';
     import axios from 'axios';
-    import { getCookie } from "svelte-cookie";
+    import {deleteCookie, getCookie} from "svelte-cookie";
+    import Modal from 'svelte-simple-modal';
+    import { getContext } from 'svelte';
+
+    const { open } = getContext('simple-modal');
+    const showSurprise = () => open(Popup, { message: "It's a modal!" });
 
     let data = [];
     let parentHeight;
@@ -30,7 +35,27 @@
 </script>
 
 <div id="incomeInfo" style="max-height: {parentHeight}px;">
-    <h2 id="text">Incomes</h2>
+    <Modal>
+        <div> lololol </div>
+    </Modal>
+    <div>
+        <h2 id="text">Incomes</h2>
+        <div id="logout" role="button"
+             tabindex="0"
+             on:click={() => {
+        deleteCookie('access_token');
+        deleteCookie('refresh_token');
+        window.location.href = '/auth/login';}}
+             on:keydown={e => {
+        if (e.key === 'Enter' || e.key === ' ') {
+            deleteCookie('access_token');
+            deleteCookie('refresh_token');
+            window.location.href = '/auth/login';
+        }}}>
+            Log out
+        </div>
+    </div>
+
     <div id="incomeList">
         <ul>
             {#each data as item}

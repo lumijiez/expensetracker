@@ -1,7 +1,7 @@
 <script>
-	import DashHeader from "./DashHeader.svelte";
-	import DataMenu from "./DataMenu.svelte";
-	import QuickInfobar from "./QuickInfobar.svelte";
+	import DashHeader from "./other/DashHeader.svelte";
+	import DataMenu from "./other/DataMenu.svelte";
+	import QuickInfobar from "./other/QuickInfobar.svelte";
     import { getCookie } from "svelte-cookie";
     import {onMount} from "svelte";
 
