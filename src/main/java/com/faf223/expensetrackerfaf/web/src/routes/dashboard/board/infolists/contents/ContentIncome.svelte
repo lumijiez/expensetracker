@@ -2,21 +2,27 @@
     import Modal from '../modals/Modal.svelte';
     import { onMount } from 'svelte';
     import { writable } from 'svelte/store';
+    import axios from 'axios';
+    import { getCookie } from "svelte-cookie";
 
     let showModal;
     let amount;
 
-    const selectedIncomeId = writable(''); 
+    const selectedIncomeId = writable('');
 
     onMount(async () => {
         try {
-            const response = await fetch('http://localhost/getElements');
-            if (response.ok) {
-                const data = await response.json();
-                incomeOptions.set(data);
-            } else {
-                console.error('Error:', response.status);
-            }
+            const token = getCookie('access_token');
+
+            const config = {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            };
+
+            const response = await axios.get('http://localhost:8081/incomes/categories', config);
+            incomeOptions.set(response.data);
+            console.log(response.data);
         } catch (error) {
             console.error('Error:', error);
         }
@@ -25,22 +31,26 @@
     const incomeOptions = writable([]);
 
     const createIncome = async () => {
-        const selectedIncome = $incomeOptions.find(income => income.incomeid === $selectedIncomeId);
+        const selectedIncome = $incomeOptions.find(income => income.id === $selectedIncomeId);
         const data = {
-            incomeid: selectedIncome.incomeid,
+            incomeCategory: selectedIncome.id,
             amount: $amount,
         };
 
         try {
-            const response = await fetch('http://localhost/createIncome', {
-                method: 'POST',
+            const token = getCookie('access_token');
+            console.log(token);
+            const response = await axios.post('http://localhost:8081/incomes', data, {
                 headers: {
+                    'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(data),
             });
 
-            if (response.ok) {
+            console.log(response.data);
+
+            if (response.status === 200) {
+                console.log("cool");
             } else {
                 console.error('Error:', response.status);
             }
@@ -62,8 +72,10 @@
 
             <label for="income">Select Income:</label>
             <select id="income" bind:value={$selectedIncomeId}>
-                {#each $incomeOptions as income (income.incomeid)}
-                    <option value={income.incomeid}>{income.incomename}</option>
+                {#each $incomeOptions as income (income.id)}
+                    {#if income.id !== undefined}
+                        <option value={income.id}>{income.name}</option>
+                    {/if}
                 {/each}
             </select>
 

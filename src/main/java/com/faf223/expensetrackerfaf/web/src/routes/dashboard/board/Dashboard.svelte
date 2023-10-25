@@ -9,6 +9,7 @@
             if (getCookie('access_token') === null ) {
                     window.location.href = '/auth/login';
             }
+            console.log(getCookie('access_token'));
     })
 </script>
 
