@@ -1,4 +1,29 @@
 <script>
+    import { onMount } from 'svelte';
+    import axios from 'axios';
+    import {deleteCookie, getCookie} from "svelte-cookie";
+
+    let username;
+
+    onMount(async () => {
+        const token = getCookie('access_token');
+
+        const config = {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        };
+
+        try {
+            const response = await axios.get('http://localhost:8081/users/getUserData', config);
+            const data = response.data;
+            username = data.username;
+            console.log(username)
+
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    });
 
 </script>
 
@@ -37,7 +62,24 @@
     </div>
 
     <div id="profileSpace">
-        <div id="profileInfo">Profile Info</div>
+        <div id="profileInfo">Hello, {username}</div>
+        <div id="logout" role="button"
+        tabindex="0"
+        on:click={() => {
+        deleteCookie('access_token');
+        deleteCookie('refresh_token');
+        window.location.href = '/auth/login';
+    }}
+        on:keydown={e => {
+        if (e.key === 'Enter' || e.key === ' ') {
+            deleteCookie('access_token');
+            deleteCookie('refresh_token');
+            window.location.href = '/auth/login';
+        }
+    }}>
+        Log out
+        </div>
+
     </div>
 </div>
 
@@ -81,15 +123,28 @@
     }
 
     #iconImg {
-        max-width: 100px;
+        max-width: 150px;
     }
 
     #profileSpace {
         margin-bottom: 20px;
         display: flex;
-        justify-content: center;
-        color:white;
+        flex-direction: column;
+        align-items: center;
+        color: white;
         font-weight: 900;
         font-size: larger;
+    }
+
+    #logout {
+        background: none;
+        cursor: pointer;
+        border-radius: 10px;
+        transition: background 0.3s ease;
+        padding: 5px;
+    }
+
+    #logout:hover {
+        background: rgba(128, 128, 128, 0.5);
     }
 </style>

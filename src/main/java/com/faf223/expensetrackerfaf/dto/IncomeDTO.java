@@ -12,7 +12,7 @@ import java.time.LocalDate;
 public class IncomeDTO {
     private long incomeId;
     private UserDTO userDTO;
-    private IncomeCategory category;
+    private IncomeCategory incomeCategory;
     private LocalDate date;
     private BigDecimal amount;
 }
