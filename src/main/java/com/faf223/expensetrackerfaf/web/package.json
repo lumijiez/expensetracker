@@ -32,6 +32,7 @@
 		"js-cookie": "^3.0.5",
 		"svelte-cookie": "^1.0.1",
 		"svelte-fa": "^3.0.4",
+		"svelte-simple-modal": "^1.6.1",
 		"svelte-spa-router": "^3.3.0"
 	}
 }
