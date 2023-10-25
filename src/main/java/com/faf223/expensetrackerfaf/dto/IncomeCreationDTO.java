@@ -11,9 +11,6 @@ import java.time.LocalDate;
 @Data
 @AllArgsConstructor
 public class IncomeCreationDTO {
-    private long incomeId;
-    private User user;
-    private IncomeCategory category;
-    private LocalDate date;
+    private int incomeCategory;
     private BigDecimal amount;
 }
