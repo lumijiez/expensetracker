@@ -1,3 +1,6 @@
+<script>
+</script>
+
 <div>
-    LOLO
+    LOL
 </div>

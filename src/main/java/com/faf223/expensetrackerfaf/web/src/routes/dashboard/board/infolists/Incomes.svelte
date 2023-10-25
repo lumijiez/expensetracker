@@ -1,10 +1,10 @@
 <script>
-    import Popup from "./Popup.svelte";
+    import Content from './Content.svelte';
+    import Modal from 'svelte-simple-modal';
+
     import { onMount, afterUpdate } from 'svelte';
     import axios from 'axios';
     import {getCookie} from "svelte-cookie";
-    import Modal from 'svelte-simple-modal';
-    const showSurprise = () => open(Popup);
 
     let data = [];
     let parentHeight;
@@ -33,15 +33,9 @@
 </script>
 
 <div id="incomeInfo" style="max-height: {parentHeight}px;">
-    <Modal></Modal>
     <div id="incomeOptions">
         <h2>Incomes</h2>
-        <div id="logout" role="button"
-             tabindex="0"
-             on:click={showSurprise()}
-             on:keydown={() => console.log("keydown")}>
-            Log out
-        </div>
+        <Modal><Content /></Modal>
     </div>
 
     <div id="incomeList">
