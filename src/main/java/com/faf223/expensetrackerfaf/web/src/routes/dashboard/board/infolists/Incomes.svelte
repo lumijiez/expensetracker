@@ -3,7 +3,6 @@
     import { onMount, afterUpdate } from 'svelte';
     import axios from 'axios';
     import {getCookie} from "svelte-cookie";
-    import ContentExpense from "./contents/ContentExpense.svelte";
     import ContentIncome from "./contents/ContentIncome.svelte";
 
     let data = [];
@@ -51,10 +50,6 @@
 </div>
 
 <style>
-    #modal {
-        position: sticky;
-    }
-
     #incomeInfo {
         display: flex;
         flex-direction: column;

@@ -55,10 +55,6 @@
         flex-direction: column;
     }
 
-    #modal {
-        position: sticky;
-    }
-
     #expenseList {
         margin-top: 10px;
         scrollbar-width: none;

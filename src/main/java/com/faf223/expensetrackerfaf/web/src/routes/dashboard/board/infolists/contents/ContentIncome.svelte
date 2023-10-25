@@ -1,40 +1,79 @@
 <script>
-    import Modal from '../modals/Modal.svelte'
+    import Modal from '../modals/Modal.svelte';
+    import { onMount } from 'svelte';
+    import { writable } from 'svelte/store';
+
     let showModal;
+    let amount;
+
+    const selectedIncomeId = writable(''); 
+
+    onMount(async () => {
+        try {
+            const response = await fetch('http://localhost/getElements');
+            if (response.ok) {
+                const data = await response.json();
+                incomeOptions.set(data);
+            } else {
+                console.error('Error:', response.status);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    });
+
+    const incomeOptions = writable([]);
+
+    const createIncome = async () => {
+        const selectedIncome = $incomeOptions.find(income => income.incomeid === $selectedIncomeId);
+        const data = {
+            incomeid: selectedIncome.incomeid,
+            amount: $amount,
+        };
+
+        try {
+            const response = await fetch('http://localhost/createIncome', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            });
+
+            if (response.ok) {
+            } else {
+                console.error('Error:', response.status);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    };
 </script>
 
-<div id="exp">
-    <h2>Expenses</h2>
+<div id="inc">
+    <h2>Incomes</h2>
     <div id="openModal" class="plus-button" role="button" tabindex="0" on:click={() => (showModal = true)} on:keydown={() => console.log("keydown")}>
         +
     </div>
     <Modal bind:showModal>
-        <h2 slot="header">
-            modal
-            <small><em>adjective</em> mod·al \ˈmō-dəl\</small>
-        </h2>
+        <div>
+            <label for="amount">Amount:</label>
+            <input type="text" id="amount" bind:value={amount} />
 
-        <ol class="definition-list">
-            <li>of or relating to modality in logic</li>
-            <li>
-                containing provisions as to the mode of procedure or the manner of taking effect —used of a
-                contract or legacy
-            </li>
-            <li>of or relating to a musical mode</li>
-            <li>of or relating to structure as opposed to substance</li>
-            <li>
-                of, relating to, or constituting a grammatical form or category characteristically indicating
-                predication
-            </li>
-            <li>of or relating to a statistical mode</li>
-        </ol>
+            <label for="income">Select Income:</label>
+            <select id="income" bind:value={$selectedIncomeId}>
+                {#each $incomeOptions as income (income.incomeid)}
+                    <option value={income.incomeid}>{income.incomename}</option>
+                {/each}
+            </select>
 
-        <a href="https://www.merriam-webster.com/dictionary/modal">merriam-webster.com</a>
+            <button on:click={createIncome}>Submit</button>
+        </div>
     </Modal>
 </div>
 
 <style>
-    #exp {
+    #inc {
         padding-left: 20px;
         padding-right: 20px;
         display: flex;
