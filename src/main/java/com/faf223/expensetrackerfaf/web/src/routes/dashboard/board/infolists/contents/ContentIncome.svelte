@@ -6,7 +6,7 @@
     import { getCookie } from "svelte-cookie";
 
     let showModal;
-    let amount;
+    let amount = '';
 
     const selectedIncomeId = writable('');
 
@@ -34,7 +34,7 @@
         const selectedIncome = $incomeOptions.find(income => income.id === $selectedIncomeId);
         const data = {
             incomeCategory: selectedIncome.id,
-            amount: $amount,
+            amount: amount,
         };
 
         try {
@@ -61,55 +61,111 @@
 </script>
 
 <div id="inc">
-    <h2>Incomes</h2>
-    <div id="openModal" class="plus-button" role="button" tabindex="0" on:click={() => (showModal = true)} on:keydown={() => console.log("keydown")}>
-        +
+    <div id="optionField">
+        <h2>Incomes</h2>
+        <div id="openModal" class="plus-button" role="button" tabindex="1" on:click={() => (showModal = true)} on:keydown={() => console.log("keydown")}>
+            +
+        </div>
     </div>
     <Modal bind:showModal>
-        <div>
-            <label for="amount">Amount:</label>
-            <input type="text" id="amount" bind:value={amount} />
+        <div class="income-form">
+            <h3>Income Details</h3>
+            <div class="form-group">
+                <label for="amount">Amount:</label>
+                <input type="text" id="amount" class="form-control" bind:value={amount} />
+            </div>
 
-            <label for="income">Select Income:</label>
-            <select id="income" bind:value={$selectedIncomeId}>
-                {#each $incomeOptions as income (income.id)}
-                    {#if income.id !== undefined}
-                        <option value={income.id}>{income.name}</option>
-                    {/if}
-                {/each}
-            </select>
+            <div class="form-group">
+                <label for="incomeCategory">Select Income Category:</label>
+                <select id="incomeCategory" class="form-control" bind:value={$selectedIncomeId}>
+                    {#each $incomeOptions as income (income.id)}
+                        {#if income.id !== undefined}
+                            <option value={income.id}>{income.name}</option>
+                        {/if}
+                    {/each}
+                </select>
+            </div>
 
-            <button on:click={createIncome}>Submit</button>
+            <button class="btn btn-primary" on:click={createIncome}>Submit</button>
         </div>
     </Modal>
 </div>
 
+
 <style>
     #inc {
-        padding-left: 20px;
-        padding-right: 20px;
+        padding: 20px;
+        text-align: center;
+    }
+
+    #optionField {
         display: flex;
         align-items: center;
         justify-content: space-between;
     }
 
     .plus-button {
-        font-size: xx-large;
-        background: none;
+        font-size: 24px;
+        background-color: #007BFF;
+        color: #fff;
+        border: none;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        line-height: 40px;
         cursor: pointer;
-        border-radius: 10px;
-        transition: background 0.3s ease;
     }
 
     .plus-button:hover {
-        background: rgba(128, 128, 128, 0.5);
+        background-color: #0056b3;
     }
 
-    #openModal {
-        top: 0;
-        background-color: #f2f2f2;
-        border-radius: 10px 10px 0 0;
-        z-index: 1;
-        margin: 0;
+    .income-form {
+        background-color: #fff;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        padding: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        max-width: 400px;
+        margin: 0 auto;
+    }
+
+    h3 {
+        font-size: 20px;
+        margin-bottom: 20px;
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+    label {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+
+    select.form-control {
+        height: 40px;
+    }
+
+    .btn {
+        background-color: #007BFF;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        padding: 10px 20px;
+        cursor: pointer;
+    }
+
+    .btn:hover {
+        background-color: #0056b3;
     }
 </style>

@@ -9,7 +9,7 @@
     let parentHeight;
     let listParentHeight;
 
-    onMount(async () => {
+    async function updateInfo() {
         const token = getCookie('access_token');
 
         const config = {
@@ -25,7 +25,8 @@
         } catch (error) {
             console.error('Error:', error);
         }
-    });
+    }
+    onMount(updateInfo);
 
     afterUpdate(() => {
         parentHeight = document.querySelector('#incomeInfo').offsetHeight;
