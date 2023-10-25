@@ -2,13 +2,12 @@
 	import Chart from 'chart.js/auto';
 	import { onMount } from 'svelte';
 	import axios from 'axios';
-	import {getCookie} from "svelte-cookie";
+	import { getCookie } from "svelte-cookie";
 
 	let ctx;
 	let chartCanvas;
 
 	onMount(async () => {
-
 		const token = getCookie('access_token');
 
 		const config = {
@@ -19,11 +18,28 @@
 
 		try {
 			const response = await axios.get('http://localhost:8081/incomes/personal-incomes', config);
-			console.log(response.data);
 			const incomeData = response.data;
 
-			const chartLabels = incomeData.map(item => item.incomeCategory.name);
-			const chartValues = incomeData.map(item => item.amount);
+			// Create a function to group and sum incomes by category
+			function groupAndSumByCategory(incomes) {
+				const groupedData = new Map();
+				incomes.forEach(income => {
+					const category = income.incomeCategory.name;
+					if (groupedData.has(category)) {
+						groupedData.set(category, groupedData.get(category) + income.amount);
+					} else {
+						groupedData.set(category, income.amount);
+					}
+				});
+				return groupedData;
+			}
+
+			// Group and sum incomes by category
+			const groupedIncomeData = groupAndSumByCategory(incomeData);
+
+			// Extract category names and summed values
+			const chartLabels = Array.from(groupedIncomeData.keys());
+			const chartValues = Array.from(groupedIncomeData.values());
 
 			ctx = chartCanvas.getContext('2d');
 			new Chart(ctx, {
@@ -50,6 +66,8 @@
 <div id="chart">
 	<canvas bind:this={chartCanvas}></canvas>
 </div>
+
+
 
 <style>
 	#chart {

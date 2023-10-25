@@ -30,7 +30,7 @@
 
     const expenseOptions = writable([]);
 
-    const createIncome = async () => {
+    const createExpense = async () => {
         const selectedExpense = $expenseOptions.find(expense => expense.id === $selectedExpenseId);
         const data = {
             expenseCategory: selectedExpense.id,
@@ -61,55 +61,111 @@
 </script>
 
 <div id="exp">
-    <h2>Expenses</h2>
-    <div id="openModal" class="plus-button" role="button" tabindex="1" on:click={() => (showModal = true)} on:keydown={() => console.log("keydown")}>
-        +
+    <div id="optionField">
+        <h2>Expenses</h2>
+        <div id="openModal" class="plus-button" role="button" tabindex="1" on:click={() => (showModal = true)} on:keydown={() => console.log("keydown")}>
+            +
+        </div>
     </div>
     <Modal bind:showModal>
-        <div>
-            <label for="amount">Amount:</label>
-            <input type="text" id="amount" bind:value={amount} />
+        <div class="expense-form">
+            <h3>Expense Details</h3>
+            <div class="form-group">
+                <label for="amount">Amount:</label>
+                <input type="text" id="amount" class="form-control" bind:value={amount} />
+            </div>
 
-            <label for="income">Select Income:</label>
-            <select id="income" bind:value={$selectedExpenseId}>
-                {#each $expenseOptions as expense (expense.id)}
-                    {#if expense.id !== undefined}
-                        <option value={expense.id}>{expense.name}</option>
-                    {/if}
-                {/each}
-            </select>
+            <div class="form-group">
+                <label for="expenseCategory">Select Expense Category:</label>
+                <select id="expenseCategory" class="form-control" bind:value={$selectedExpenseId}>
+                    {#each $expenseOptions as expense (expense.id)}
+                        {#if expense.id !== undefined}
+                            <option value={expense.id}>{expense.name}</option>
+                        {/if}
+                    {/each}
+                </select>
+            </div>
 
-            <button on:click={createIncome}>Submit</button>
+            <button class="btn btn-primary" on:click={createExpense}>Submit</button>
         </div>
     </Modal>
 </div>
 
+
 <style>
     #exp {
-        padding-left: 20px;
-        padding-right: 20px;
+        padding: 20px;
+        text-align: center;
+    }
+
+    #optionField {
         display: flex;
         align-items: center;
         justify-content: space-between;
     }
 
     .plus-button {
-        font-size: xx-large;
-        background: none;
+        font-size: 24px;
+        background-color: #007BFF;
+        color: #fff;
+        border: none;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        line-height: 40px;
         cursor: pointer;
-        border-radius: 10px;
-        transition: background 0.3s ease;
     }
 
     .plus-button:hover {
-        background: rgba(128, 128, 128, 0.5);
+        background-color: #0056b3;
     }
 
-    #openModal {
-        top: 0;
-        background-color: #f2f2f2;
-        border-radius: 10px 10px 0 0;
-        z-index: 1;
-        margin: 0;
+    .expense-form {
+        background-color: #fff;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        padding: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        max-width: 400px;
+        margin: 0 auto;
+    }
+
+    h3 {
+        font-size: 20px;
+        margin-bottom: 20px;
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+    label {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+
+    select.form-control {
+        height: 40px;
+    }
+
+    .btn {
+        background-color: #007BFF;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        padding: 10px 20px;
+        cursor: pointer;
+    }
+
+    .btn:hover {
+        background-color: #0056b3;
     }
 </style>
