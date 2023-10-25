@@ -1,5 +1,5 @@
 <script>
-    import Content from './Content.svelte';
+    import Content from './contents/ContentIncome.svelte';
     import Modal from 'svelte-simple-modal';
 
     import { onMount, afterUpdate } from 'svelte';
@@ -8,6 +8,7 @@
 
     let data = [];
     let parentHeight;
+    let listParentHeight;
 
     onMount(async () => {
         const token = getCookie('access_token');
@@ -29,17 +30,16 @@
 
     afterUpdate(() => {
         parentHeight = document.querySelector('#incomeInfo').offsetHeight;
+        listParentHeight = document.querySelector('#expenseList').offsetHeight;
     });
 </script>
 
 <div id="incomeInfo" style="max-height: {parentHeight}px;">
-    <div id="incomeOptions">
-        <h2>Incomes</h2>
+    <div id="modal">
         <Modal><Content /></Modal>
     </div>
 
-
-    <div id="incomeList">
+    <div id="incomeList" style="max-height: {listParentHeight}px;">
         <ul>
             {#each data as item}
                 <li>
@@ -53,27 +53,23 @@
 </div>
 
 <style>
-    #incomeOptions {
-
-        top: 0;
-        background-color: #f2f2f2;
-        padding: 10px;
-        border-radius: 10px 10px 0 0;
-        z-index: 1;
-        padding: 0 0 10px;
-        margin: 0;
+    #modal {
+        position: sticky;
     }
 
     #incomeInfo {
+        display: flex;
+        flex-direction: column;
+    }
+
+    #incomeList {
+        margin-top: 10px;
+        scrollbar-width: none;
         flex: 1;
         border-radius: 10px;
         margin: 10px;
         overflow-y: auto;
         max-height: 100%;
-    }
-
-    #incomeList {
-        margin-top: 10px;
     }
 
     ul {
@@ -94,4 +90,7 @@
         box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
     }
 
+    #incomeList::-webkit-scrollbar {
+        display: none;
+    }
 </style>
