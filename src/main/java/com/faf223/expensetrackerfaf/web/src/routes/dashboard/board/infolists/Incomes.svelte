@@ -1,12 +1,10 @@
 <script>
+    import Popup from "./Popup.svelte";
     import { onMount, afterUpdate } from 'svelte';
     import axios from 'axios';
-    import {deleteCookie, getCookie} from "svelte-cookie";
+    import {getCookie} from "svelte-cookie";
     import Modal from 'svelte-simple-modal';
-    import { getContext } from 'svelte';
-
-    const { open } = getContext('simple-modal');
-    const showSurprise = () => open(Popup, { message: "It's a modal!" });
+    const showSurprise = () => open(Popup);
 
     let data = [];
     let parentHeight;
@@ -35,23 +33,13 @@
 </script>
 
 <div id="incomeInfo" style="max-height: {parentHeight}px;">
-    <Modal>
-        <div> lololol </div>
-    </Modal>
-    <div>
-        <h2 id="text">Incomes</h2>
+    <Modal></Modal>
+    <div id="incomeOptions">
+        <h2>Incomes</h2>
         <div id="logout" role="button"
              tabindex="0"
-             on:click={() => {
-        deleteCookie('access_token');
-        deleteCookie('refresh_token');
-        window.location.href = '/auth/login';}}
-             on:keydown={e => {
-        if (e.key === 'Enter' || e.key === ' ') {
-            deleteCookie('access_token');
-            deleteCookie('refresh_token');
-            window.location.href = '/auth/login';
-        }}}>
+             on:click={showSurprise()}
+             on:keydown={() => console.log("keydown")}>
             Log out
         </div>
     </div>
@@ -70,7 +58,13 @@
 </div>
 
 <style>
-    #text {
+    #incomeOptions {
+        position: sticky;
+        top: 0;
+        background-color: #f2f2f2;
+        padding: 10px;
+        border-radius: 10px 10px 0 0;
+        z-index: 1;
         padding: 0 0 10px;
         margin: 0;
     }
@@ -81,15 +75,6 @@
         margin: 10px;
         overflow-y: auto;
         max-height: 100%;
-    }
-
-    h2 {
-        position: sticky;
-        top: 0;
-        background-color: #f2f2f2;
-        padding: 10px;
-        border-radius: 10px 10px 0 0;
-        z-index: 1;
     }
 
     #incomeList {
