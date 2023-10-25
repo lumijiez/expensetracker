@@ -2,7 +2,9 @@
     import { onMount, afterUpdate } from 'svelte';
     import axios from 'axios';
     import { getCookie } from "svelte-cookie";
+
     import Modal from 'svelte-simple-modal';
+    import Content from "./Content.svelte";
 
     let data = [];
     let parentHeight;
@@ -31,7 +33,11 @@
 </script>
 
 <div id="expenseInfo" style="max-height: {parentHeight}px;">
-    <h2 id="text">Expenses</h2>
+    <div id="options">
+        <h2>Incomes</h2>
+        <Modal><Content /></Modal>
+    </div>
+
     <div id="expenseList">
         <ul>
             {#each data as item}
@@ -46,10 +52,6 @@
 </div>
 
 <style>
-    #text {
-        padding: 0 0 10px;
-        margin: 0;
-    }
 
     #expenseInfo {
         flex: 1;
@@ -59,11 +61,12 @@
         max-height: 100%;
     }
 
-    h2 {
+    #options {
         position: sticky;
         top: 0;
         background-color: #f2f2f2;
-        padding: 10px;
+        padding: 0 0 10px;
+        margin: 0;
         border-radius: 10px 10px 0 0;
         z-index: 1;
     }

@@ -38,6 +38,7 @@
         <Modal><Content /></Modal>
     </div>
 
+
     <div id="incomeList">
         <ul>
             {#each data as item}
@@ -53,7 +54,7 @@
 
 <style>
     #incomeOptions {
-        position: sticky;
+
         top: 0;
         background-color: #f2f2f2;
         padding: 10px;

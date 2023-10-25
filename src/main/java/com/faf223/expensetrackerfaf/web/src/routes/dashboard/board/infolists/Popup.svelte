@@ -1,6 +1,5 @@
 <script>
+    export let message = 'Hi';
 </script>
 
-<div>
-    LOL
-</div>
+<p>🎉 {message} 🍾</p>
