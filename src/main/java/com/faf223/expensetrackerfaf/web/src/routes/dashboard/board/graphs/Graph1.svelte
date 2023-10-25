@@ -7,7 +7,7 @@
 	let ctx;
 	let chartCanvas;
 
-	onMount(async () => {
+	async function updateGraph() {
 		const token = getCookie('access_token');
 
 		const config = {
@@ -20,7 +20,6 @@
 			const response = await axios.get('http://localhost:8081/incomes/personal-incomes', config);
 			const incomeData = response.data;
 
-			// Create a function to group and sum incomes by category
 			function groupAndSumByCategory(incomes) {
 				const groupedData = new Map();
 				incomes.forEach(income => {
@@ -34,10 +33,8 @@
 				return groupedData;
 			}
 
-			// Group and sum incomes by category
 			const groupedIncomeData = groupAndSumByCategory(incomeData);
 
-			// Extract category names and summed values
 			const chartLabels = Array.from(groupedIncomeData.keys());
 			const chartValues = Array.from(groupedIncomeData.values());
 
@@ -60,7 +57,9 @@
 		} catch (error) {
 			console.error('Error:', error);
 		}
-	});
+	}
+
+	onMount(updateGraph);
 </script>
 
 <div id="chart">
