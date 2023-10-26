@@ -1,49 +1,71 @@
 <script>
 	import Chart from 'chart.js/auto';
 	import { onMount } from 'svelte';
-	import axios from 'axios';
-	import {getCookie} from "svelte-cookie";
+	import { incomeData } from "../../stores.js";
 
 	let ctx;
 	let chartCanvas;
+	let chart = null;
 
-	onMount(async () => {
-
-		const token = getCookie('access_token');
-
-		const config = {
-			headers: {
-				'Authorization': `Bearer ${token}`
-			}
-		};
-
+	function createGraph(data) {
 		try {
-			const response = await axios.get('http://localhost:8081/incomes/personal-incomes', config);
-			console.log(response.data);
-			const incomeData = response.data;
+			function groupAndSumByCategory(incomes) {
+				const groupedData = new Map();
+				incomes.forEach(income => {
+							const category = income.incomeCategory.name;
+							if (groupedData.has(category)) {
+								groupedData.set(category, groupedData.get(category) + parseInt(income.amount));
+							} else {
+								groupedData.set(category, income.amount);
+							}
+						}
+				);
+				return groupedData;
+			}
 
-			const chartLabels = incomeData.map(item => item.incomeCategory.name);
-			const chartValues = incomeData.map(item => item.amount);
+			const groupedIncomeData = groupAndSumByCategory(data);
+
+			const chartLabels = Array.from(groupedIncomeData.keys());
+			const chartValues = Array.from(groupedIncomeData.values());
 
 			ctx = chartCanvas.getContext('2d');
-			new Chart(ctx, {
-				type: 'bar',
-				data: {
-					labels: chartLabels,
-					datasets: [{
-						label: 'Revenue',
-						backgroundColor: 'rgb(255, 99, 132)',
-						data: chartValues
-					}]
-				},
-				options: {
-					responsive: true,
-					maintainAspectRatio: false
-				}
-			});
+
+			if (!chart) {
+				chart = new Chart(ctx, {
+					type: 'bar',
+					data: {
+						labels: chartLabels,
+						datasets: [{
+							label: 'Revenue',
+							backgroundColor: 'rgb(255, 99, 132)',
+							data: chartValues
+						}]
+					},
+					options: {
+						responsive: true,
+						maintainAspectRatio: false
+					}
+				});
+			} else {
+				chart.data.labels = chartLabels;
+				chart.data.datasets[0].data = chartValues;
+				console.log(chart.data.datasets[0].data);
+				chart.update();
+			}
 		} catch (error) {
 			console.error('Error:', error);
 		}
+	}
+
+	$: {
+		if ($incomeData) {
+			createGraph($incomeData);
+			console.log($incomeData);
+		}
+	}
+
+	onMount(() => {
+		createGraph($incomeData);
 	});
 </script>
 

@@ -30,8 +30,10 @@
 		"chart.js": "^4.4.0",
 		"email-validator": "^2.0.4",
 		"js-cookie": "^3.0.5",
+		"stores": "^1.0.0",
 		"svelte-cookie": "^1.0.1",
 		"svelte-fa": "^3.0.4",
+		"svelte-simple-modal": "^1.6.1",
 		"svelte-spa-router": "^3.3.0"
 	}
 }

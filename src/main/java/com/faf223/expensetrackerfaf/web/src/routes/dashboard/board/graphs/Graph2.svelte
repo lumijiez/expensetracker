@@ -7,8 +7,7 @@
 	let ctx;
 	let chartCanvas;
 
-	onMount(async () => {
-
+	async function updateGraph() {
 		const token = getCookie('access_token');
 
 		const config = {
@@ -65,7 +64,9 @@
 		} catch (error) {
 			console.error('Error:', error);
 		}
-	});
+	}
+
+	onMount(updateGraph);
 </script>
 
 <div id="chart">

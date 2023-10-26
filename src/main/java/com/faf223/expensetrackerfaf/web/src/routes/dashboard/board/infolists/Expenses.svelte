@@ -2,11 +2,13 @@
     import { onMount, afterUpdate } from 'svelte';
     import axios from 'axios';
     import { getCookie } from "svelte-cookie";
+    import ContentExpense from "./contents/ContentExpense.svelte";
 
     let data = [];
     let parentHeight;
+    let listParentHeight;
 
-    onMount(async () => {
+    async function updateInfo() {
         const token = getCookie('access_token');
 
         const config = {
@@ -22,16 +24,19 @@
         } catch (error) {
             console.error('Error:', error);
         }
-    });
+    }
+    onMount(updateInfo);
 
     afterUpdate(() => {
         parentHeight = document.querySelector('#expenseInfo').offsetHeight;
+        listParentHeight = document.querySelector('#expenseList').offsetHeight;
     });
 </script>
 
 <div id="expenseInfo" style="max-height: {parentHeight}px;">
-    <h2 id="text">Expenses</h2>
-    <div id="expenseList">
+    <ContentExpense />
+
+    <div id="expenseList" style="max-height: {listParentHeight}px;">
         <ul>
             {#each data as item}
                 <li>
@@ -44,32 +49,21 @@
     </div>
 </div>
 
+
 <style>
-    #text {
-        padding: 0 0 10px;
-        margin: 0;
-    }
-
     #expenseInfo {
-        flex: 1;
-        border-radius: 10px;
-        margin: 10px;
-        overflow-y: auto;
-        max-height: 100%;
-    }
-
-    h2 {
-        position: sticky;
-        top: 0;
-        background-color: #f2f2f2;
-        padding: 10px;
-        border-radius: 10px 10px 0 0;
-        z-index: 1;
+        display: flex;
+        flex-direction: column;
     }
 
     #expenseList {
         margin-top: 10px;
         scrollbar-width: none;
+        flex: 1;
+        border-radius: 10px;
+        margin: 10px;
+        overflow-y: auto;
+        max-height: 100%;
     }
 
     #expenseList::-webkit-scrollbar {
