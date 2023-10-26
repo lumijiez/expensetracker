@@ -41,14 +41,15 @@ To run the Expense Tracker application, follow these steps:
    
 3. Run the backend Spring application to start the server.
 
-4. For the frontend, navigate to the `frontend` directory and run:
+4. For the frontend, navigate to the `web` directory and run:
 
-```npm install```
-```npm run dev```
+```bash
+npm install
+npm run dev```
 
 This will start the frontend development server and open the application in your web browser.
 
-Now you can access the Expense Tracker application at http://localhost:3000 and start tracking your expenses and incomes visually.
+Now you can access the Expense Tracker application at http://localhost:5173/auth/login and start tracking your expenses and incomes visually.
 
 Please note that you need to configure the database connection details and other environment-specific settings in the application properties before running the backend.
 
