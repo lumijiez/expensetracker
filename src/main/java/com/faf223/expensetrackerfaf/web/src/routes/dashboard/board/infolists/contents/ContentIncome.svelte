@@ -3,8 +3,7 @@
     import { writable } from 'svelte/store';
     import axios from 'axios';
     import { getCookie } from "svelte-cookie";
-    import {incomeData} from "../../../stores.js";
-    import {incomeTypes} from "../../../stores.js";
+    import {incomeData, incomeTypes} from "../../../stores.js";
 
     let showModal;
     let amount = '';
@@ -34,7 +33,6 @@
             newData = $incomeData;
             newData.push(newIncome);
             $incomeData = newData;
-            console.log("ggWPPPPP", newIncome);
         } else {
             console.error('Income category not found for id:', id);
         }
@@ -51,7 +49,7 @@
 
         try {
             const token = getCookie('access_token');
-            console.log(token);
+
             const response = await axios.post('http://localhost:8081/incomes', data, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -59,8 +57,8 @@
                 },
             });
 
-            if (response.status === 200) {
-                console.log("cool");
+            if (response.status === 201) {
+                //console.log("cool");
             } else {
                 console.error('Error:', response.status);
             }

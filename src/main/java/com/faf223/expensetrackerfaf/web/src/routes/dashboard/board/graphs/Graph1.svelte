@@ -7,9 +7,9 @@
 	let chartCanvas;
 	let chart = null;
 
-	function groupAndSumByCategory(incomes) {
+	function groupAndSumByCategory() {
 		const groupedData = new Map();
-		incomes.forEach(income => {
+		$incomeData.forEach(income => {
 					const category = income.incomeCategory.name;
 					if (groupedData.has(category)) {
 						groupedData.set(category, groupedData.get(category) + parseInt(income.amount));
@@ -21,10 +21,9 @@
 		return groupedData;
 	}
 
-	function createGraph(data) {
+	function createGraph() {
 		try {
-
-			const groupedIncomeData = groupAndSumByCategory(data);
+			const groupedIncomeData = groupAndSumByCategory();
 
 			const chartLabels = Array.from(groupedIncomeData.keys());
 			const chartValues = Array.from(groupedIncomeData.values());
@@ -38,7 +37,16 @@
 						labels: chartLabels,
 						datasets: [{
 							label: 'Revenue',
-							backgroundColor: 'rgb(255, 99, 132)',
+							backgroundColor:
+									['rgb(0, 0, 179)',
+									'rgb(0, 16, 217)',
+									'rgb(0, 32, 255)',
+									'rgb(0, 64, 255)',
+									'rgb(0, 96, 255)',
+									'rgb(0, 128, 255)',
+									'rgb(0, 159, 255)',
+									'rgb(0, 191, 255)',
+									'rgb(0, 255, 255)'],
 							data: chartValues
 						}]
 					},
@@ -50,7 +58,6 @@
 			} else {
 				chart.data.labels = chartLabels;
 				chart.data.datasets[0].data = chartValues;
-				console.log(chart.data.datasets[0].data);
 				chart.update();
 			}
 		} catch (error) {
@@ -60,13 +67,12 @@
 
 	$: {
 		if ($incomeData) {
-			createGraph($incomeData);
-			console.log($incomeData);
+			createGraph();
 		}
 	}
 
 	onMount(() => {
-		createGraph($incomeData);
+		createGraph();
 	});
 </script>
 

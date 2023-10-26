@@ -5,21 +5,18 @@
     import { getCookie } from "svelte-cookie";
     import {onMount} from "svelte";
 
-    import {incomeData} from "../stores.js";
-    import {expenseData} from "../stores.js";
-    import {incomeTypes} from "../stores.js";
-    import {expenseTypes} from "../stores.js";
+    import {incomeData, expenseData, incomeTypes, expenseTypes} from "../stores.js";
 
     import axios from "axios";
 
 
-    onMount(() => {
-            if (getCookie('access_token') === '') {
-                    window.location.href = '/auth/login';
-                    console.log("no token");
-            }
-
+    onMount(async () => {
             const token = getCookie('access_token');
+
+            if (token === '') {
+                    window.location.href = '/auth/login';
+                    return;
+            }
 
             const config = {
                     headers: {
@@ -27,38 +24,21 @@
                     }
             };
 
-            const incomePromise = axios.get('http://localhost:8081/incomes/personal-incomes', config)
-                    .then(response => {
-                            incomeData.set(response.data);
-                            console.log("Received Income Data");
-                    })
-                    .catch(error => console.error('Error fetching income data:', error));
+            try {
+                    const [incomeResponse, expenseResponse, incomeTypesResponse, expenseTypesResponse] = await Promise.all([
+                            axios.get('http://localhost:8081/incomes/personal-incomes', config),
+                            axios.get('http://localhost:8081/expenses/personal-expenses', config),
+                            axios.get('http://localhost:8081/incomes/categories', config),
+                            axios.get('http://localhost:8081/expenses/categories', config)
+                    ]);
 
-            const expensePromise = axios.get('http://localhost:8081/expenses/personal-expenses', config)
-                    .then(response => {
-                            expenseData.set(response.data);
-                            console.log("Received Expense Data");
-                    })
-                    .catch(error => console.error('Error fetching expense data:', error));
-
-            const incomeTypesPromise = axios.get('http://localhost:8081/incomes/categories', config)
-                    .then(response => {
-                            incomeTypes.set(response.data);
-                            console.log("Received Income Type Data");
-                    })
-                    .catch(error => console.error('Error:', error));
-
-            const expenseTypesPromise = axios.get('http://localhost:8081/expenses/categories', config)
-                    .then(response => {
-                            expenseTypes.set(response.data);
-                            console.log("Received Expense Type Data");
-                    })
-                    .catch(error => console.error('Error:', error));
-
-            Promise.all([incomePromise, expensePromise, incomeTypesPromise, expenseTypesPromise])
-                    .then(() => {
-                            console.log(getCookie('access_token'));
-                    });
+                    incomeData.set(incomeResponse.data);
+                    expenseData.set(expenseResponse.data);
+                    incomeTypes.set(incomeTypesResponse.data);
+                    expenseTypes.set(expenseTypesResponse.data);
+            } catch (error) {
+                    console.error('Error:', error);
+            }
     });
 </script>
 

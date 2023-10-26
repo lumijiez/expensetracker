@@ -4,14 +4,6 @@
     import Graph3 from '../graphs/Graph3.svelte';
     import Expenses from "../infolists/Expenses.svelte";
     import Incomes from "../infolists/Incomes.svelte";
-
-    function updateAll() {
-        Graph1.updateGraph();
-        Graph2.updateGraph();
-        Graph3.updateGraph();
-        Expenses.updateInfo();
-        Incomes.updateInfo();
-    }
 </script>
 
 <div id="dataMenu">

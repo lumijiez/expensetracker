@@ -1,15 +1,16 @@
 <script>
 	import Chart from 'chart.js/auto';
 	import { onMount } from 'svelte';
-	import {expenseData} from "../../stores.js";
+	import { expenseData } from "../../stores.js";
 
 	let ctx;
 	let chartCanvas;
 	let chart = null;
 
-	function groupAndSumByCategory(expenses) {
+	function groupAndSumByCategory() {
 		const groupedData = new Map();
-		expenses.forEach(expense => {
+		console.log($expenseData)
+		$expenseData.forEach(expense => {
 					const category = expense.expenseCategory.name;
 					if (groupedData.has(category)) {
 						groupedData.set(category, groupedData.get(category) + parseInt(expense.amount));
@@ -21,10 +22,9 @@
 		return groupedData;
 	}
 
-	function createGraph(data) {
+	function createGraph() {
 		try {
-
-			const groupedExpenseData = groupAndSumByCategory(data);
+			const groupedExpenseData = groupAndSumByCategory();
 
 			const chartLabels = Array.from(groupedExpenseData.keys());
 			const chartValues = Array.from(groupedExpenseData.values());
@@ -38,7 +38,12 @@
 						labels: chartLabels,
 						datasets: [{
 							label: 'Spendings',
-							backgroundColor: 'rgb(255, 99, 132)',
+							backgroundColor: [
+								'rgb(107, 80, 107)',
+								'rgb(171, 61, 169)',
+								'rgb(222, 37, 218)',
+								'rgb(235, 68, 232)',
+								'rgb(255, 128, 255)'],
 							data: chartValues
 						}]
 					},
@@ -50,7 +55,6 @@
 			} else {
 				chart.data.labels = chartLabels;
 				chart.data.datasets[0].data = chartValues;
-				console.log(chart.data.datasets[0].data);
 				chart.update();
 			}
 		} catch (error) {
@@ -60,13 +64,12 @@
 
 	$: {
 		if ($expenseData) {
-			createGraph($expenseData);
-			console.log($expenseData);
+			createGraph();
 		}
 	}
 
 	onMount(() => {
-		createGraph($expenseData);
+		createGraph();
 	});
 </script>
 

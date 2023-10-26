@@ -36,6 +36,10 @@
     #expenseInfo {
         display: flex;
         flex-direction: column;
+        background-color: #212942;
+        color:white;
+        border-radius: 10px;
+        margin: 10px;
     }
 
     #expenseList {
@@ -54,6 +58,7 @@
     ul {
         list-style: none;
         padding: 0;
+        color:black;
     }
 
     li {

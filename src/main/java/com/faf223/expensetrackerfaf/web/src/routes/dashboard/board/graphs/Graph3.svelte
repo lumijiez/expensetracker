@@ -1,5 +1,5 @@
 <script>
-	import chartjs from 'chart.js/auto';
+	import Chart from 'chart.js/auto';
 	import { onMount } from 'svelte';
 	import { incomeData, expenseData } from "../../stores.js";
 
@@ -7,24 +7,26 @@
 	let chartCanvas;
 	let chart = null;
 
-	function createGraph(incomes, expenses) {
+	function createGraph() {
 		try {
-
-			const totalIncomes = incomes.reduce((total, item) => total + item.amount, 0);
-			const totalExpenses = expenses.reduce((total, item) => total + item.amount, 0);
+			const totalIncomes = $incomeData.reduce((total, item) => total + item.amount, 0);
+			const totalExpenses = $expenseData.reduce((total, item) => total + item.amount, 0);
 
 			const chartLabels = ['Incomes', 'Expenses'];
 			const chartValues = [totalIncomes, totalExpenses];
 
 			ctx = chartCanvas.getContext('2d');
 			if (!chart) {
-			chart = new chartjs(ctx, {
+			chart = new Chart(ctx, {
 				type: 'pie',
 				data: {
 					labels: chartLabels,
 					datasets: [{
 						data: chartValues,
-						backgroundColor: ['green', 'red'],
+						backgroundColor: [
+							'rgb(243, 188, 0)',
+							'rgb(0, 117, 164)'
+						],
 					}]
 				},
 				options: {
@@ -33,9 +35,13 @@
 				}
 			});
 			} else {
+				const totalIncomesUpd = $incomeData.reduce((total, item) => total + parseInt(item.amount), 0);
+				const totalExpensesUpd = $expenseData.reduce((total, item) => total + parseInt(item.amount), 0);
+
+				const chartLabels = ['Incomes', 'Expenses'];
+				const chartValues = [totalIncomesUpd, totalExpensesUpd];
 				chart.data.labels = chartLabels;
 				chart.data.datasets[0].data = chartValues;
-				console.log(chart.data.datasets[0].data);
 				chart.update();
 			}
 		} catch (error) {
@@ -45,13 +51,12 @@
 
 	$: {
 		if ($incomeData || $expenseData) {
-			console.log("created");
-			createGraph($incomeData, $expenseData);
+			createGraph();
 		}
 	}
 
 	onMount(() => {
-		createGraph($incomeData, $expenseData);
+		createGraph();
 	});
 </script>
 

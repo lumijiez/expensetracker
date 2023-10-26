@@ -3,12 +3,40 @@
     import { writable } from 'svelte/store';
     import axios from 'axios';
     import { getCookie } from "svelte-cookie";
-    import {expenseTypes} from "../../../stores.js";
+    import {expenseTypes, expenseData} from "../../../stores.js";
 
     let showModal;
     let amount = '';
+    let newData;
 
     const selectedExpenseId = writable('');
+
+    function addNewExpense(id, amount) {
+        const today = new Date().toISOString().split('T')[0];
+        const expenseCategory = $expenseTypes.find(incomeType => incomeType.id === id);
+
+        console.log(amount);
+
+        if (expenseCategory) {
+            const newIncome = {
+                incomeId: 0,
+                userDTO: {
+                    name: "Dummy",
+                    surname: "User",
+                    username: "dummyuser"
+                },
+                expenseCategory: expenseCategory,
+                date: today,
+                amount: amount
+            };
+
+            newData = $expenseData;
+            newData.push(newIncome);
+            $expenseData = newData;
+        } else {
+            console.error('Expense category not found for id:', id);
+        }
+    }
 
     const createExpense = async () => {
         const selectedExpense = $expenseTypes.find(expense => expense.id === $selectedExpenseId);
@@ -17,9 +45,11 @@
             amount: amount,
         };
 
+        addNewExpense(selectedExpense.id, amount);
+
         try {
             const token = getCookie('access_token');
-            console.log(token);
+
             const response = await axios.post('http://localhost:8081/expenses', data, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -27,10 +57,8 @@
                 },
             });
 
-            console.log(response.data);
-
-            if (response.status === 200) {
-                console.log("cool");
+            if (response.status === 201) {
+                //console.log("cool");
             } else {
                 console.error('Error:', response.status);
             }
