@@ -8,17 +8,19 @@
     import {incomeData} from "../stores.js";
     import {expenseData} from "../stores.js";
     import {incomeTypes} from "../stores.js";
+    import {expenseTypes} from "../stores.js";
 
     import axios from "axios";
 
 
     onMount(() => {
-            if (getCookie('access_token') === null) {
+            if (getCookie('access_token') === '') {
                     window.location.href = '/auth/login';
                     console.log("no token");
             }
 
             const token = getCookie('access_token');
+
             const config = {
                     headers: {
                             'Authorization': `Bearer ${token}`
@@ -46,7 +48,14 @@
                     })
                     .catch(error => console.error('Error:', error));
 
-            Promise.all([incomePromise, expensePromise, incomeTypesPromise])
+            const expenseTypesPromise = axios.get('http://localhost:8081/expenses/categories', config)
+                    .then(response => {
+                            expenseTypes.set(response.data);
+                            console.log("Received Expense Type Data");
+                    })
+                    .catch(error => console.error('Error:', error));
+
+            Promise.all([incomePromise, expensePromise, incomeTypesPromise, expenseTypesPromise])
                     .then(() => {
                             console.log(getCookie('access_token'));
                     });

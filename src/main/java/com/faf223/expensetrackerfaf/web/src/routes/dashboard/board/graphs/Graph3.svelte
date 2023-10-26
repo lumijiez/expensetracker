@@ -1,39 +1,24 @@
 <script>
 	import chartjs from 'chart.js/auto';
 	import { onMount } from 'svelte';
-	import axios from 'axios';
-	import { getCookie } from "svelte-cookie";
+	import { incomeData, expenseData } from "../../stores.js";
 
 	let ctx;
 	let chartCanvas;
+	let chart = null;
 
-	async function updateGraph() {
-		const token = getCookie('access_token');
-
-		const config = {
-			headers: {
-				'Authorization': `Bearer ${token}`
-			}
-		};
-
+	function createGraph(incomes, expenses) {
 		try {
-			const [incomesResponse, expensesResponse] = await Promise.all([
-				axios.get('http://localhost:8081/incomes/personal-incomes', config),
-				axios.get('http://localhost:8081/expenses/personal-expenses', config)
-			]);
 
-			const incomesData = incomesResponse.data;
-			const expensesData = expensesResponse.data;
-
-			const totalIncomes = incomesData.reduce((total, item) => total + item.amount, 0);
-
-			const totalExpenses = expensesData.reduce((total, item) => total + item.amount, 0);
+			const totalIncomes = incomes.reduce((total, item) => total + item.amount, 0);
+			const totalExpenses = expenses.reduce((total, item) => total + item.amount, 0);
 
 			const chartLabels = ['Incomes', 'Expenses'];
 			const chartValues = [totalIncomes, totalExpenses];
 
 			ctx = chartCanvas.getContext('2d');
-			new chartjs(ctx, {
+			if (!chart) {
+			chart = new chartjs(ctx, {
 				type: 'pie',
 				data: {
 					labels: chartLabels,
@@ -47,12 +32,27 @@
 					maintainAspectRatio: false
 				}
 			});
+			} else {
+				chart.data.labels = chartLabels;
+				chart.data.datasets[0].data = chartValues;
+				console.log(chart.data.datasets[0].data);
+				chart.update();
+			}
 		} catch (error) {
 			console.error('Error:', error);
 		}
 	}
 
-	onMount(updateGraph);
+	$: {
+		if ($incomeData || $expenseData) {
+			console.log("created");
+			createGraph($incomeData, $expenseData);
+		}
+	}
+
+	onMount(() => {
+		createGraph($incomeData, $expenseData);
+	});
 </script>
 
 <div id="chart">

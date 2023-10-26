@@ -1,6 +1,5 @@
 <script>
     import Modal from '../modals/Modal.svelte';
-    import { onMount } from 'svelte';
     import { writable } from 'svelte/store';
     import axios from 'axios';
     import { getCookie } from "svelte-cookie";
@@ -41,29 +40,8 @@
         }
     }
 
-
-    onMount(async () => {
-        try {
-            const token = getCookie('access_token');
-
-            const config = {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            };
-
-            const response = await axios.get('http://localhost:8081/incomes/categories', config);
-            incomeOptions.set(response.data);
-            console.log(response.data);
-        } catch (error) {
-            console.error('Error:', error);
-        }
-    });
-
-    const incomeOptions = writable([]);
-
     const createIncome = async () => {
-        const selectedIncome = $incomeOptions.find(income => income.id === $selectedIncomeId);
+        const selectedIncome = $incomeTypes.find(income => income.id === $selectedIncomeId);
         const data = {
             incomeCategory: selectedIncome.id,
             amount: amount,
@@ -110,7 +88,7 @@
             <div class="form-group">
                 <label for="incomeCategory">Select Income Category:</label>
                 <select id="incomeCategory" class="form-control" bind:value={$selectedIncomeId}>
-                    {#each $incomeOptions as income (income.id)}
+                    {#each $incomeTypes as income (income.id)}
                         {#if income.id !== undefined}
                             <option value={income.id}>{income.name}</option>
                         {/if}

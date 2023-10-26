@@ -1,37 +1,17 @@
 <script>
     import Modal from '../modals/Modal.svelte';
-    import { onMount } from 'svelte';
     import { writable } from 'svelte/store';
     import axios from 'axios';
     import { getCookie } from "svelte-cookie";
+    import {expenseTypes} from "../../../stores.js";
 
     let showModal;
     let amount = '';
 
     const selectedExpenseId = writable('');
 
-    onMount(async () => {
-        try {
-            const token = getCookie('access_token');
-
-            const config = {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            };
-
-            const response = await axios.get('http://localhost:8081/expenses/categories', config);
-            expenseOptions.set(response.data);
-            console.log(response.data);
-        } catch (error) {
-            console.error('Error:', error);
-        }
-    });
-
-    const expenseOptions = writable([]);
-
     const createExpense = async () => {
-        const selectedExpense = $expenseOptions.find(expense => expense.id === $selectedExpenseId);
+        const selectedExpense = $expenseTypes.find(expense => expense.id === $selectedExpenseId);
         const data = {
             expenseCategory: selectedExpense.id,
             amount: amount,
@@ -78,7 +58,7 @@
             <div class="form-group">
                 <label for="expenseCategory">Select Expense Category:</label>
                 <select id="expenseCategory" class="form-control" bind:value={$selectedExpenseId}>
-                    {#each $expenseOptions as expense (expense.id)}
+                    {#each $expenseTypes as expense (expense.id)}
                         {#if expense.id !== undefined}
                             <option value={expense.id}>{expense.name}</option>
                         {/if}

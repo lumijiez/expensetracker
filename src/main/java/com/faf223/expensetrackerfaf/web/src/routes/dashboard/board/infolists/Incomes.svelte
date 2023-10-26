@@ -1,37 +1,18 @@
 <script>
-
     import { onMount, afterUpdate } from 'svelte';
-    import axios from 'axios';
-    import {getCookie} from "svelte-cookie";
+    import { incomeData } from "../../stores.js";
     import ContentIncome from "./contents/ContentIncome.svelte";
 
-    let data = [];
     let parentHeight;
     let listParentHeight;
 
     async function updateInfo() {
-        const token = getCookie('access_token');
-
-        const config = {
-            headers: {
-                'Authorization': `Bearer ${token}`
-            }
-        };
-
-        try {
-            const response = await axios.get('http://localhost:8081/incomes/personal-incomes', config);
-            data = response.data;
-            parentHeight = document.querySelector('#incomeInfo').offsetHeight;
-        } catch (error) {
-            console.error('Error:', error);
-        }
-    }
-    onMount(updateInfo);
-
-    afterUpdate(() => {
-        parentHeight = document.querySelector('#incomeInfo').offsetHeight;
+        parentHeight = document.querySelector('#expenseInfo').offsetHeight;
         listParentHeight = document.querySelector('#expenseList').offsetHeight;
-    });
+    }
+
+    onMount(updateInfo);
+    afterUpdate(updateInfo);
 </script>
 
 <div id="incomeInfo" style="max-height: {parentHeight}px;">
@@ -39,7 +20,7 @@
 
     <div id="incomeList" style="max-height: {listParentHeight}px;">
         <ul>
-            {#each data as item}
+            {#each $incomeData as item}
                 <li>
                     {item.incomeCategory ? `${item.incomeCategory.name}: ` : `${item.expenseCategory.name}: `}
                     {item.incomeCategory ? `+${item.amount}$` : `-${item.amount}$`}

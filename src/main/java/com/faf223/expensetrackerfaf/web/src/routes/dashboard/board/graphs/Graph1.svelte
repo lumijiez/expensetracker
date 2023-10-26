@@ -7,21 +7,22 @@
 	let chartCanvas;
 	let chart = null;
 
+	function groupAndSumByCategory(incomes) {
+		const groupedData = new Map();
+		incomes.forEach(income => {
+					const category = income.incomeCategory.name;
+					if (groupedData.has(category)) {
+						groupedData.set(category, groupedData.get(category) + parseInt(income.amount));
+					} else {
+						groupedData.set(category, income.amount);
+					}
+				}
+		);
+		return groupedData;
+	}
+
 	function createGraph(data) {
 		try {
-			function groupAndSumByCategory(incomes) {
-				const groupedData = new Map();
-				incomes.forEach(income => {
-							const category = income.incomeCategory.name;
-							if (groupedData.has(category)) {
-								groupedData.set(category, groupedData.get(category) + parseInt(income.amount));
-							} else {
-								groupedData.set(category, income.amount);
-							}
-						}
-				);
-				return groupedData;
-			}
 
 			const groupedIncomeData = groupAndSumByCategory(data);
 

@@ -1,36 +1,18 @@
 <script>
     import { onMount, afterUpdate } from 'svelte';
-    import axios from 'axios';
-    import { getCookie } from "svelte-cookie";
     import ContentExpense from "./contents/ContentExpense.svelte";
+    import {expenseData} from "../../stores.js";
 
-    let data = [];
     let parentHeight;
     let listParentHeight;
 
     async function updateInfo() {
-        const token = getCookie('access_token');
-
-        const config = {
-            headers: {
-                'Authorization': `Bearer ${token}`
-            }
-        };
-
-        try {
-            const response = await axios.get('http://localhost:8081/expenses/personal-expenses', config);
-            data = response.data;
-            parentHeight = document.querySelector('#expenseInfo').offsetHeight;
-        } catch (error) {
-            console.error('Error:', error);
-        }
-    }
-    onMount(updateInfo);
-
-    afterUpdate(() => {
         parentHeight = document.querySelector('#expenseInfo').offsetHeight;
         listParentHeight = document.querySelector('#expenseList').offsetHeight;
-    });
+    }
+
+    onMount(updateInfo);
+    afterUpdate(updateInfo);
 </script>
 
 <div id="expenseInfo" style="max-height: {parentHeight}px;">
@@ -38,7 +20,7 @@
 
     <div id="expenseList" style="max-height: {listParentHeight}px;">
         <ul>
-            {#each data as item}
+            {#each $expenseData as item}
                 <li>
                     {item.incomeCategory ? `${item.incomeCategory.name}: ` : `${item.expenseCategory.name}: `}
                     {item.incomeCategory ? `+${item.amount}$` : `-${item.amount}$`}
