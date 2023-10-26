@@ -1,7 +1,7 @@
 <script>
-    export let showModal; // boolean
+    export let showModal;
 
-    let dialog; // HTMLDialogElement
+    let dialog;
 
     $: if (dialog && showModal) dialog.showModal();
 </script>
@@ -53,8 +53,5 @@
         to {
             opacity: 1;
         }
-    }
-    button {
-        display: block;
     }
 </style>
