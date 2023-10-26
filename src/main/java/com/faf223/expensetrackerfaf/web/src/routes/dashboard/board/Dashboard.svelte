@@ -15,6 +15,7 @@
     onMount(() => {
             if (getCookie('access_token') === null) {
                     window.location.href = '/auth/login';
+                    console.log("no token");
             }
 
             const token = getCookie('access_token');

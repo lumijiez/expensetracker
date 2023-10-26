@@ -95,7 +95,7 @@
 <div id="inc">
     <div id="optionField">
         <h2>Incomes</h2>
-        <div id="openModal" class="plus-button" role="button" tabindex="1" on:click={() => (showModal = true)} on:keydown={() => console.log("keydown")}>
+        <div id="openModal" class="plus-button" role="button" tabindex="0" on:click={() => (showModal = true)} on:keydown={() => console.log("keydown")}>
             +
         </div>
     </div>

@@ -57,7 +57,6 @@
     }
 
     #incomeList {
-        margin-top: 10px;
         scrollbar-width: none;
         flex: 1;
         border-radius: 10px;
