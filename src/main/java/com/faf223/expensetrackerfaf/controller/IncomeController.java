@@ -25,7 +25,6 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/incomes")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:5173")
 public class IncomeController {
 
     private final IncomeService incomeService;
