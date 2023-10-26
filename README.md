@@ -45,7 +45,8 @@ To run the Expense Tracker application, follow these steps:
 
 ```bash
 npm install
-npm run dev```
+npm run dev
+```
 
 This will start the frontend development server and open the application in your web browser.
 
