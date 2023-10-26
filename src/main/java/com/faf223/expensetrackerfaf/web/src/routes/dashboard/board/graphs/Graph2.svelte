@@ -1,72 +1,76 @@
 <script>
 	import Chart from 'chart.js/auto';
 	import { onMount } from 'svelte';
-	import axios from 'axios';
-	import {getCookie} from "svelte-cookie";
+	import { expenseData } from "../../stores.js";
 
 	let ctx;
 	let chartCanvas;
+	let chart = null;
 
-	async function updateGraph() {
-		const token = getCookie('access_token');
-
-		const config = {
-			headers: {
-				'Authorization': `Bearer ${token}`
-			}
-		};
-
-		try {
-			const response = await axios.get('http://localhost:8081/expenses/personal-expenses', config);
-
-			const aggregatedData = {};
-
-			response.data.forEach(item => {
-				const category = item.expenseCategory.name;
-				const amount = item.amount;
-
-				if (aggregatedData[category]) {
-					aggregatedData[category] += amount;
-				} else {
-					aggregatedData[category] = amount;
-				}
-			});
-
-			const chartLabels = Object.keys(aggregatedData);
-			const chartValues = Object.values(aggregatedData);
-
-			ctx = chartCanvas.getContext('2d');
-			new Chart(ctx, {
-				type: 'bar',
-				data: {
-					labels: chartLabels,
-					datasets: [{
-						label: 'Revenue',
-						backgroundColor: 'rgb(255, 99, 132)',
-						data: chartValues
-					}]
-				},
-				options: {
-					responsive: true,
-					maintainAspectRatio: false,
-					legend: {
-						display: false
-					},
-					tooltips: {
-						callbacks: {
-							label: (tooltipItem) => {
-								return tooltipItem.yLabel;
-							}
-						}
+	function groupAndSumByCategory() {
+		const groupedData = new Map();
+		console.log($expenseData)
+		$expenseData.forEach(expense => {
+					const category = expense.expenseCategory.name;
+					if (groupedData.has(category)) {
+						groupedData.set(category, groupedData.get(category) + parseInt(expense.amount));
+					} else {
+						groupedData.set(category, expense.amount);
 					}
 				}
-			});
+		);
+		return groupedData;
+	}
+
+	function createGraph() {
+		try {
+			const groupedExpenseData = groupAndSumByCategory();
+
+			const chartLabels = Array.from(groupedExpenseData.keys());
+			const chartValues = Array.from(groupedExpenseData.values());
+
+			ctx = chartCanvas.getContext('2d');
+
+			if (!chart) {
+				chart = new Chart(ctx, {
+					type: 'bar',
+					data: {
+						labels: chartLabels,
+						datasets: [{
+							label: 'Spendings',
+							backgroundColor: [
+								'rgb(107, 80, 107)',
+								'rgb(171, 61, 169)',
+								'rgb(222, 37, 218)',
+								'rgb(235, 68, 232)',
+								'rgb(255, 128, 255)'],
+							data: chartValues
+						}]
+					},
+					options: {
+						responsive: true,
+						maintainAspectRatio: false
+					}
+				});
+			} else {
+				chart.data.labels = chartLabels;
+				chart.data.datasets[0].data = chartValues;
+				chart.update();
+			}
 		} catch (error) {
 			console.error('Error:', error);
 		}
 	}
 
-	onMount(updateGraph);
+	$: {
+		if ($expenseData) {
+			createGraph();
+		}
+	}
+
+	onMount(() => {
+		createGraph();
+	});
 </script>
 
 <div id="chart">

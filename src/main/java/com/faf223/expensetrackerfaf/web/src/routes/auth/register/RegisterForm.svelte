@@ -55,7 +55,7 @@
             <input type="submit" value="Sign up" class="submitButton">
         </form>
         <a href="/auth/login" class="noAccount">Already have an account? Sign in</a>
-    </div> 
+    </div>
 </div>
 
 
@@ -78,18 +78,18 @@
         height: 600px;
         box-shadow: 1px 1px 108.8px 19.2px rgb(25, 31, 53);
     }
-    
+
     #formTitle {
         font-family: 'Source Sans Pro', sans-serif;
         color: #5c6bc0;
         margin-top: 94px;
     }
-    
+
     #formTitle span {
         color: #dfdeee;
         font-weight: lighter;
     }
-    
+
     .registerForm h5 {
         font-family: 'Source Sans Pro', sans-serif;
         font-size: 13px;
@@ -98,7 +98,7 @@
         margin-top: -15px;
         margin-bottom: 70px;
     }
-    
+
     .registerForm input[type="text"],
     .registerForm input[type="password"] {
         display: block;
@@ -116,21 +116,21 @@
         -o-transition: all .2s ease-out;
         transition: all .2s ease-out;
     }
-    
+
     .registerForm input[type="text"]:focus,
     .registerForm input[type="password"]:focus {
         border: 1px solid #79A6FE;
     }
-    
+
     a {
         color: #5c7fda;
         text-decoration: none;
     }
-    
+
     a:hover {
         text-decoration: underline;
     }
-    
+
     .submitButton {
         border: 0;
         background: #7f5feb;
@@ -145,23 +145,23 @@
         transition: 0.3s;
         cursor: pointer;
     }
-    
+
     .submitButton:hover {
         background: #5d33e6;
     }
-    
+
     .recoveryPass {
         position: relative;
         float: right;
         right: 28px;
     }
-    
+
     .noAccount {
         position: absolute;
         top: 92%;
         left: 24%;
     }
-    
+
     .error {
         text-align: center;
         width: 337px;

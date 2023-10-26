@@ -1,45 +1,55 @@
 <script>
     import Modal from '../modals/Modal.svelte';
-    import { onMount } from 'svelte';
     import { writable } from 'svelte/store';
     import axios from 'axios';
     import { getCookie } from "svelte-cookie";
+    import {expenseTypes, expenseData} from "../../../stores.js";
 
     let showModal;
     let amount = '';
+    let newData;
 
     const selectedExpenseId = writable('');
 
-    onMount(async () => {
-        try {
-            const token = getCookie('access_token');
+    function addNewExpense(id, amount) {
+        const today = new Date().toISOString().split('T')[0];
+        const expenseCategory = $expenseTypes.find(incomeType => incomeType.id === id);
 
-            const config = {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
+        console.log(amount);
+
+        if (expenseCategory) {
+            const newIncome = {
+                incomeId: 0,
+                userDTO: {
+                    name: "Dummy",
+                    surname: "User",
+                    username: "dummyuser"
+                },
+                expenseCategory: expenseCategory,
+                date: today,
+                amount: amount
             };
 
-            const response = await axios.get('http://localhost:8081/expenses/categories', config);
-            expenseOptions.set(response.data);
-            console.log(response.data);
-        } catch (error) {
-            console.error('Error:', error);
+            newData = $expenseData;
+            newData.push(newIncome);
+            $expenseData = newData;
+        } else {
+            console.error('Expense category not found for id:', id);
         }
-    });
-
-    const expenseOptions = writable([]);
+    }
 
     const createExpense = async () => {
-        const selectedExpense = $expenseOptions.find(expense => expense.id === $selectedExpenseId);
+        const selectedExpense = $expenseTypes.find(expense => expense.id === $selectedExpenseId);
         const data = {
             expenseCategory: selectedExpense.id,
             amount: amount,
         };
 
+        addNewExpense(selectedExpense.id, amount);
+
         try {
             const token = getCookie('access_token');
-            console.log(token);
+
             const response = await axios.post('http://localhost:8081/expenses', data, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -47,10 +57,8 @@
                 },
             });
 
-            console.log(response.data);
-
-            if (response.status === 200) {
-                console.log("cool");
+            if (response.status === 201) {
+                //console.log("cool");
             } else {
                 console.error('Error:', response.status);
             }
@@ -78,7 +86,7 @@
             <div class="form-group">
                 <label for="expenseCategory">Select Expense Category:</label>
                 <select id="expenseCategory" class="form-control" bind:value={$selectedExpenseId}>
-                    {#each $expenseOptions as expense (expense.id)}
+                    {#each $expenseTypes as expense (expense.id)}
                         {#if expense.id !== undefined}
                             <option value={expense.id}>{expense.name}</option>
                         {/if}
