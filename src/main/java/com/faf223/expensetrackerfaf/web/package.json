@@ -2,7 +2,6 @@
 	"name": "expensetracker",
 	"version": "0.0.1",
 	"scripts": {
-		"g": "vite dev -- --open",
 		"dev": "vite dev",
 		"build": "vite build",
 		"preview": "vite preview",

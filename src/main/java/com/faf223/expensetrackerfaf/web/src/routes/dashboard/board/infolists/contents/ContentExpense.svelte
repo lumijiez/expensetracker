@@ -15,8 +15,6 @@
         const today = new Date().toISOString().split('T')[0];
         const expenseCategory = $expenseTypes.find(incomeType => incomeType.id === id);
 
-        console.log(amount);
-
         if (expenseCategory) {
             const newIncome = {
                 incomeId: 0,
@@ -27,7 +25,7 @@
                 },
                 expenseCategory: expenseCategory,
                 date: today,
-                amount: amount
+                amount: parseInt(amount)
             };
 
             newData = $expenseData;
