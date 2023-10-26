@@ -1,11 +1,9 @@
 <script>
     import Modal from '../modals/Modal.svelte';
-    import { onMount } from 'svelte';
     import { writable } from 'svelte/store';
     import axios from 'axios';
     import { getCookie } from "svelte-cookie";
-    import {incomeData} from "../../../stores.js";
-    import {incomeTypes} from "../../../stores.js";
+    import {incomeData, incomeTypes} from "../../../stores.js";
 
     let showModal;
     let amount = '';
@@ -35,35 +33,13 @@
             newData = $incomeData;
             newData.push(newIncome);
             $incomeData = newData;
-            console.log("ggWPPPPP", newIncome);
         } else {
             console.error('Income category not found for id:', id);
         }
     }
 
-
-    onMount(async () => {
-        try {
-            const token = getCookie('access_token');
-
-            const config = {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            };
-
-            const response = await axios.get('http://localhost:8081/incomes/categories', config);
-            incomeOptions.set(response.data);
-            console.log(response.data);
-        } catch (error) {
-            console.error('Error:', error);
-        }
-    });
-
-    const incomeOptions = writable([]);
-
     const createIncome = async () => {
-        const selectedIncome = $incomeOptions.find(income => income.id === $selectedIncomeId);
+        const selectedIncome = $incomeTypes.find(income => income.id === $selectedIncomeId);
         const data = {
             incomeCategory: selectedIncome.id,
             amount: amount,
@@ -73,7 +49,7 @@
 
         try {
             const token = getCookie('access_token');
-            console.log(token);
+
             const response = await axios.post('http://localhost:8081/incomes', data, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -81,8 +57,8 @@
                 },
             });
 
-            if (response.status === 200) {
-                console.log("cool");
+            if (response.status === 201) {
+                //console.log("cool");
             } else {
                 console.error('Error:', response.status);
             }
@@ -110,7 +86,7 @@
             <div class="form-group">
                 <label for="incomeCategory">Select Income Category:</label>
                 <select id="incomeCategory" class="form-control" bind:value={$selectedIncomeId}>
-                    {#each $incomeOptions as income (income.id)}
+                    {#each $incomeTypes as income (income.id)}
                         {#if income.id !== undefined}
                             <option value={income.id}>{income.name}</option>
                         {/if}

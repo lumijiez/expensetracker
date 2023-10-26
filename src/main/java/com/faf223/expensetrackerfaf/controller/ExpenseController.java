@@ -25,7 +25,6 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/expenses")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:5173")
 public class ExpenseController {
 
     private final ExpenseService expenseService;

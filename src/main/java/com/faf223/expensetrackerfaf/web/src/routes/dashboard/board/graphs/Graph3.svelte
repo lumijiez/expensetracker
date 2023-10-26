@@ -1,45 +1,32 @@
 <script>
-	import chartjs from 'chart.js/auto';
+	import Chart from 'chart.js/auto';
 	import { onMount } from 'svelte';
-	import axios from 'axios';
-	import { getCookie } from "svelte-cookie";
+	import { incomeData, expenseData } from "../../stores.js";
 
 	let ctx;
 	let chartCanvas;
+	let chart = null;
 
-	async function updateGraph() {
-		const token = getCookie('access_token');
-
-		const config = {
-			headers: {
-				'Authorization': `Bearer ${token}`
-			}
-		};
-
+	function createGraph() {
 		try {
-			const [incomesResponse, expensesResponse] = await Promise.all([
-				axios.get('http://localhost:8081/incomes/personal-incomes', config),
-				axios.get('http://localhost:8081/expenses/personal-expenses', config)
-			]);
-
-			const incomesData = incomesResponse.data;
-			const expensesData = expensesResponse.data;
-
-			const totalIncomes = incomesData.reduce((total, item) => total + item.amount, 0);
-
-			const totalExpenses = expensesData.reduce((total, item) => total + item.amount, 0);
+			const totalIncomes = $incomeData.reduce((total, item) => total + item.amount, 0);
+			const totalExpenses = $expenseData.reduce((total, item) => total + item.amount, 0);
 
 			const chartLabels = ['Incomes', 'Expenses'];
 			const chartValues = [totalIncomes, totalExpenses];
 
 			ctx = chartCanvas.getContext('2d');
-			new chartjs(ctx, {
+			if (!chart) {
+			chart = new Chart(ctx, {
 				type: 'pie',
 				data: {
 					labels: chartLabels,
 					datasets: [{
 						data: chartValues,
-						backgroundColor: ['green', 'red'],
+						backgroundColor: [
+							'rgb(243, 188, 0)',
+							'rgb(0, 117, 164)'
+						],
 					}]
 				},
 				options: {
@@ -47,12 +34,30 @@
 					maintainAspectRatio: false
 				}
 			});
+			} else {
+				const totalIncomesUpd = $incomeData.reduce((total, item) => total + parseInt(item.amount), 0);
+				const totalExpensesUpd = $expenseData.reduce((total, item) => total + parseInt(item.amount), 0);
+
+				const chartLabels = ['Incomes', 'Expenses'];
+				const chartValues = [totalIncomesUpd, totalExpensesUpd];
+				chart.data.labels = chartLabels;
+				chart.data.datasets[0].data = chartValues;
+				chart.update();
+			}
 		} catch (error) {
 			console.error('Error:', error);
 		}
 	}
 
-	onMount(updateGraph);
+	$: {
+		if ($incomeData || $expenseData) {
+			createGraph();
+		}
+	}
+
+	onMount(() => {
+		createGraph();
+	});
 </script>
 
 <div id="chart">
