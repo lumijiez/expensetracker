@@ -45,6 +45,9 @@ To run the Expense Tracker application, follow these steps:
 
 ```bash
 npm install
+```
+
+```bash
 npm run dev
 ```
 
