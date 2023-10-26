@@ -4,11 +4,43 @@
     import { writable } from 'svelte/store';
     import axios from 'axios';
     import { getCookie } from "svelte-cookie";
+    import {incomeData} from "../../../stores.js";
+    import {incomeTypes} from "../../../stores.js";
 
     let showModal;
     let amount = '';
+    let newData;
 
     const selectedIncomeId = writable('');
+
+    function addNewIncome(id, amount) {
+        const today = new Date().toISOString().split('T')[0];
+        const incomeCategory = $incomeTypes.find(incomeType => incomeType.id === id);
+
+        console.log(amount);
+
+        if (incomeCategory) {
+            const newIncome = {
+                incomeId: 0,
+                userDTO: {
+                    name: "Dummy",
+                    surname: "User",
+                    username: "dummyuser"
+                },
+                incomeCategory: incomeCategory,
+                date: today,
+                amount: amount
+            };
+
+            newData = $incomeData;
+            newData.push(newIncome);
+            $incomeData = newData;
+            console.log("ggWPPPPP", newIncome);
+        } else {
+            console.error('Income category not found for id:', id);
+        }
+    }
+
 
     onMount(async () => {
         try {
@@ -37,6 +69,8 @@
             amount: amount,
         };
 
+        addNewIncome(selectedIncome.id, amount);
+
         try {
             const token = getCookie('access_token');
             console.log(token);
@@ -46,8 +80,6 @@
                     'Content-Type': 'application/json',
                 },
             });
-
-            console.log(response.data);
 
             if (response.status === 200) {
                 console.log("cool");
@@ -122,10 +154,8 @@
 
     .income-form {
         background-color: #fff;
-        border: 1px solid #ccc;
         border-radius: 5px;
         padding: 20px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         max-width: 400px;
         margin: 0 auto;
     }
