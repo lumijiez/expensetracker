@@ -1,31 +1,35 @@
 <script>
 	import Chart from 'chart.js/auto';
 	import { onMount } from 'svelte';
-	import axios from 'axios';
-	import {getCookie} from "svelte-cookie";
-
+	import { incomeData } from '../Dashboard.svelte';
 	let ctx;
 	let chartCanvas;
 
-	onMount(async () => {
-
-		const token = getCookie('access_token');
-
-		const config = {
-			headers: {
-				'Authorization': `Bearer ${token}`
+	function groupAndSumByCategory(incomes) {
+		const groupedData = new Map();
+		incomes.forEach(income => {
+			const category = income.incomeCategory.name;
+			if (groupedData.has(category)) {
+				groupedData.set(category, groupedData.get(category) + income.amount);
+			} else {
+				groupedData.set(category, income.amount);
 			}
-		};
+		});
+		return groupedData;
+	}
 
-		try {
-			const response = await axios.get('http://localhost:8081/incomes/personal-incomes', config);
-			console.log(response.data);
-			const incomeData = response.data;
+	function updateGraph() {
+		const incomeDataArray = $incomeData;
+		const groupedIncomeData = groupAndSumByCategory(incomeDataArray);
 
-			const chartLabels = incomeData.map(item => item.incomeCategory.name);
-			const chartValues = incomeData.map(item => item.amount);
+		const chartLabels = Array.from(groupedIncomeData.keys());
+		const chartValues = Array.from(groupedIncomeData.values());
 
+		if (chartCanvas) {
 			ctx = chartCanvas.getContext('2d');
+			if (ctx.chart) {
+				ctx.chart.destroy(); 
+			}
 			new Chart(ctx, {
 				type: 'bar',
 				data: {
@@ -41,15 +45,17 @@
 					maintainAspectRatio: false
 				}
 			});
-		} catch (error) {
-			console.error('Error:', error);
 		}
-	});
+	}
+
+	onMount(updateGraph);
 </script>
 
 <div id="chart">
 	<canvas bind:this={chartCanvas}></canvas>
 </div>
+
+
 
 <style>
 	#chart {

@@ -41,7 +41,7 @@ public class ExpenseController {
     }
 
     @PostMapping()
-    public ResponseEntity<ExpenseDTO> createNewExpense(@RequestBody ExpenseCreationDTO expenseDTO,
+    public ResponseEntity<Void> createNewExpense(@RequestBody ExpenseCreationDTO expenseDTO,
                                                        BindingResult bindingResult) {
         Expense expense = expenseMapper.toExpense(expenseDTO);
 
@@ -54,8 +54,7 @@ public class ExpenseController {
             expense.setUser(user);
 
             expenseService.createOrUpdate(expense);
-            ExpenseDTO createdExpenseDTO = expenseMapper.toDto(expense);
-            return ResponseEntity.status(HttpStatus.CREATED).body(createdExpenseDTO);
+            return ResponseEntity.status(HttpStatus.CREATED).build();
         }
 
         return ResponseEntity.notFound().build();

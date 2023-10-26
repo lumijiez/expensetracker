@@ -41,7 +41,7 @@ public class IncomeController {
     }
 
     @PostMapping()
-    public ResponseEntity<IncomeDTO> createNewIncome(@RequestBody IncomeCreationDTO incomeDTO,
+    public ResponseEntity<Void> createNewIncome(@RequestBody IncomeCreationDTO incomeDTO,
                                                      BindingResult bindingResult) {
         Income income = incomeMapper.toIncome(incomeDTO);
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -54,8 +54,7 @@ public class IncomeController {
 
             System.out.println(income);
             incomeService.createOrUpdate(income);
-            IncomeDTO createdIncomeDTO = incomeMapper.toDto(income);
-            return ResponseEntity.status(HttpStatus.CREATED).body(createdIncomeDTO);
+            return ResponseEntity.status(HttpStatus.CREATED).build();
         }
 
         return ResponseEntity.notFound().build();

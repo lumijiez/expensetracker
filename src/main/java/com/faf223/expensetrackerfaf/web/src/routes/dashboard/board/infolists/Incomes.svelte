@@ -1,12 +1,15 @@
 <script>
+
     import { onMount, afterUpdate } from 'svelte';
     import axios from 'axios';
-    import { getCookie } from "svelte-cookie";
+    import {getCookie} from "svelte-cookie";
+    import ContentIncome from "./contents/ContentIncome.svelte";
 
     let data = [];
     let parentHeight;
+    let listParentHeight;
 
-    onMount(async () => {
+    async function updateInfo() {
         const token = getCookie('access_token');
 
         const config = {
@@ -22,16 +25,19 @@
         } catch (error) {
             console.error('Error:', error);
         }
-    });
+    }
+    onMount(updateInfo);
 
     afterUpdate(() => {
         parentHeight = document.querySelector('#incomeInfo').offsetHeight;
+        listParentHeight = document.querySelector('#expenseList').offsetHeight;
     });
 </script>
 
 <div id="incomeInfo" style="max-height: {parentHeight}px;">
-    <h2 id="text">Incomes</h2>
-    <div id="incomeList">
+    <ContentIncome />
+
+    <div id="incomeList" style="max-height: {listParentHeight}px;">
         <ul>
             {#each data as item}
                 <li>
@@ -45,30 +51,19 @@
 </div>
 
 <style>
-    #text {
-        padding: 0 0 10px;
-        margin: 0;
+    #incomeInfo {
+        display: flex;
+        flex-direction: column;
     }
 
-    #incomeInfo {
+    #incomeList {
+        margin-top: 10px;
+        scrollbar-width: none;
         flex: 1;
         border-radius: 10px;
         margin: 10px;
         overflow-y: auto;
         max-height: 100%;
-    }
-
-    h2 {
-        position: sticky;
-        top: 0;
-        background-color: #f2f2f2;
-        padding: 10px;
-        border-radius: 10px 10px 0 0;
-        z-index: 1;
-    }
-
-    #incomeList {
-        margin-top: 10px;
     }
 
     ul {
@@ -89,4 +84,7 @@
         box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
     }
 
+    #incomeList::-webkit-scrollbar {
+        display: none;
+    }
 </style>
