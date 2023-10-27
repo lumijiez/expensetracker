@@ -40,4 +40,8 @@ public class IncomeService implements ITransactionService {
     public Income getTransactionById(long id) {
         return incomeRepository.findById(id).orElse(null);
     }
+
+    public void deleteIncomeById(long id) {
+        incomeRepository.deleteById(id);
+    }
 }
