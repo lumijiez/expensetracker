@@ -42,7 +42,7 @@
         const selectedIncome = $incomeTypes.find(income => income.id === $selectedIncomeId);
         const data = {
             incomeCategory: selectedIncome.id,
-            amount: amount,
+            amount: parseInt(amount),
         };
 
         addNewIncome(selectedIncome.id, amount);

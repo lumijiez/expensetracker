@@ -61,14 +61,18 @@ public class ExpenseController {
     }
 
 
-    // TODO: has to be checked on auto extracting Uuid
-    @PatchMapping()
-    public ResponseEntity<ExpenseDTO> updateExpense(@RequestBody ExpenseCreationDTO expenseDTO,
+    // TODO: check if the expense belongs to the user
+    @PatchMapping("/update/{id}")
+    public ResponseEntity<Void> updateExpense(@PathVariable long id, @RequestBody ExpenseCreationDTO expenseDTO,
                                                     BindingResult bindingResult) {
-        Expense expense = expenseMapper.toExpense(expenseDTO);
+        Expense expense = expenseService.getTransactionById(id);
+        ExpenseCategory category = expenseCategoryService.getCategoryById(expenseDTO.getExpenseCategory());
+        expense.setCategory(category);
+        expense.setAmount(expenseDTO.getAmount());
+
         if (!bindingResult.hasErrors()) {
             expenseService.createOrUpdate(expense);
-            return ResponseEntity.ok(expenseMapper.toDto(expense));
+            return ResponseEntity.status(HttpStatus.CREATED).build();
         } else {
             return ResponseEntity.notFound().build();
         }
@@ -97,5 +101,10 @@ public class ExpenseController {
         List<ExpenseCategory> categories = expenseCategoryService.getAllCategories();
         if (!categories.isEmpty()) return ResponseEntity.ok(categories);
         else return ResponseEntity.notFound().build();
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public void deleteCategory(@PathVariable long id) {
+        expenseService.deleteExpenseById(id);
     }
 }
