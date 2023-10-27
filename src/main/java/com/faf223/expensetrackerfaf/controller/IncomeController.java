@@ -96,4 +96,9 @@ public class IncomeController {
         if (!categories.isEmpty()) return ResponseEntity.ok(categories);
         else return ResponseEntity.notFound().build();
     }
+
+    @DeleteMapping("/incomes/{id}")
+    public void deleteIncome(@PathVariable long id) {
+        incomeService.deleteIncomeById(id);
+    }
 }
