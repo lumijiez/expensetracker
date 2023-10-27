@@ -41,7 +41,7 @@ public class ExpenseService implements ITransactionService {
         return expenseRepository.findById(id).orElse(null);
     }
 
-    public void deleteExpenseById(long id) {
+    public void deleteTransactionById(long id) {
         expenseRepository.deleteById(id);
     }
 }

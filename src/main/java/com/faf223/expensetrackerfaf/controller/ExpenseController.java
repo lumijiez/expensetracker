@@ -105,6 +105,6 @@ public class ExpenseController {
 
     @DeleteMapping("/delete/{id}")
     public void deleteCategory(@PathVariable long id) {
-        expenseService.deleteExpenseById(id);
+        expenseService.deleteTransactionById(id);
     }
 }

@@ -102,6 +102,6 @@ public class IncomeController {
 
     @DeleteMapping("/delete/{id}")
     public void deleteIncome(@PathVariable long id) {
-        incomeService.deleteIncomeById(id);
+        incomeService.deleteTransactionById(id);
     }
 }

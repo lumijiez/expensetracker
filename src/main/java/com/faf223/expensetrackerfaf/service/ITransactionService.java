@@ -10,5 +10,6 @@ public interface ITransactionService {
     List<? extends IMoneyTransaction> getTransactions();
     List<? extends IMoneyTransaction> getTransactionsByEmail(String email);
     IMoneyTransaction getTransactionById(long id);
+    void deleteTransactionById(long it);
 
 }

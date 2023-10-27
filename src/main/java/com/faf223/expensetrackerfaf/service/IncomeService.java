@@ -41,7 +41,7 @@ public class IncomeService implements ITransactionService {
         return incomeRepository.findById(id).orElse(null);
     }
 
-    public void deleteIncomeById(long id) {
+    public void deleteTransactionById(long id) {
         incomeRepository.deleteById(id);
     }
 }
