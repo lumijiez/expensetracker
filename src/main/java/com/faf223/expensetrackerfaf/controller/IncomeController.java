@@ -3,9 +3,7 @@ package com.faf223.expensetrackerfaf.controller;
 import com.faf223.expensetrackerfaf.dto.IncomeCreationDTO;
 import com.faf223.expensetrackerfaf.dto.IncomeDTO;
 import com.faf223.expensetrackerfaf.dto.mappers.IncomeMapper;
-import com.faf223.expensetrackerfaf.model.Income;
-import com.faf223.expensetrackerfaf.model.IncomeCategory;
-import com.faf223.expensetrackerfaf.model.User;
+import com.faf223.expensetrackerfaf.model.*;
 import com.faf223.expensetrackerfaf.service.IncomeCategoryService;
 import com.faf223.expensetrackerfaf.service.IncomeService;
 import com.faf223.expensetrackerfaf.service.UserService;
@@ -60,13 +58,18 @@ public class IncomeController {
         return ResponseEntity.notFound().build();
     }
 
-    @PatchMapping()
-    public ResponseEntity<IncomeDTO> updateIncome(@RequestBody IncomeCreationDTO incomeDTO,
-                                                  BindingResult bindingResult) {
-        Income income = incomeMapper.toIncome(incomeDTO);
+    // TODO: check if the income belongs to the user, extract logic into service
+    @PatchMapping("/update/{id}")
+    public ResponseEntity<Void> updateIncome(@PathVariable long id, @RequestBody IncomeCreationDTO incomeDTO,
+                                                    BindingResult bindingResult) {
+        Income income = incomeService.getTransactionById(id);
+        IncomeCategory category = incomeCategoryService.getCategoryById(incomeDTO.getIncomeCategory());
+        income.setCategory(category);
+        income.setAmount(incomeDTO.getAmount());
+
         if (!bindingResult.hasErrors()) {
             incomeService.createOrUpdate(income);
-            return ResponseEntity.ok(incomeMapper.toDto(income));
+            return ResponseEntity.status(HttpStatus.CREATED).build();
         } else {
             return ResponseEntity.notFound().build();
         }
