@@ -98,4 +98,9 @@ public class ExpenseController {
         if (!categories.isEmpty()) return ResponseEntity.ok(categories);
         else return ResponseEntity.notFound().build();
     }
+
+    @DeleteMapping("/delete/{id}")
+    public void deleteCategory(@PathVariable long id) {
+        expenseService.deleteExpenseById(id);
+    }
 }
