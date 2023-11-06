@@ -17,6 +17,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -87,6 +88,8 @@ public class IncomeController {
 
             if (!incomes.isEmpty()) {
                 return ResponseEntity.ok(incomes);
+            } else {
+                return ResponseEntity.ok(Collections.emptyList());
             }
         }
 

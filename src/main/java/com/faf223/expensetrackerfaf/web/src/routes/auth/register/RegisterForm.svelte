@@ -1,36 +1,80 @@
 <script>
+    // eslint-disable-next-line no-unused-vars
     import * as EmailValidator from 'email-validator';
+    import {onMount} from "svelte";
+    import {getCookie, setCookie} from "svelte-cookie";
+    import axios from "axios";
 
     let isErrorVisible = false;
-    let username, email, password;
+
+    // eslint-disable-next-line no-unused-vars
+    let username, email, password, name, surname;
     let message = ""
 
-    function submitForm(event) {
+    onMount(async () => {
+
+        const access_token = getCookie('access_token');
+        const refresh_token = getCookie('refresh_token');
+
+        if (access_token && refresh_token) {
+            window.location.href = '/dashboard';
+        }
+
+    });
+
+    async function submitForm(event) {
         event.preventDefault();
-        console.log("Tried to submit!");
-        console.log("Valid? ", (validateEmail() && validateUsername() && validatePassword() ? "Yes" : "No"));
+
+        try {
+            const data = {
+                firstname: name,
+                lastname: surname,
+                username: username,
+                email: email,
+                password: password,
+            };
+
+            console.log(data)
+
+            const response = await axios.post('http://localhost:8081/api/v1/auth/register', data);
+
+            const { access_token, refresh_token } = response.data;
+
+            setCookie('access_token', access_token);
+            setCookie('refresh_token', refresh_token);
+
+            window.location.href = '/dashboard'
+        } catch (error) {
+            console.error('Login failed:', error);
+        }
     }
 
-    function validateEmail() {
-        let valid = EmailValidator.validate(username);
-        isErrorVisible = valid ? false : true;
-        message = isErrorVisible ? "Invalid e-mail!" : "";
-        return valid;
-    }
+    // function submitForm(event) {
+    //     event.preventDefault();
+    //     // console.log("Tried to submit!");
+    //     // console.log("Valid? ", (validateEmail() && validateUsername() && validatePassword() ? "Yes" : "No"));
+    // }
 
-    function validatePassword() {
-        let valid = password.value != '';
-        isErrorVisible = valid ? false : true;
-        message = isErrorVisible ? "Invalid password!" : "";
-        return valid;
-    }
-
-    function validateUsername() {
-        let valid = username.value != '';
-        isErrorVisible = valid ? false : true;
-        message = isErrorVisible ? "Invalid password!" : "";
-        return valid;
-    }
+    // function validateEmail() {
+    //     let valid = EmailValidator.validate(username);
+    //     isErrorVisible = valid ? false : true;
+    //     message = isErrorVisible ? "Invalid e-mail!" : "";
+    //     return valid;
+    // }
+    //
+    // function validatePassword() {
+    //     let valid = password.value != '';
+    //     isErrorVisible = valid ? false : true;
+    //     message = isErrorVisible ? "Invalid password!" : "";
+    //     return valid;
+    // }
+    //
+    // function validateUsername() {
+    //     let valid = username.value != '';
+    //     isErrorVisible = valid ? false : true;
+    //     message = isErrorVisible ? "Invalid password!" : "";
+    //     return valid;
+    // }
 
 </script>
 
@@ -45,11 +89,17 @@
             <input id="usernameInput" type="text" name="username" placeholder="Username" autocomplete="off" on:input={
                 event => {username = event.target.value}
             }>
+            <input id="nameInput" type="text" name="name" placeholder="Name" autocomplete="off" on:input={
+                event => {name = event.target.value}
+            }>
+            <input id="surnameInput" type="text" name="surname" placeholder="Surname" autocomplete="off" on:input={
+                event => {surname = event.target.value}
+            }>
             <input id="emailInput" type="text" name="email" placeholder="Email" autocomplete="off" on:input={
                 event => {email = event.target.value}
             }>
             <input id="passwordInput" type="password" name="password" placeholder="Password" autocomplete="off" on:input={
-                event => {password = event.target.password}
+                event => {password = event.target.value}
             }>
             <a href="/auth/recovery" class="recoveryPass">Forgot your password?</a>
             <input type="submit" value="Sign up" class="submitButton">
@@ -75,7 +125,7 @@
         border-top: 10px solid #79a6fe;
         border-bottom: 10px solid #8BD17C;
         width: 400px;
-        height: 600px;
+        height: 750px;
         box-shadow: 1px 1px 108.8px 19.2px rgb(25, 31, 53);
     }
 
