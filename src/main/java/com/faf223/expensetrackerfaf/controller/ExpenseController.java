@@ -19,6 +19,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -86,6 +87,8 @@ public class ExpenseController {
 
             if (!expenses.isEmpty()) {
                 return ResponseEntity.ok(expenses);
+            } else {
+                return ResponseEntity.ok(Collections.emptyList());
             }
         }
 
