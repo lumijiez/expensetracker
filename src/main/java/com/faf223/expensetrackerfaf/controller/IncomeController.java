@@ -1,5 +1,6 @@
 package com.faf223.expensetrackerfaf.controller;
 
+import com.faf223.expensetrackerfaf.dto.ExpenseDTO;
 import com.faf223.expensetrackerfaf.dto.IncomeCreationDTO;
 import com.faf223.expensetrackerfaf.dto.IncomeDTO;
 import com.faf223.expensetrackerfaf.dto.mappers.IncomeMapper;
@@ -17,8 +18,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.Month;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -85,6 +89,31 @@ public class IncomeController {
 
             String email = userDetails.getUsername();
             List<IncomeDTO> incomes = incomeService.getTransactionsByEmail(email).stream().map(incomeMapper::toDto).collect(Collectors.toList());
+
+            if (!incomes.isEmpty()) {
+                return ResponseEntity.ok(incomes);
+            } else {
+                return ResponseEntity.ok(Collections.emptyList());
+            }
+        }
+
+        return ResponseEntity.notFound().build();
+    }
+
+    @GetMapping("/personal-incomes")
+    public ResponseEntity<List<IncomeDTO>> getExpensesByUser(@RequestParam Optional<LocalDate> date,
+                                                              @RequestParam Optional<Month> month) {
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication != null && authentication.getPrincipal() instanceof UserDetails userDetails) {
+
+            String email = userDetails.getUsername();
+            List<IncomeDTO> incomes;
+
+            incomes = date.map(localDate -> incomeService.getTransactionsByDate(localDate).stream().map(incomeMapper::toDto).toList())
+                    .orElseGet(() -> month.map(value -> incomeService.getTransactionsByMonth(value).stream().map(incomeMapper::toDto).toList())
+                            .orElseGet(() -> incomeService.getTransactionsByEmail(email).stream().map(incomeMapper::toDto).toList()));
 
             if (!incomes.isEmpty()) {
                 return ResponseEntity.ok(incomes);

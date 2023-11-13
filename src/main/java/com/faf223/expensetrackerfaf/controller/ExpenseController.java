@@ -19,8 +19,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.Month;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -80,14 +83,19 @@ public class ExpenseController {
     }
 
     @GetMapping("/personal-expenses")
-    public ResponseEntity<List<ExpenseDTO>> getExpensesByUser() {
+    public ResponseEntity<List<ExpenseDTO>> getExpensesByUser(@RequestParam Optional<LocalDate> date,
+                                                              @RequestParam Optional<Month> month) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication != null && authentication.getPrincipal() instanceof UserDetails userDetails) {
 
             String email = userDetails.getUsername();
-            List<ExpenseDTO> expenses = expenseService.getTransactionsByEmail(email).stream().map(expenseMapper::toDto).collect(Collectors.toList());
+            List<ExpenseDTO> expenses;
+
+            expenses = date.map(localDate -> expenseService.getTransactionsByDate(localDate).stream().map(expenseMapper::toDto).toList())
+                    .orElseGet(() -> month.map(value -> expenseService.getTransactionsByMonth(value).stream().map(expenseMapper::toDto).toList())
+                            .orElseGet(() -> expenseService.getTransactionsByEmail(email).stream().map(expenseMapper::toDto).toList()));
 
             if (!expenses.isEmpty()) {
                 return ResponseEntity.ok(expenses);

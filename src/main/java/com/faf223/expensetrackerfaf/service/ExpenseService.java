@@ -8,6 +8,8 @@ import com.faf223.expensetrackerfaf.repository.ExpenseRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -31,6 +33,20 @@ public class ExpenseService implements ITransactionService {
         }
 
         return new ArrayList<>();
+    }
+
+    @Override
+    public List<Expense> getTransactionsByDate(LocalDate date) {
+        return expenseRepository.findByDate(date);
+    }
+
+    // TODO: store transaction month in a separate field in the DB and change this logic
+    @Override
+    public List<Expense> getTransactionsByMonth(Month month) {
+        LocalDate startOfMonth = LocalDate.of(LocalDate.now().getYear(), month, 1);
+        LocalDate endOfMonth = startOfMonth.plusMonths(1).minusDays(1);
+
+        return expenseRepository.findByDateBetween(startOfMonth, endOfMonth);
     }
 
     public List<Expense> getTransactions() {
