@@ -5,6 +5,7 @@ import com.faf223.expensetrackerfaf.dto.UserDTO;
 import com.faf223.expensetrackerfaf.dto.mappers.UserMapper;
 import com.faf223.expensetrackerfaf.model.User;
 import com.faf223.expensetrackerfaf.service.UserService;
+import com.faf223.expensetrackerfaf.util.exceptions.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -32,7 +33,7 @@ public class UserController {
             userService.updateUser(user);
             return ResponseEntity.ok(userMapper.toDto(user));
         } else {
-            return ResponseEntity.notFound().build();
+            throw new UserNotFoundException("The user has not been found");
         }
     }
 
@@ -43,9 +44,8 @@ public class UserController {
         if (authentication != null && authentication.getPrincipal() instanceof UserDetails userDetails) {
             User user = userService.getUserByEmail(userDetails.getUsername());
             if (user != null) return ResponseEntity.ok(userMapper.toDto(user));
-            else return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.notFound().build();
+        throw new UserNotFoundException("The user has not been found");
     }
 
     @GetMapping()
