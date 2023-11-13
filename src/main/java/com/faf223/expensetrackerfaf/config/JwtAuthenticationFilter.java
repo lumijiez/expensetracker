@@ -1,6 +1,6 @@
 package com.faf223.expensetrackerfaf.config;
 
-import com.faf223.expensetrackerfaf.controller.auth.ErrorResponse;
+import com.faf223.expensetrackerfaf.util.errors.ErrorResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
@@ -61,7 +61,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.setContentType("application/json");
 
-            ErrorResponse errorResponse = new ErrorResponse("TokenExpired", "Your session has expired. Please log in again.");
+            ErrorResponse errorResponse = new ErrorResponse("Your session has expired. Please log in again.");
             ObjectMapper objectMapper = new ObjectMapper(); // You may need to import ObjectMapper
             response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
 
