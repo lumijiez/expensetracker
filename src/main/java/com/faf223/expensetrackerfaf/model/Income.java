@@ -2,6 +2,8 @@ package com.faf223.expensetrackerfaf.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -25,9 +27,14 @@ public class Income implements IMoneyTransaction {
 
     @ManyToOne
     @JoinColumn(name = "category_id")
+    @NotNull
     private IncomeCategory category;
 
+    @NotNull
     private LocalDate date;
+
+    @NotNull
+    @DecimalMin(value = "0.0", inclusive = false)
     private BigDecimal amount;
 
     public Income(IncomeCategory incomeCategory, LocalDate date, BigDecimal amount) {

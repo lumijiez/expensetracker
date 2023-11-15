@@ -10,9 +10,11 @@ import com.faf223.expensetrackerfaf.service.ExpenseCategoryService;
 import com.faf223.expensetrackerfaf.service.ExpenseService;
 import com.faf223.expensetrackerfaf.service.UserService;
 import com.faf223.expensetrackerfaf.util.errors.ErrorResponse;
+import com.faf223.expensetrackerfaf.util.exceptions.TransactionDoesNotBelongToTheUserException;
 import com.faf223.expensetrackerfaf.util.exceptions.TransactionNotCreatedException;
 import com.faf223.expensetrackerfaf.util.exceptions.TransactionNotUpdatedException;
 import com.faf223.expensetrackerfaf.util.exceptions.TransactionsNotFoundException;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -49,12 +51,12 @@ public class ExpenseController {
     }
 
     @PostMapping()
-    public ResponseEntity<Void> createNewExpense(@RequestBody ExpenseCreationDTO expenseDTO,
+    public ResponseEntity<Void> createNewExpense(@RequestBody @Valid ExpenseCreationDTO expenseDTO,
                                                        BindingResult bindingResult) {
-        Expense expense = expenseMapper.toExpense(expenseDTO);
-
         if(bindingResult.hasErrors())
-            throw new TransactionNotCreatedException(ErrorResponse.from(bindingResult).getMessage());
+            throw new TransactionNotCreatedException("Could not create new expense");
+
+        Expense expense = expenseMapper.toExpense(expenseDTO);
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
@@ -71,25 +73,26 @@ public class ExpenseController {
         throw new TransactionNotCreatedException("Could not create new expense");
     }
 
-
-    // TODO: check if the expense belongs to the user
     @PatchMapping("/update/{id}")
-    public ResponseEntity<Void> updateExpense(@PathVariable long id, @RequestBody ExpenseCreationDTO expenseDTO,
+    public ResponseEntity<Void> updateExpense(@PathVariable long id, @RequestBody @Valid ExpenseCreationDTO expenseDTO,
                                                     BindingResult bindingResult) {
+        if(bindingResult.hasErrors())
+            throw new TransactionNotUpdatedException(ErrorResponse.from(bindingResult).getMessage());
+
         Expense expense = expenseService.getTransactionById(id);
 
-        if(expense == null) throw new TransactionsNotFoundException("The expense has not been found");
+        if(expense == null)
+            throw new TransactionsNotFoundException("The expense has not been found");
+
+        if(!expenseService.belongsToUser(expense))
+            throw new TransactionDoesNotBelongToTheUserException("The transaction does not belong to you");
 
         ExpenseCategory category = expenseCategoryService.getCategoryById(expenseDTO.getExpenseCategory());
         expense.setCategory(category);
         expense.setAmount(expenseDTO.getAmount());
 
-        if (!bindingResult.hasErrors()) {
-            expenseService.createOrUpdate(expense);
-            return ResponseEntity.status(HttpStatus.CREATED).build();
-        } else {
-            throw new TransactionNotUpdatedException(ErrorResponse.from(bindingResult).getMessage());
-        }
+        expenseService.createOrUpdate(expense);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @GetMapping("/personal-expenses")
@@ -103,8 +106,8 @@ public class ExpenseController {
             String email = userDetails.getUsername();
             List<ExpenseDTO> expenses;
 
-            expenses = date.map(localDate -> expenseService.getTransactionsByDate(localDate).stream().map(expenseMapper::toDto).toList())
-                    .orElseGet(() -> month.map(value -> expenseService.getTransactionsByMonth(value).stream().map(expenseMapper::toDto).toList())
+            expenses = date.map(localDate -> expenseService.getTransactionsByDate(localDate, email).stream().map(expenseMapper::toDto).toList())
+                    .orElseGet(() -> month.map(value -> expenseService.getTransactionsByMonth(value, email).stream().map(expenseMapper::toDto).toList())
                             .orElseGet(() -> expenseService.getTransactionsByEmail(email).stream().map(expenseMapper::toDto).toList()));
 
             if (!expenses.isEmpty()) {

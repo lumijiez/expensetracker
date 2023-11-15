@@ -10,9 +10,11 @@ import com.faf223.expensetrackerfaf.service.IncomeCategoryService;
 import com.faf223.expensetrackerfaf.service.IncomeService;
 import com.faf223.expensetrackerfaf.service.UserService;
 import com.faf223.expensetrackerfaf.util.errors.ErrorResponse;
+import com.faf223.expensetrackerfaf.util.exceptions.TransactionDoesNotBelongToTheUserException;
 import com.faf223.expensetrackerfaf.util.exceptions.TransactionNotCreatedException;
 import com.faf223.expensetrackerfaf.util.exceptions.TransactionNotUpdatedException;
 import com.faf223.expensetrackerfaf.util.exceptions.TransactionsNotFoundException;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -49,12 +51,12 @@ public class IncomeController {
     }
 
     @PostMapping()
-    public ResponseEntity<Void> createNewIncome(@RequestBody IncomeCreationDTO incomeDTO,
+    public ResponseEntity<Void> createNewIncome(@RequestBody @Valid IncomeCreationDTO incomeDTO,
                                                      BindingResult bindingResult) {
-        Income income = incomeMapper.toIncome(incomeDTO);
-
         if(bindingResult.hasErrors())
             throw new TransactionNotCreatedException(ErrorResponse.from(bindingResult).getMessage());
+
+        Income income = incomeMapper.toIncome(incomeDTO);
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
@@ -71,24 +73,26 @@ public class IncomeController {
         throw new TransactionNotCreatedException("Could not create new expense");
     }
 
-    // TODO: check if the income belongs to the user, extract logic into service
     @PatchMapping("/update/{id}")
-    public ResponseEntity<Void> updateIncome(@PathVariable long id, @RequestBody IncomeCreationDTO incomeDTO,
+    public ResponseEntity<Void> updateIncome(@PathVariable long id, @RequestBody @Valid IncomeCreationDTO incomeDTO,
                                                     BindingResult bindingResult) {
+        if(bindingResult.hasErrors())
+            throw new TransactionNotUpdatedException(ErrorResponse.from(bindingResult).getMessage());
+
         Income income = incomeService.getTransactionById(id);
 
-        if(income == null) throw new TransactionsNotFoundException("The income has not been found");
+        if(income == null)
+            throw new TransactionsNotFoundException("The income has not been found");
+
+        if(!incomeService.belongsToUser(income))
+            throw new TransactionDoesNotBelongToTheUserException("The transaction does not belong to you");
 
         IncomeCategory category = incomeCategoryService.getCategoryById(incomeDTO.getIncomeCategory());
         income.setCategory(category);
         income.setAmount(incomeDTO.getAmount());
 
-        if (!bindingResult.hasErrors()) {
-            incomeService.createOrUpdate(income);
-            return ResponseEntity.status(HttpStatus.CREATED).build();
-        } else {
-            throw new TransactionNotUpdatedException(ErrorResponse.from(bindingResult).getMessage());
-        }
+        incomeService.createOrUpdate(income);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @GetMapping("/personal-incomes")
@@ -102,8 +106,8 @@ public class IncomeController {
             String email = userDetails.getUsername();
             List<IncomeDTO> incomes;
 
-            incomes = date.map(localDate -> incomeService.getTransactionsByDate(localDate).stream().map(incomeMapper::toDto).toList())
-                    .orElseGet(() -> month.map(value -> incomeService.getTransactionsByMonth(value).stream().map(incomeMapper::toDto).toList())
+            incomes = date.map(localDate -> incomeService.getTransactionsByDate(localDate, email).stream().map(incomeMapper::toDto).toList())
+                    .orElseGet(() -> month.map(value -> incomeService.getTransactionsByMonth(value, email).stream().map(incomeMapper::toDto).toList())
                             .orElseGet(() -> incomeService.getTransactionsByEmail(email).stream().map(incomeMapper::toDto).toList()));
 
             if (!incomes.isEmpty()) {

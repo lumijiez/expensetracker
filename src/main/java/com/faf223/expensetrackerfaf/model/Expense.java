@@ -1,7 +1,13 @@
 package com.faf223.expensetrackerfaf.model;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.*;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -24,9 +30,14 @@ public class Expense implements IMoneyTransaction {
 
     @ManyToOne
     @JoinColumn(name = "category_id")
+    @NotNull
     private ExpenseCategory category;
 
+    @NotNull
     private LocalDate date;
+
+    @NotNull
+    @DecimalMin(value = "0.0", inclusive = false)
     private BigDecimal amount;
 
     public Expense(LocalDate date, BigDecimal amount) {
