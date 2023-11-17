@@ -1,7 +1,7 @@
 <script>
 	import Chart from 'chart.js/auto';
 	import { onMount } from 'svelte';
-	import { incomeData } from "../../stores.js";
+	import { expenseData } from "../../../stores.js";
 
 	let ctx;
 	let chartCanvas;
@@ -9,12 +9,13 @@
 
 	function groupAndSumByCategory() {
 		const groupedData = new Map();
-		$incomeData.forEach(income => {
-					const category = income.incomeCategory.name;
+		console.log($expenseData)
+		$expenseData.forEach(expense => {
+					const category = expense.expenseCategory.name;
 					if (groupedData.has(category)) {
-						groupedData.set(category, groupedData.get(category) + parseInt(income.amount));
+						groupedData.set(category, groupedData.get(category) + parseInt(expense.amount));
 					} else {
-						groupedData.set(category, income.amount);
+						groupedData.set(category, expense.amount);
 					}
 				}
 		);
@@ -23,10 +24,10 @@
 
 	function createGraph() {
 		try {
-			const groupedIncomeData = groupAndSumByCategory();
+			const groupedExpenseData = groupAndSumByCategory();
 
-			const chartLabels = Array.from(groupedIncomeData.keys());
-			const chartValues = Array.from(groupedIncomeData.values());
+			const chartLabels = Array.from(groupedExpenseData.keys());
+			const chartValues = Array.from(groupedExpenseData.values());
 
 			ctx = chartCanvas.getContext('2d');
 
@@ -36,17 +37,13 @@
 					data: {
 						labels: chartLabels,
 						datasets: [{
-							label: 'Revenue',
-							backgroundColor:
-									['rgb(0, 0, 179)',
-									'rgb(0, 16, 217)',
-									'rgb(0, 32, 255)',
-									'rgb(0, 64, 255)',
-									'rgb(0, 96, 255)',
-									'rgb(0, 128, 255)',
-									'rgb(0, 159, 255)',
-									'rgb(0, 191, 255)',
-									'rgb(0, 255, 255)'],
+							label: 'Spendings',
+							backgroundColor: [
+								'rgb(107, 80, 107)',
+								'rgb(171, 61, 169)',
+								'rgb(222, 37, 218)',
+								'rgb(235, 68, 232)',
+								'rgb(255, 128, 255)'],
 							data: chartValues
 						}]
 					},
@@ -66,7 +63,7 @@
 	}
 
 	$: {
-		if ($incomeData) {
+		if ($expenseData) {
 			createGraph();
 		}
 	}
