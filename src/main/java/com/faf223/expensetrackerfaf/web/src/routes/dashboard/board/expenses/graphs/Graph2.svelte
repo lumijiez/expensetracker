@@ -1,7 +1,7 @@
 <script>
 	import Chart from 'chart.js/auto';
 	import { onMount } from 'svelte';
-	import { expenseData } from "../../stores.js";
+	import { expenseData } from "../../../stores.js";
 
 	let ctx;
 	let chartCanvas;

@@ -1,7 +1,7 @@
 <script>
     import { onMount, afterUpdate } from 'svelte';
     import ContentExpense from "./contents/ContentExpense.svelte";
-    import {expenseData} from "../../stores.js";
+    import {expenseData} from "../../../stores.js";
 
     let parentHeight;
     let listParentHeight;
@@ -36,6 +36,7 @@
     #expenseInfo {
         display: flex;
         flex-direction: column;
+        min-width: 300px;
         background-color: #212942;
         color:white;
         border-radius: 10px;

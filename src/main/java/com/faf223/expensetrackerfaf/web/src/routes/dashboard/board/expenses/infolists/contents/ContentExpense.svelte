@@ -3,7 +3,7 @@
     import { writable } from 'svelte/store';
     import axios from 'axios';
     import { getCookie } from "svelte-cookie";
-    import {expenseTypes, expenseData} from "../../../stores.js";
+    import {expenseTypes, expenseData} from "../../../../stores.js";
 
     let showModal;
     let amount = '';

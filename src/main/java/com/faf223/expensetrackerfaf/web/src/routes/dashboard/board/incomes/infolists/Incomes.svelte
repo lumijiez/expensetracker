@@ -1,6 +1,6 @@
 <script>
     import { onMount, afterUpdate } from 'svelte';
-    import { incomeData } from "../../stores.js";
+    import { incomeData } from "../../../stores.js";
     import ContentIncome from "./contents/ContentIncome.svelte";
 
     let parentHeight;
@@ -35,6 +35,7 @@
     #incomeInfo {
         display: flex;
         flex-direction: column;
+        min-width: 300px;
         background-color: #212942;
         color:white;
         border-radius: 10px;

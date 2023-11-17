@@ -1,6 +1,6 @@
 <script>
     import { onMount } from 'svelte';
-    import { incomeData, expenseData } from "../../stores.js";
+    import { incomeData, expenseData } from "../../../stores.js";
 
     let infobar1, infobar2, infobar3, infobar4;
     let totalExpenses = 0;

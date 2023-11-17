@@ -1,11 +1,18 @@
 <script>
     import Dashboard from './board/Dashboard.svelte';
     import SideMenu from './menu/SideMenu.svelte';
+
+    import {selectedTab} from "./stores.js";
+
+    function handleTabClick(tab) {
+        selectedTab.set(tab);
+    }
+
 </script>
 
 <div id="wrapper">
-    <SideMenu />
-    <Dashboard />
+    <SideMenu onTabClick={handleTabClick} />
+    <Dashboard {selectedTab} />
 </div>
 
 <style>

@@ -1,22 +1,18 @@
 <script>
     import Graph1 from '../graphs/Graph1.svelte';
-    import Graph2 from '../graphs/Graph2.svelte';
     import Graph3 from '../graphs/Graph3.svelte';
-    import Expenses from "../infolists/Expenses.svelte";
     import Incomes from "../infolists/Incomes.svelte";
 </script>
 
 <div id="dataMenu">
     <div id="twoVertical">
             <Graph1 />
-            <Graph2 />
     </div>
     <div id="oneVertical">
             <Graph3 />
     </div>
     <div id="dataPanel">
             <Incomes />
-            <Expenses />
     </div>
 </div>
 
