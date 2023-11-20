@@ -97,24 +97,34 @@ public class IncomeController {
 
     @GetMapping("/personal-incomes")
     public ResponseEntity<List<IncomeDTO>> getExpensesByUser(@RequestParam Optional<LocalDate> date,
-                                                              @RequestParam Optional<Month> month) {
+                                                             @RequestParam Optional<Month> month,
+                                                             @RequestParam Optional<Integer> startYear,
+                                                             @RequestParam Optional<Integer> endYear,
+                                                             @RequestParam Optional<String> lastUnit) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication != null && authentication.getPrincipal() instanceof UserDetails userDetails) {
 
             String email = userDetails.getUsername();
-            List<IncomeDTO> incomes;
+            List<IncomeDTO> incomes = Collections.emptyList();
 
-            incomes = date.map(localDate -> incomeService.getTransactionsByDate(localDate, email).stream().map(incomeMapper::toDto).toList())
-                    .orElseGet(() -> month.map(value -> incomeService.getTransactionsByMonth(value, email).stream().map(incomeMapper::toDto).toList())
-                            .orElseGet(() -> incomeService.getTransactionsByEmail(email).stream().map(incomeMapper::toDto).toList()));
+            if(date.isPresent())
+                incomes = incomeService.getTransactionsByDate(date.get(), email).stream().map(incomeMapper::toDto).toList();
+            else if(month.isPresent())
+                incomes = incomeService.getTransactionsByMonth(month.get(), email).stream().map(incomeMapper::toDto).toList();
+            else if(startYear.isPresent() && endYear.isPresent())
+                incomes = incomeService.getYearIntervalTransactions(email, startYear.get(), endYear.get()).stream().map(incomeMapper::toDto).toList();
+            else if(lastUnit.isPresent()) {
 
-            if (!incomes.isEmpty()) {
-                return ResponseEntity.ok(incomes);
-            } else {
-                return ResponseEntity.ok(Collections.emptyList());
+                if(lastUnit.get().equalsIgnoreCase("week"))
+                    incomes = incomeService.getLastWeekTransactions(email).stream().map(incomeMapper::toDto).toList();
+                else if(lastUnit.get().equalsIgnoreCase("month"))
+                    incomes = incomeService.getLastMonthTransactions(email).stream().map(incomeMapper::toDto).toList();
+
             }
+
+            return ResponseEntity.ok(incomes);
         }
 
         throw new TransactionsNotFoundException("The expenses have not been found");

@@ -7,6 +7,7 @@ import com.faf223.expensetrackerfaf.model.User;
 import com.faf223.expensetrackerfaf.repository.CredentialRepository;
 import com.faf223.expensetrackerfaf.repository.IncomeRepository;
 import com.faf223.expensetrackerfaf.repository.UserRepository;
+import com.faf223.expensetrackerfaf.util.TransactionFilter;
 import com.faf223.expensetrackerfaf.util.exceptions.UserNotAuthenticatedException;
 import com.faf223.expensetrackerfaf.util.exceptions.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +29,7 @@ public class IncomeService implements ITransactionService {
     private final IncomeRepository incomeRepository;
     private final CredentialRepository credentialRepository;
     private final UserRepository userRepository;
+    private final TransactionFilter transactionFilter;
 
     public void createOrUpdate(IMoneyTransaction income) {
         incomeRepository.save((Income) income);
@@ -65,13 +67,9 @@ public class IncomeService implements ITransactionService {
                 .toList();
     }
 
-    // TODO: store transaction month in a separate field in the DB and change this logic
     @Override
     public List<Income> getTransactionsByMonth(Month month) {
-        LocalDate startOfMonth = LocalDate.of(LocalDate.now().getYear(), month, 1);
-        LocalDate endOfMonth = startOfMonth.plusMonths(1).minusDays(1);
-
-        return incomeRepository.findByDateBetween(startOfMonth, endOfMonth);
+        return incomeRepository.filterByMonth(month.getValue());
     }
 
     @Override
@@ -85,6 +83,36 @@ public class IncomeService implements ITransactionService {
                     return credential.get().getUser().equals(transaction.getUser());
                 })
                 .toList();
+    }
+
+    @Override
+    public List<Income> getLastWeekTransactions() {
+        return incomeRepository.findLastWeek();
+    }
+
+    @Override
+    public List<Income> getLastWeekTransactions(String email) {
+        return (List<Income>) transactionFilter.filterByEmail(getLastWeekTransactions(), email);
+    }
+
+    @Override
+    public List<Income> getLastMonthTransactions() {
+        return incomeRepository.findLastMonth();
+    }
+
+    @Override
+    public List<Income> getLastMonthTransactions(String email) {
+        return (List<Income>) transactionFilter.filterByEmail(getLastMonthTransactions(), email);
+    }
+
+    @Override
+    public List<Income> getYearIntervalTransactions(int start, int end) {
+        return incomeRepository.filterByYearInterval(start, end);
+    }
+
+    @Override
+    public List<Income> getYearIntervalTransactions(String email, int start, int end) {
+        return (List<Income>) transactionFilter.filterByEmail(getYearIntervalTransactions(start, end), email);
     }
 
     public Income getTransactionById(long id) {

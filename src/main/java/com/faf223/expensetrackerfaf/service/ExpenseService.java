@@ -4,6 +4,7 @@ import com.faf223.expensetrackerfaf.model.*;
 import com.faf223.expensetrackerfaf.repository.CredentialRepository;
 import com.faf223.expensetrackerfaf.repository.ExpenseRepository;
 import com.faf223.expensetrackerfaf.repository.UserRepository;
+import com.faf223.expensetrackerfaf.util.TransactionFilter;
 import com.faf223.expensetrackerfaf.util.exceptions.UserNotAuthenticatedException;
 import com.faf223.expensetrackerfaf.util.exceptions.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,7 @@ public class ExpenseService implements ITransactionService {
     private final ExpenseRepository expenseRepository;
     private final CredentialRepository credentialRepository;
     private final UserRepository userRepository;
+    private final TransactionFilter transactionFilter;
 
     public void createOrUpdate(IMoneyTransaction expense) {
         expenseRepository.save((Expense) expense);
@@ -47,37 +49,47 @@ public class ExpenseService implements ITransactionService {
 
     @Override
     public List<Expense> getTransactionsByDate(LocalDate date, String email) {
-        return getTransactionsByDate(date)
-                .stream()
-                .filter(transaction -> {
-                    Optional<Credential> credential = credentialRepository.findByEmail(email);
-                    if(credential.isEmpty())
-                        throw new UserNotFoundException("The user has not been found");
-                    return credential.get().getUser().equals(transaction.getUser());
-                })
-                .toList();
+        return (List<Expense>) transactionFilter.filterByEmail(getTransactionsByDate(date), email);
     }
 
-    // TODO: store transaction month in a separate field in the DB and change this logic
     @Override
     public List<Expense> getTransactionsByMonth(Month month) {
-        LocalDate startOfMonth = LocalDate.of(LocalDate.now().getYear(), month, 1);
-        LocalDate endOfMonth = startOfMonth.plusMonths(1).minusDays(1);
-
-        return expenseRepository.findByDateBetween(startOfMonth, endOfMonth);
+        return expenseRepository.filterByMonth(month.getValue());
     }
 
     @Override
     public List<Expense> getTransactionsByMonth(Month month, String email) {
-        return getTransactionsByMonth(month)
-                .stream()
-                .filter(transaction -> {
-                    Optional<Credential> credential = credentialRepository.findByEmail(email);
-                    if(credential.isEmpty())
-                        throw new UserNotFoundException("The user has not been found");
-                    return credential.get().getUser().equals(transaction.getUser());
-                })
-                .toList();
+        return (List<Expense>) transactionFilter.filterByEmail(getTransactionsByMonth(month), email);
+    }
+
+    @Override
+    public List<Expense> getLastWeekTransactions() {
+        return expenseRepository.findLastWeek();
+    }
+
+    @Override
+    public List<Expense> getLastWeekTransactions(String email) {
+        return (List<Expense>) transactionFilter.filterByEmail(getLastWeekTransactions(), email);
+    }
+
+    @Override
+    public List<Expense> getLastMonthTransactions() {
+        return expenseRepository.findLastMonth();
+    }
+
+    @Override
+    public List<Expense> getLastMonthTransactions(String email) {
+        return (List<Expense>) transactionFilter.filterByEmail(getLastMonthTransactions(), email);
+    }
+
+    @Override
+    public List<Expense> getYearIntervalTransactions(int start, int end) {
+        return expenseRepository.filterByYearInterval(start, end);
+    }
+
+    @Override
+    public List<Expense> getYearIntervalTransactions(String email, int start, int end) {
+        return (List<Expense>) transactionFilter.filterByEmail(getYearIntervalTransactions(start, end), email);
     }
 
     public List<Expense> getTransactions() {
@@ -113,4 +125,5 @@ public class ExpenseService implements ITransactionService {
 
         throw new UserNotAuthenticatedException("You are not authenticated");
     }
+
 }
