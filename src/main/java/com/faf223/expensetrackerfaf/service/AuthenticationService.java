@@ -10,11 +10,12 @@ import com.faf223.expensetrackerfaf.model.User;
 import com.faf223.expensetrackerfaf.repository.CredentialRepository;
 import com.faf223.expensetrackerfaf.repository.UserRepository;
 import com.faf223.expensetrackerfaf.security.PersonDetails;
+import com.faf223.expensetrackerfaf.util.exceptions.UserNotAuthenticatedException;
+import com.faf223.expensetrackerfaf.util.exceptions.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -55,7 +56,7 @@ public class AuthenticationService {
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
 
-        Credential credential = credentialRepository.findByEmail(request.getEmail()).orElseThrow((() -> new UsernameNotFoundException("User not found")));
+        Credential credential = credentialRepository.findByEmail(request.getEmail()).orElseThrow((() -> new UserNotFoundException("User not found")));
 
         UserDetails userDetails = new PersonDetails(credential);
         String jwtToken = jwtService.generateToken(userDetails);
@@ -79,7 +80,7 @@ public class AuthenticationService {
                     .refreshToken(refreshToken)
                     .build();
         } else {
-            throw new RuntimeException("Invalid or expired refresh token");
+            throw new UserNotAuthenticatedException("Invalid or expired refresh token");
         }
     }
 

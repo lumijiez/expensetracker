@@ -5,7 +5,10 @@ import com.faf223.expensetrackerfaf.dto.UserDTO;
 import com.faf223.expensetrackerfaf.dto.mappers.UserMapper;
 import com.faf223.expensetrackerfaf.model.User;
 import com.faf223.expensetrackerfaf.service.UserService;
+import com.faf223.expensetrackerfaf.util.errors.ErrorResponse;
+import com.faf223.expensetrackerfaf.util.exceptions.UserNotCreatedException;
 import com.faf223.expensetrackerfaf.util.exceptions.UserNotFoundException;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -26,8 +29,11 @@ public class UserController {
     private final UserMapper userMapper;
 
     @PatchMapping()
-    public ResponseEntity<UserDTO> updateUser(@RequestBody UserCreationDTO userDTO,
+    public ResponseEntity<UserDTO> updateUser(@RequestBody @Valid UserCreationDTO userDTO,
                                               BindingResult bindingResult) {
+        if(bindingResult.hasErrors())
+            throw new UserNotCreatedException(ErrorResponse.from(bindingResult).getMessage());
+
         User user = userMapper.toUser(userDTO);
         if (!bindingResult.hasErrors()) {
             userService.updateUser(user);
@@ -37,7 +43,7 @@ public class UserController {
         }
     }
 
-    @GetMapping("/getUserData")
+    @GetMapping("/get-user-data")
     public ResponseEntity<UserDTO> getUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
