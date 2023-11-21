@@ -1,9 +1,9 @@
 <script>
-    import Modal from '../modals/Modal.svelte';
+    import Modal from './Modal.svelte';
     import { writable } from 'svelte/store';
     import axios from 'axios';
     import { getCookie } from "svelte-cookie";
-    import {incomeData, incomeTypes} from "../../../../stores.js";
+    import {incomeData, incomeTypes} from "../../../stores.js";
 
     let showModal;
     let amount = '';
@@ -27,7 +27,7 @@
                 },
                 incomeCategory: incomeCategory,
                 date: today,
-                amount: amount
+                amount: parseInt(amount)
             };
 
             newData = $incomeData;
@@ -45,7 +45,7 @@
             amount: parseInt(amount),
         };
 
-        addNewIncome(selectedIncome.id, amount);
+        addNewIncome(selectedIncome.id, parseInt(amount));
 
         try {
             const token = getCookie('access_token');
@@ -102,7 +102,7 @@
 
 <style>
     #inc {
-        padding: 20px;
+        padding: 10px 20px;
         text-align: center;
     }
 

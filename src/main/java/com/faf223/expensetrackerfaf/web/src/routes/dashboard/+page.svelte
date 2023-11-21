@@ -1,8 +1,8 @@
 <script>
     import Dashboard from './board/Dashboard.svelte';
     import SideMenu from './menu/SideMenu.svelte';
-
     import {selectedTab} from "./stores.js";
+    import {globalStyles} from "./styles.js";
 
     function handleTabClick(tab) {
         selectedTab.set(tab);
@@ -10,19 +10,19 @@
 
 </script>
 
-<div id="wrapper">
+<div id="wrapper" style="background-color: {$globalStyles.mainColor}">
     <SideMenu onTabClick={handleTabClick} />
-    <Dashboard {selectedTab} />
+    <Dashboard />
 </div>
 
 <style>
     @import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400');
 
     #wrapper {
-        background-color: rgb(23,34,51);
         display: flex;
         align-items: stretch;
         min-height: 100vh;
         max-height: 100%;
+        transition: all 0.3s cubic-bezier(.25,.8,.25,1);
     }
 </style>

@@ -2,55 +2,163 @@
     import Graph2 from '../graphs/Graph2.svelte';
     import Graph3 from '../graphs/Graph3.svelte';
     import Expenses from "../infolists/Expenses.svelte";
+    import {globalStyles} from "../../../styles.js";
+    import { slide } from 'svelte/transition'
+    import {expenseTypes} from "../../../stores.js";
+
+    let isDateDropdownExpanded = false
+    let isCategoryDropdownExpanded = false
+
+    function clickHandlerDate() {
+        isDateDropdownExpanded = !isDateDropdownExpanded
+    }
+
+    function clickHandlerCategory() {
+        isCategoryDropdownExpanded = !isCategoryDropdownExpanded;
+    }
+
 </script>
 
-<div id="dataMenu">
-    <div id="twoVertical">
+<div id="main-data" style="background-color: {$globalStyles.dashColor}; color: {$globalStyles.color}">
+    <div id="data-header" style="background-color:{$globalStyles.mainColor}; color: {$globalStyles.altColor}">
+        <span style="color: {$globalStyles.altColor}">Revenue Analysis</span>
+
+        <div id="dropdown-date">
+            <button id="button" on:click={clickHandlerDate}>Filter by Date:</button>
+            {#if isDateDropdownExpanded}
+                <div id="date-list" transition:slide>
+                    <div on:click={() => console.log("Today")}>Today</div>
+                    <div on:click={() => console.log("Yesterday")}>Yesterday</div>
+                    <div on:click={() => console.log("Last week")}>Last week</div>
+                    <div on:click={() => console.log("Last month")}>Last month</div>
+                    <div on:click={() => console.log("Current quarter")}>Current quarter</div>
+                    <div on:click={() => console.log("This year")}>This year</div>
+                </div>
+            {/if}
+        </div>
+
+        <div id="dropdown-category">
+            <button id="button" on:click={clickHandlerCategory}>Filter by Category:</button>
+            {#if isCategoryDropdownExpanded}
+                <div id="category-list" transition:slide>
+                    {#each $expenseTypes as expense (expense.id)}
+                        {#if expense.id !== undefined}
+                            <option value={expense.id}>{expense.name}</option>
+                        {/if}
+                    {/each}
+                </div>
+            {/if}
+        </div>
+    </div>
+    <div id="data-menu">
+        <div id="first-graph">
             <Graph2 />
-    </div>
-    <div id="oneVertical">
+        </div>
+        <div id="second-graph">
             <Graph3 />
+        </div>
+        <Expenses />
     </div>
-    <div id="dataPanel">
-            <Expenses />
-    </div>
+
 </div>
 
 <style>
-    #dataMenu {
+    #main-data {
         border-bottom-left-radius: 20px;
         border-bottom-right-radius: 20px;
-        background-color: rgb(245,242,243);
-        display:flex;
-        padding:10px;
-        flex-direction: row-reverse;
+        padding:0;
+        display: flex;
+        min-height: 0;
+        height: 0;
+        flex-direction: column;
         justify-content: stretch;
         align-items: stretch;
-        flex-grow: 1;
+        flex: 1 1 auto;
+    }
+
+    #button {
+        background-color: #fff000;
+        border-radius: 12px;
+        color: #000;
+        cursor: pointer;
+        font-weight: bold;
+        padding: 10px 15px;
+        text-align: center;
+        transition: 200ms;
+        width: 100%;
+        box-sizing: border-box;
+        border: 0;
+        font-size: 16px;
+        user-select: none;
+        -webkit-user-select: none;
+        touch-action: manipulation;
+    }
+
+    #button:not(:disabled):hover,
+    #button:not(:disabled):focus {
+        outline: 0;
+        background: #f4e603;
+        box-shadow: 0 0 0 2px rgba(0,0,0,.2), 0 3px 8px 0 rgba(0,0,0,.15);
+    }
+
+    #button:disabled {
+        filter: saturate(0.2) opacity(0.5);
+        -webkit-filter: saturate(0.2) opacity(0.5);
+        cursor: not-allowed;
     }
 
 
-    #twoVertical {
-        display: flex;
-        flex-direction: column;
-        align-self: stretch;
-        flex-grow: 1;
-        min-width: 0;
-        min-height:0;
+    #date-list {
+        background-color: #8BD17C;
+        position:absolute;
+        z-index:1;
     }
 
-    #oneVertical {
-        display: flex;
-        flex-direction: column;
-        align-self: stretch;
-        flex-grow: 1;
-        min-width: 0;
-        min-height:0;
+    #category-list {
+        background-color: #8BD17C;
+        position:absolute;
+        z-index:1;
     }
 
-    #dataPanel {
+    #data-header {
+        background-color: black;
+        min-height: 50px;
+        padding-left: 30px;
         display: flex;
         flex-direction: row;
+        align-items: center;
+        justify-content: space-around;
+        border-top-left-radius: 20px;
+        border-top-right-radius: 20px;
+        font-size: larger;
+        border: #8BD17C 2px solid;
+    }
+
+    #data-menu {
+        border-bottom-left-radius: 20px;
+        border-bottom-right-radius: 20px;
+        display:flex;
+        /*padding:10px;*/
+        flex-direction: row-reverse;
+        justify-content: space-between;
+        align-items: stretch;
+        flex: 1;
+        height: 0;
+        min-height: 0;
+    }
+
+    #first-graph {
+        display: flex;
+        flex-direction: column;
+        align-self: stretch;
+        flex-grow: 1;
+        min-width: 0;
+        min-height:0;
+    }
+
+    #second-graph {
+        display: flex;
+        flex-direction: column;
         align-self: stretch;
         flex-grow: 1;
         min-width: 0;

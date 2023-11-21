@@ -2,6 +2,14 @@
 	import Chart from 'chart.js/auto';
 	import { onMount } from 'svelte';
 	import { incomeData } from "../../../stores.js";
+	import {globalStyles} from "../../../styles.js";
+
+	let componentStyles;
+
+	$: {
+		console.log("got here")
+		componentStyles = $globalStyles;
+	}
 
 	let ctx;
 	let chartCanvas;
@@ -76,7 +84,7 @@
 	});
 </script>
 
-<div id="chart">
+<div id="chart" style="background-color: {componentStyles.mainColor}">
 	<canvas bind:this={chartCanvas}></canvas>
 </div>
 
@@ -85,9 +93,10 @@
 		box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
 		transition: all 0.3s cubic-bezier(.25,.8,.25,1);
 		flex: 1;
-		border-radius: 10px;
-		margin: 10px;
-		background-color: #d3d3d3;
+		border-radius: 0 0 10px 10px;
+		margin: 0 0 10px 10px;
+		min-width: 0;
+		min-height:0;
 	}
 
 	#chart:hover {
