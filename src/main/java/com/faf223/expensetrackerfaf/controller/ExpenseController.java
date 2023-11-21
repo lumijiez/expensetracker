@@ -22,6 +22,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -96,25 +97,36 @@ public class ExpenseController {
     }
 
     @GetMapping("/personal-expenses")
+    @Transactional(readOnly = true)
     public ResponseEntity<List<ExpenseDTO>> getExpensesByUser(@RequestParam Optional<LocalDate> date,
-                                                              @RequestParam Optional<Month> month) {
+                                                              @RequestParam Optional<Integer> month,
+                                                              @RequestParam Optional<Integer> startYear,
+                                                              @RequestParam Optional<Integer> endYear,
+                                                              @RequestParam Optional<String> lastUnit) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication != null && authentication.getPrincipal() instanceof UserDetails userDetails) {
 
             String email = userDetails.getUsername();
-            List<ExpenseDTO> expenses;
+            List<ExpenseDTO> expenses = Collections.emptyList();
 
-            expenses = date.map(localDate -> expenseService.getTransactionsByDate(localDate, email).stream().map(expenseMapper::toDto).toList())
-                    .orElseGet(() -> month.map(value -> expenseService.getTransactionsByMonth(value, email).stream().map(expenseMapper::toDto).toList())
-                            .orElseGet(() -> expenseService.getTransactionsByEmail(email).stream().map(expenseMapper::toDto).toList()));
+            if(date.isPresent())
+                expenses = expenseService.getTransactionsByDate(date.get(), email).stream().map(expenseMapper::toDto).toList();
+            else if(month.isPresent())
+                expenses = expenseService.getTransactionsByMonth(Month.of(month.get()), email).stream().map(expenseMapper::toDto).toList();
+            else if(startYear.isPresent() && endYear.isPresent())
+                expenses = expenseService.getYearIntervalTransactions(email, startYear.get(), endYear.get()).stream().map(expenseMapper::toDto).toList();
+            else if(lastUnit.isPresent()) {
 
-            if (!expenses.isEmpty()) {
-                return ResponseEntity.ok(expenses);
-            } else {
-                return ResponseEntity.ok(Collections.emptyList());
+                if(lastUnit.get().equalsIgnoreCase("week"))
+                    expenses = expenseService.getLastWeekTransactions(email).stream().map(expenseMapper::toDto).toList();
+                else if(lastUnit.get().equalsIgnoreCase("month"))
+                    expenses = expenseService.getLastMonthTransactions(email).stream().map(expenseMapper::toDto).toList();
+
             }
+
+            return ResponseEntity.ok(expenses);
         }
 
         throw new TransactionsNotFoundException("The expenses have not been found");

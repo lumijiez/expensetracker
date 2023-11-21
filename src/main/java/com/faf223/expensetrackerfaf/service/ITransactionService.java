@@ -17,6 +17,12 @@ public interface ITransactionService {
     List<? extends IMoneyTransaction> getTransactionsByDate(LocalDate date, String email);
     List<? extends IMoneyTransaction> getTransactionsByMonth(Month month);
     List<? extends IMoneyTransaction> getTransactionsByMonth(Month month, String email);
+    List<? extends IMoneyTransaction> getLastWeekTransactions();
+    List<? extends IMoneyTransaction> getLastWeekTransactions(String email);
+    List<? extends IMoneyTransaction> getLastMonthTransactions();
+    List<? extends IMoneyTransaction> getLastMonthTransactions(String email);
+    List<? extends IMoneyTransaction> getYearIntervalTransactions(int start, int end);
+    List<? extends IMoneyTransaction> getYearIntervalTransactions(String email, int start, int end);
     IMoneyTransaction getTransactionById(long id);
     void deleteTransactionById(long it);
     boolean belongsToUser(IMoneyTransaction transaction);
