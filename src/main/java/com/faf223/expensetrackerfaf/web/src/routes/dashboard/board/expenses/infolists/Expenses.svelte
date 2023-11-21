@@ -1,27 +1,15 @@
 <script>
-    import { onMount, afterUpdate } from 'svelte';
-    import ContentExpense from "./contents/ContentExpense.svelte";
-    import {expenseData} from "../../../stores.js";
-
-    let parentHeight;
-    let listParentHeight;
-
-    async function updateInfo() {
-        parentHeight = document.querySelector('#expenseInfo').offsetHeight;
-        listParentHeight = document.querySelector('#expenseList').offsetHeight;
-    }
-
-    onMount(updateInfo);
-    afterUpdate(updateInfo);
+    import ContentExpense from "./ContentExpense.svelte";
+    import { expenseData } from "../../../stores.js";
+    import { globalStyles } from "../../../styles.js";
 </script>
 
-<div id="expenseInfo" style="max-height: {parentHeight}px;">
+<div id="expenseInfo" style="background-color: {$globalStyles.mainColor}">
     <ContentExpense />
-
-    <div id="expenseList" style="max-height: {listParentHeight}px;">
+    <div id="listContainer" style="color: {$globalStyles.color}">
         <ul>
             {#each $expenseData as item}
-                <li>
+                <li style="color: {$globalStyles.color}">
                     {item.incomeCategory ? `${item.incomeCategory.name}: ` : `${item.expenseCategory.name}: `}
                     {item.incomeCategory ? `+${item.amount}$` : `-${item.amount}$`}
                     {`${item.date}`}
@@ -31,47 +19,58 @@
     </div>
 </div>
 
-
 <style>
+
     #expenseInfo {
+        min-width: 300px;
+        min-height: 0;
+        background-color: #212942;
+        color: white;
+        border-radius: 0 0 10px 10px;
+        margin: 0 0 10px 0;
         display: flex;
         flex-direction: column;
-        min-width: 300px;
-        background-color: #212942;
-        color:white;
-        border-radius: 10px;
-        margin: 10px;
+        box-sizing: border-box;
     }
 
-    #expenseList {
-        scrollbar-width: none;
-        flex: 1;
-        border-radius: 10px;
-        margin: 10px;
+    #listContainer {
+        flex: 1 1 auto;
         overflow-y: auto;
-        max-height: 100%;
+        min-height: 0;
+        padding: 0 10px 10px;
+        margin: 0 0 10px;
+        box-sizing: border-box;
+        border-radius: 0 0 10px 10px;
     }
 
-    #expenseList::-webkit-scrollbar {
-        display: none;
+    #listContainer::-webkit-scrollbar {
+        width: 0;
     }
 
-    ul {
+    #listContainer::-webkit-scrollbar-thumb {
+        background-color: transparent;
+    }
+
+    #listContainer::-webkit-scrollbar-track {
+        background-color: transparent;
+    }
+
+    #listContainer ul {
         list-style: none;
         padding: 0;
-        color:black;
+        border-radius: 0 0 10px 10px;
     }
 
-    li {
+    #listContainer li {
         margin-bottom: 20px;
         background-color: #f2f2f2;
         padding: 10px;
         border-radius: 5px;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
-        transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+        transition: all 0.3s cubic-bezier(.25, .8, .25, 1);
     }
 
-    li:hover {
-        box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+    #listContainer li:hover {
+        box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
     }
 </style>
