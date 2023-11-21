@@ -2,7 +2,6 @@ package com.faf223.expensetrackerfaf.controller;
 
 import com.faf223.expensetrackerfaf.dto.ExpenseCreationDTO;
 import com.faf223.expensetrackerfaf.dto.ExpenseDTO;
-import com.faf223.expensetrackerfaf.dto.IncomeDTO;
 import com.faf223.expensetrackerfaf.dto.mappers.ExpenseMapper;
 import com.faf223.expensetrackerfaf.model.Expense;
 import com.faf223.expensetrackerfaf.model.ExpenseCategory;
@@ -23,6 +22,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -97,8 +97,9 @@ public class ExpenseController {
     }
 
     @GetMapping("/personal-expenses")
+    @Transactional(readOnly = true)
     public ResponseEntity<List<ExpenseDTO>> getExpensesByUser(@RequestParam Optional<LocalDate> date,
-                                                              @RequestParam Optional<Month> month,
+                                                              @RequestParam Optional<Integer> month,
                                                               @RequestParam Optional<Integer> startYear,
                                                               @RequestParam Optional<Integer> endYear,
                                                               @RequestParam Optional<String> lastUnit) {
@@ -113,7 +114,7 @@ public class ExpenseController {
             if(date.isPresent())
                 expenses = expenseService.getTransactionsByDate(date.get(), email).stream().map(expenseMapper::toDto).toList();
             else if(month.isPresent())
-                expenses = expenseService.getTransactionsByMonth(month.get(), email).stream().map(expenseMapper::toDto).toList();
+                expenses = expenseService.getTransactionsByMonth(Month.of(month.get()), email).stream().map(expenseMapper::toDto).toList();
             else if(startYear.isPresent() && endYear.isPresent())
                 expenses = expenseService.getYearIntervalTransactions(email, startYear.get(), endYear.get()).stream().map(expenseMapper::toDto).toList();
             else if(lastUnit.isPresent()) {

@@ -56,15 +56,7 @@ public class IncomeService implements ITransactionService {
 
     @Override
     public List<Income> getTransactionsByDate(LocalDate date, String email) {
-        return getTransactionsByDate(date)
-                .stream()
-                .filter(transaction -> {
-                    Optional<Credential> credential = credentialRepository.findByEmail(email);
-                    if(credential.isEmpty())
-                        throw new UserNotFoundException("The user has not been found");
-                    return credential.get().getUser().equals(transaction.getUser());
-                })
-                .toList();
+        return (List<Income>) transactionFilter.filterByEmail(getTransactionsByDate(date), email);
     }
 
     @Override
@@ -74,15 +66,7 @@ public class IncomeService implements ITransactionService {
 
     @Override
     public List<Income> getTransactionsByMonth(Month month, String email) {
-        return getTransactionsByMonth(month)
-                .stream()
-                .filter(transaction -> {
-                    Optional<Credential> credential = credentialRepository.findByEmail(email);
-                    if(credential.isEmpty())
-                        throw new UserNotFoundException("The user has not been found");
-                    return credential.get().getUser().equals(transaction.getUser());
-                })
-                .toList();
+        return (List<Income>) transactionFilter.filterByEmail(getTransactionsByMonth(month), email);
     }
 
     @Override

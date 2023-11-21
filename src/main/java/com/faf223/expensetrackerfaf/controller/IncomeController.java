@@ -22,6 +22,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -96,8 +97,9 @@ public class IncomeController {
     }
 
     @GetMapping("/personal-incomes")
-    public ResponseEntity<List<IncomeDTO>> getExpensesByUser(@RequestParam Optional<LocalDate> date,
-                                                             @RequestParam Optional<Month> month,
+    @Transactional(readOnly = true)
+    public ResponseEntity<List<IncomeDTO>> getIncomesByUser(@RequestParam Optional<LocalDate> date,
+                                                             @RequestParam Optional<Integer> month,
                                                              @RequestParam Optional<Integer> startYear,
                                                              @RequestParam Optional<Integer> endYear,
                                                              @RequestParam Optional<String> lastUnit) {
@@ -112,7 +114,7 @@ public class IncomeController {
             if(date.isPresent())
                 incomes = incomeService.getTransactionsByDate(date.get(), email).stream().map(incomeMapper::toDto).toList();
             else if(month.isPresent())
-                incomes = incomeService.getTransactionsByMonth(month.get(), email).stream().map(incomeMapper::toDto).toList();
+                incomes = incomeService.getTransactionsByMonth(Month.of(month.get()), email).stream().map(incomeMapper::toDto).toList();
             else if(startYear.isPresent() && endYear.isPresent())
                 incomes = incomeService.getYearIntervalTransactions(email, startYear.get(), endYear.get()).stream().map(incomeMapper::toDto).toList();
             else if(lastUnit.isPresent()) {

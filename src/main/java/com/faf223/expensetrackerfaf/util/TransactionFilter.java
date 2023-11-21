@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
@@ -19,10 +20,10 @@ public class TransactionFilter {
         return transactions
                 .stream()
                 .filter(transaction -> {
-                    Credential credential = credentialService.findByEmail(email);
-                    if(credential == null)
+                    Optional<Credential> credential = credentialService.findByEmail(email);
+                    if(credential.isEmpty())
                         throw new UserNotFoundException("The user has not been found");
-                    return credential.getUser().equals(transaction.getUser());
+                    return credential.get().getUser().equals(transaction.getUser());
                 })
                 .toList();
     }
