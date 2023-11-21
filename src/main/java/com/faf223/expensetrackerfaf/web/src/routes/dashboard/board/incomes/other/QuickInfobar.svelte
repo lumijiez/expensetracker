@@ -1,6 +1,14 @@
 <script>
     import { onMount } from 'svelte';
     import { incomeData, expenseData } from "../../../stores.js";
+    import {globalStyles} from "../../../styles.js";
+
+    let componentStyles;
+
+    $: {
+        console.log("got here")
+        componentStyles = $globalStyles;
+    }
 
     let infobar1, infobar2, infobar3, infobar4;
     let totalExpenses = 0;
@@ -38,10 +46,10 @@
 </script>
 
 <div id="quickInfobar">
-    <div class="infobarElement" bind:this={infobar1}></div>
-    <div class="infobarElement" bind:this={infobar2}></div>
-    <div class="infobarElement" bind:this={infobar3}></div>
-    <div class="infobarElement" bind:this={infobar4}></div>
+    <div class="infobarElement" bind:this={infobar1} style="background-color: {componentStyles.mainColor}"></div>
+    <div class="infobarElement" bind:this={infobar2} style="background-color: {componentStyles.mainColor}"></div>
+    <div class="infobarElement" bind:this={infobar3} style="background-color: {componentStyles.mainColor}"></div>
+    <div class="infobarElement" bind:this={infobar4} style="background-color: {componentStyles.mainColor}"></div>
 </div>
 
 <style>

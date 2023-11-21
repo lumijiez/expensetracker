@@ -1,9 +1,10 @@
 <script>
-    import Modal from '../modals/Modal.svelte';
+    import Modal from './Modal.svelte';
     import { writable } from 'svelte/store';
     import axios from 'axios';
     import { getCookie } from "svelte-cookie";
-    import {expenseTypes, expenseData} from "../../../../stores.js";
+    import {expenseTypes, expenseData} from "../../../stores.js";
+
 
     let showModal;
     let amount = '';
@@ -40,10 +41,10 @@
         const selectedExpense = $expenseTypes.find(expense => expense.id === $selectedExpenseId);
         const data = {
             expenseCategory: selectedExpense.id,
-            amount: amount,
+            amount: parseInt(amount),
         };
 
-        addNewExpense(selectedExpense.id, amount);
+        addNewExpense(selectedExpense.id, parseInt(amount));
 
         try {
             const token = getCookie('access_token');
@@ -100,7 +101,7 @@
 
 <style>
     #exp {
-        padding: 20px;
+        padding: 10px 20px;
         text-align: center;
     }
 
