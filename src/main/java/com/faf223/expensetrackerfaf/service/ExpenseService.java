@@ -1,6 +1,9 @@
 package com.faf223.expensetrackerfaf.service;
 
-import com.faf223.expensetrackerfaf.model.*;
+import com.faf223.expensetrackerfaf.model.Credential;
+import com.faf223.expensetrackerfaf.model.Expense;
+import com.faf223.expensetrackerfaf.model.IMoneyTransaction;
+import com.faf223.expensetrackerfaf.model.User;
 import com.faf223.expensetrackerfaf.repository.CredentialRepository;
 import com.faf223.expensetrackerfaf.repository.ExpenseRepository;
 import com.faf223.expensetrackerfaf.repository.UserRepository;
@@ -12,7 +15,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.Month;
@@ -49,6 +51,7 @@ public class ExpenseService implements ITransactionService {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public List<Expense> getTransactionsByDate(LocalDate date, String email) {
         return (List<Expense>) transactionFilter.filterByEmail(getTransactionsByDate(date), email);
     }
@@ -59,6 +62,7 @@ public class ExpenseService implements ITransactionService {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public List<Expense> getTransactionsByMonth(Month month, String email) {
         return (List<Expense>) transactionFilter.filterByEmail(getTransactionsByMonth(month), email);
     }
@@ -69,6 +73,7 @@ public class ExpenseService implements ITransactionService {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public List<Expense> getLastWeekTransactions(String email) {
         return (List<Expense>) transactionFilter.filterByEmail(getLastWeekTransactions(), email);
     }
@@ -79,6 +84,7 @@ public class ExpenseService implements ITransactionService {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public List<Expense> getLastMonthTransactions(String email) {
         return (List<Expense>) transactionFilter.filterByEmail(getLastMonthTransactions(), email);
     }
@@ -89,6 +95,7 @@ public class ExpenseService implements ITransactionService {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public List<Expense> getYearIntervalTransactions(String email, int start, int end) {
         return (List<Expense>) transactionFilter.filterByEmail(getYearIntervalTransactions(start, end), email);
     }
