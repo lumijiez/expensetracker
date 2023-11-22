@@ -124,6 +124,8 @@ public class IncomeController {
                 else if(lastUnit.get().equalsIgnoreCase("month"))
                     incomes = incomeService.getLastMonthTransactions(email).stream().map(incomeMapper::toDto).toList();
 
+            } else {
+                incomes = userService.getUserByEmail(email).getIncomes().stream().map(incomeMapper::toDto).toList();
             }
 
             return ResponseEntity.ok(incomes);

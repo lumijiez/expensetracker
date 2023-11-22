@@ -124,6 +124,8 @@ public class ExpenseController {
                 else if(lastUnit.get().equalsIgnoreCase("month"))
                     expenses = expenseService.getLastMonthTransactions(email).stream().map(expenseMapper::toDto).toList();
 
+            } else {
+                expenses = userService.getUserByEmail(email).getExpenses().stream().map(expenseMapper::toDto).toList();
             }
 
             return ResponseEntity.ok(expenses);

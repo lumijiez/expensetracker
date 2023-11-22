@@ -55,6 +55,7 @@ public class IncomeService implements ITransactionService {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public List<Income> getTransactionsByDate(LocalDate date, String email) {
         return (List<Income>) transactionFilter.filterByEmail(getTransactionsByDate(date), email);
     }
@@ -65,6 +66,7 @@ public class IncomeService implements ITransactionService {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public List<Income> getTransactionsByMonth(Month month, String email) {
         return (List<Income>) transactionFilter.filterByEmail(getTransactionsByMonth(month), email);
     }
@@ -75,6 +77,7 @@ public class IncomeService implements ITransactionService {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public List<Income> getLastWeekTransactions(String email) {
         return (List<Income>) transactionFilter.filterByEmail(getLastWeekTransactions(), email);
     }
@@ -85,6 +88,7 @@ public class IncomeService implements ITransactionService {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public List<Income> getLastMonthTransactions(String email) {
         return (List<Income>) transactionFilter.filterByEmail(getLastMonthTransactions(), email);
     }
@@ -95,6 +99,7 @@ public class IncomeService implements ITransactionService {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public List<Income> getYearIntervalTransactions(String email, int start, int end) {
         return (List<Income>) transactionFilter.filterByEmail(getYearIntervalTransactions(start, end), email);
     }
