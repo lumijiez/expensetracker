@@ -62,7 +62,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             response.setContentType("application/json");
 
             ErrorResponse errorResponse = new ErrorResponse("Your session has expired. Refresh your token.");
-            ObjectMapper objectMapper = new ObjectMapper(); // You may need to import ObjectMapper
+            ObjectMapper objectMapper = new ObjectMapper();
             response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
 
 

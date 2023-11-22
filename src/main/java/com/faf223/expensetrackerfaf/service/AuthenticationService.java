@@ -71,16 +71,15 @@ public class AuthenticationService {
                     .build();
         }
 
-        // Extract user details from OAuth2User
+
         String givenName = oAuth2User.getAttribute("given_name");
         String familyName = oAuth2User.getAttribute("family_name");
         String email = oAuth2User.getAttribute("email");
 
-        // Create a new User entity and save it to the database
         User user = User.builder()
                 .firstName(givenName)
                 .lastName(familyName)
-                .username(email) // You can adjust the username as needed
+                .username(email)
                 .build();
 
         String randomPassword = passwordGenerator.generateRandomPassword(8);
@@ -98,7 +97,6 @@ public class AuthenticationService {
         System.out.println("New user: " + user);
         System.out.println("New credentials: " + credential);
 
-        // Return the registered user's authentication response
         return AuthenticationResponse.builder()
                 .accessToken(jwtToken)
                 .refreshToken(refreshToken)

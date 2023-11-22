@@ -45,22 +45,9 @@ public class SecurityConfiguration {
                 .cors(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-//                        .requestMatchers("/api/v1/auth/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .oauth2Login(withDefaults());
-//                .exceptionHandling(exceptionHandling ->
-//                        exceptionHandling
-//                                .authenticationEntryPoint(authenticationEntryPoint())
-//                )
-//                .oauth2Login(oauth2Login ->
-//                        oauth2Login
-//                                .loginPage("/login")
-//                                .clientRegistrationRepository(clientRegistrationRepository)
-//                                .userInfoEndpoint(userInfoEndpoint ->
-//                                        userInfoEndpoint.userService(oAuth2UserService())
-//                                )
-//                                .successHandler(jwtAuthenticationSuccessHandler()));
 
         return http.build();
     }
