@@ -1,10 +1,12 @@
 package com.faf223.expensetrackerfaf.config;
 
+import com.faf223.expensetrackerfaf.repository.CredentialRepository;
+import com.faf223.expensetrackerfaf.repository.UserRepository;
 import com.faf223.expensetrackerfaf.security.PersonDetails;
-import com.faf223.expensetrackerfaf.service.CredentialService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -18,11 +20,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @RequiredArgsConstructor
 public class ApplicationConfig {
 
-    private final CredentialService credentialService;
+    private final CredentialRepository credentialRepository;
 
     @Bean
     public UserDetailsService userDetailsService() {
-        return username -> new PersonDetails(credentialService.findByEmail(username).orElseThrow((() -> new UsernameNotFoundException("User not found"))));
+        return username -> new PersonDetails(credentialRepository.findByEmail(username).orElseThrow(() -> new UsernameNotFoundException("User not found")));
     }
 
     @Bean
@@ -42,4 +44,10 @@ public class ApplicationConfig {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+    @Bean
+    @Primary
+    public JwtAuthenticationFilter customJwtAuthenticationFilter(JwtService jwtService, UserDetailsService userDetailsService) {
+        return new JwtAuthenticationFilter(jwtService, userDetailsService);
+    }
+
 }
