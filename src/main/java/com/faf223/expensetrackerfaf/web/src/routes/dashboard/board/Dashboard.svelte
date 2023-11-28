@@ -30,21 +30,23 @@
                         }
                 };
 
-                try {
-                        const [incomeResponse, expenseResponse, incomeTypesResponse, expenseTypesResponse] = await Promise.all([
-                                axios.get('http://localhost:8081/incomes/personal-incomes', config),
-                                axios.get('http://localhost:8081/expenses/personal-expenses', config),
-                                axios.get('http://localhost:8081/incomes/categories', config),
-                                axios.get('http://localhost:8081/expenses/categories', config)
-                        ]);
+            try {
+                const [incomeResponse, expenseResponse, incomeTypesResponse, expenseTypesResponse] = await Promise.all([
+                    axios.get('http://localhost:8081/incomes/personal-incomes?month=11', config),
+                    axios.get('http://localhost:8081/expenses/personal-expenses?month=11', config),
+                    axios.get('http://localhost:8081/incomes/categories', config),
+                    axios.get('http://localhost:8081/expenses/categories', config)
+                ]);
 
-                        incomeData.set(incomeResponse.data);
-                        expenseData.set(expenseResponse.data);
-                        incomeTypes.set(incomeTypesResponse.data);
-                        expenseTypes.set(expenseTypesResponse.data);
-                } catch (error) {
-                        console.error('Error:', error);
-                }
+                console.log("Data", incomeResponse.data);
+
+                incomeData.set(incomeResponse.data);
+                expenseData.set(expenseResponse.data);
+                incomeTypes.set(incomeTypesResponse.data);
+                expenseTypes.set(expenseTypesResponse.data);
+            } catch (error) {
+                console.error('Error:', error);
+            }
         });
 </script>
 

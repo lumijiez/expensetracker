@@ -17,7 +17,7 @@
         };
 
         try {
-            const response = await axios.get('http://localhost:8081/users/getUserData', config);
+            const response = await axios.get('http://localhost:8081/users/get-user-data', config);
             const data = response.data;
             username = data.username;
             console.log(username)
