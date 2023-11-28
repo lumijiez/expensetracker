@@ -17,14 +17,13 @@ public class TransactionFilter {
     private final CredentialService credentialService;
 
     public List<? extends IMoneyTransaction> filterByEmail(List<? extends IMoneyTransaction> transactions, String email) {
+        Optional<Credential> credential = credentialService.findByEmail(email);
+        if(credential.isEmpty())
+            throw new UserNotFoundException("The user has not been found");
+
         return transactions
                 .stream()
-                .filter(transaction -> {
-                    Optional<Credential> credential = credentialService.findByEmail(email);
-                    if(credential.isEmpty())
-                        throw new UserNotFoundException("The user has not been found");
-                    return credential.get().getUser().equals(transaction.getUser());
-                })
+                .filter(transaction -> credential.get().getUser().equals(transaction.getUser()))
                 .toList();
     }
 
