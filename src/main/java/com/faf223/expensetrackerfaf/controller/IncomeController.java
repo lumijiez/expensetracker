@@ -134,12 +134,8 @@ public class IncomeController {
     }
 
     @GetMapping("/extend-data")
-    public ResponseEntity<List<BigDecimal>> extendData(@RequestParam Optional<String> userUuid,
-                                                       @RequestParam Optional<String> extendValue,
+    public ResponseEntity<List<BigDecimal>> extendData(@RequestParam Optional<String> extendValue,
                                                        @RequestParam Optional<Integer> extrapolationCount) {
-        if(userUuid.isEmpty())
-            throw new RequiredParamMissingException("User UUID has not been specified");
-
         if(extendValue.isEmpty())
             throw new RequiredParamMissingException("Extend value has not been specified");
 
