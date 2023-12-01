@@ -9,11 +9,9 @@ import com.faf223.expensetrackerfaf.model.User;
 import com.faf223.expensetrackerfaf.service.IncomeCategoryService;
 import com.faf223.expensetrackerfaf.service.IncomeService;
 import com.faf223.expensetrackerfaf.service.UserService;
+import com.faf223.expensetrackerfaf.util.DataExtender;
 import com.faf223.expensetrackerfaf.util.errors.ErrorResponse;
-import com.faf223.expensetrackerfaf.util.exceptions.TransactionDoesNotBelongToTheUserException;
-import com.faf223.expensetrackerfaf.util.exceptions.TransactionNotCreatedException;
-import com.faf223.expensetrackerfaf.util.exceptions.TransactionNotUpdatedException;
-import com.faf223.expensetrackerfaf.util.exceptions.TransactionsNotFoundException;
+import com.faf223.expensetrackerfaf.util.exceptions.*;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -26,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.Collections;
@@ -132,6 +131,36 @@ public class IncomeController {
         }
 
         throw new TransactionsNotFoundException("The expenses have not been found");
+    }
+
+    @GetMapping("/extend-data")
+    public ResponseEntity<List<BigDecimal>> extendData(@RequestParam Optional<String> userUuid,
+                                                       @RequestParam Optional<String> extendValue,
+                                                       @RequestParam Optional<Integer> extrapolationCount) {
+        if(userUuid.isEmpty())
+            throw new RequiredParamMissingException("User UUID has not been specified");
+
+        if(extendValue.isEmpty())
+            throw new RequiredParamMissingException("Extend value has not been specified");
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user;
+
+        if (authentication != null && authentication.getPrincipal() instanceof UserDetails userDetails)
+            user = userService.getUserByEmail(userDetails.getUsername());
+        else
+            user = null;
+
+        if(user == null)
+            throw new UserNotFoundException("User with the specified UUID has not been found");
+
+        if(extendValue.get().equalsIgnoreCase("i"))
+            return ResponseEntity.ok(DataExtender.interpolate(user.getIncomes()));
+
+        if(extendValue.get().equalsIgnoreCase("e"))
+            return extrapolationCount.map(integer -> ResponseEntity.ok(DataExtender.extrapolate(user.getIncomes(), integer))).orElseGet(() -> ResponseEntity.ok(DataExtender.extrapolate(user.getIncomes(), 10)));
+
+        throw new WrongParamValueException("Wrong extend value has been specified (use either \"i\" or \"e\")");
     }
 
     @GetMapping("/categories")

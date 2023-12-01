@@ -12,72 +12,47 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler
     private ResponseEntity<ErrorResponse> handleDoesNotBelongException(TransactionDoesNotBelongToTheUserException e) {
-        ErrorResponse response = new ErrorResponse(
-                e.getMessage(),
-                System.currentTimeMillis()
-        );
-
-        return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
+        return new ResponseEntity<>(new ErrorResponse(e.getMessage()), HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler
     private ResponseEntity<ErrorResponse> handleTransactionNotCreatedException(TransactionNotCreatedException e) {
-        ErrorResponse response = new ErrorResponse(
-                e.getMessage(),
-                System.currentTimeMillis()
-        );
-
-        return new ResponseEntity<>(response, HttpStatus.NOT_MODIFIED);
+        return new ResponseEntity<>(new ErrorResponse(e.getMessage()), HttpStatus.NOT_MODIFIED);
     }
 
     @ExceptionHandler
     private ResponseEntity<ErrorResponse> handleTransactionsNotFoundException(TransactionsNotFoundException e) {
-        ErrorResponse response = new ErrorResponse(
-                e.getMessage(),
-                System.currentTimeMillis()
-        );
-
-        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(new ErrorResponse(e.getMessage()), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler
     private ResponseEntity<ErrorResponse> handleUserNotFoundException(UserNotFoundException e) {
-        ErrorResponse response = new ErrorResponse(
-                e.getMessage(),
-                System.currentTimeMillis()
-        );
-
-        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(new ErrorResponse(e.getMessage()), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler
     private ResponseEntity<ErrorResponse> handleTransactionNotUpdatedException(TransactionNotUpdatedException e) {
-        ErrorResponse response = new ErrorResponse(
-                e.getMessage(),
-                System.currentTimeMillis()
-        );
-
-        return new ResponseEntity<>(response, HttpStatus.NOT_MODIFIED);
+        return new ResponseEntity<>(new ErrorResponse(e.getMessage()), HttpStatus.NOT_MODIFIED);
     }
 
     @ExceptionHandler
     private ResponseEntity<ErrorResponse> handleUserNotAuthenticatedException(UserNotAuthenticatedException e) {
-        ErrorResponse response = new ErrorResponse(
-                e.getMessage(),
-                System.currentTimeMillis()
-        );
-
-        return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
+        return new ResponseEntity<>(new ErrorResponse(e.getMessage()), HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler
     private ResponseEntity<ErrorResponse> handleUserNotCreatedException(UserNotCreatedException e) {
-        ErrorResponse response = new ErrorResponse(
-                e.getMessage(),
-                System.currentTimeMillis()
-        );
+        return new ResponseEntity<>(new ErrorResponse(e.getMessage()), HttpStatus.NOT_MODIFIED);
+    }
 
-        return new ResponseEntity<>(response, HttpStatus.NOT_MODIFIED);
+    @ExceptionHandler
+    private ResponseEntity<ErrorResponse> handleRequiredParamMissingException(RequiredParamMissingException e) {
+        return new ResponseEntity<>(new ErrorResponse(e.getMessage()), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler
+    private ResponseEntity<ErrorResponse> handleWrongParamValueException(WrongParamValueException e) {
+        return new ResponseEntity<>(new ErrorResponse(e.getMessage()), HttpStatus.BAD_REQUEST);
     }
 
 }
