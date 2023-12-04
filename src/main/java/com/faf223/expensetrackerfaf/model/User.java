@@ -34,8 +34,6 @@ public class User {
     private String username;
 
     @Transient
-    @NotNull(message = "Password must not be null")
-    @NotEmpty(message = "Password must not be empty")
     private String password;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
