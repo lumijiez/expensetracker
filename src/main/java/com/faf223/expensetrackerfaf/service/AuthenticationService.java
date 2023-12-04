@@ -49,6 +49,7 @@ public class AuthenticationService {
         String jwtToken = jwtService.generateToken(userDetails);
         String refreshToken = jwtService.generateRefreshToken(userDetails);
 
+        System.out.println(user);
         return AuthenticationResponse.builder()
                 .accessToken(jwtToken)
                 .refreshToken(refreshToken)
@@ -113,6 +114,7 @@ public class AuthenticationService {
         UserDetails userDetails = new PersonDetails(credential);
         String jwtToken = jwtService.generateToken(userDetails);
         String refreshToken = jwtService.generateRefreshToken(userDetails);
+        System.out.println(jwtToken);
         return AuthenticationResponse.builder()
                 .accessToken(jwtToken)
                 .refreshToken(refreshToken)
@@ -127,6 +129,7 @@ public class AuthenticationService {
             UserDetails userDetails = new PersonDetails(credential.get());
 
             String jwtToken = jwtService.generateToken(userDetails);
+            System.out.println(jwtToken);
             return AuthenticationResponse.builder()
                     .accessToken(jwtToken)
                     .refreshToken(refreshToken)
