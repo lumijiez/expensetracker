@@ -58,6 +58,7 @@ public class ExpenseService implements ITransactionService {
 
     @Override
     public List<Expense> getTransactionsByMonth(Month month) {
+        System.out.println(expenseRepository.filterByMonth(month.getValue()));
         return expenseRepository.filterByMonth(month.getValue());
     }
 

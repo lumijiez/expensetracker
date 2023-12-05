@@ -13,6 +13,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity(name = "incomes")
+@Builder
 public class Income implements IMoneyTransaction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
