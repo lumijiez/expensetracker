@@ -23,7 +23,6 @@ public class IncomeRepositoryTest {
     private IncomeRepository incomeRepository;
     @Autowired
     private IncomeCategoryRepository incomeCategoryRepository;
-
     @Autowired
     private UserRepository userRepository;
 
@@ -119,4 +118,75 @@ public class IncomeRepositoryTest {
         Optional<Income> incomeReturn = incomeRepository.findById(income.getId());
         Assertions.assertThat(incomeReturn.isPresent()).isTrue();
     }
+
+    @Test
+    public void IncomeRepository_FindByUser_ReturnIncomes() {
+
+        Optional<User> user = userRepository.findByUsername("Balaban");
+        Assertions.assertThat(user.isPresent()).isTrue();
+
+        List<Income> incomes = incomeRepository.findByUser(user.get());
+
+        Assertions.assertThat(incomes).isNotNull();
+    }
+
+    @Test
+    public void IncomeRepository_FindByDate_ReturnIncomes() {
+
+        List<Income> incomes = incomeRepository.findByDate(LocalDate.of(2023,10,7));
+
+        Assertions.assertThat(incomes).isNotNull();
+    }
+
+    @Test
+    public void IncomeRepository_UpdateIncome_ReturnIncomeNotNull() {
+
+        Optional<User> user = userRepository.findByUsername("Deep Deep");
+        Assertions.assertThat(user.isPresent()).isTrue();
+        IncomeCategory incomeCategory = incomeCategoryRepository.getReferenceById(4L);
+
+        Income income = Income.builder()
+                .user(user.get())
+                .amount(BigDecimal.valueOf(700))
+                .category(incomeCategory)
+                .date(LocalDate.of(2023,10,5))
+                .build();
+
+        incomeRepository.save(income);
+
+        Optional<Income> incomeSave = incomeRepository.findById(income.getId());
+        Assertions.assertThat(incomeSave).isNotNull();
+
+        Income incomeToUpdate = incomeSave.get();
+        incomeToUpdate.setDate(LocalDate.of(2023,10,6));
+        incomeToUpdate.setAmount(BigDecimal.valueOf(777));
+
+        Income updatedIncome = incomeRepository.save(incomeToUpdate);
+
+        Assertions.assertThat(updatedIncome).isNotNull();
+        Assertions.assertThat(updatedIncome.getAmount()).isEqualTo(BigDecimal.valueOf(777));
+    }
+
+    @Test
+    public void IncomeRepository_DeleteIncome_ReturnIncomeNull() {
+
+        Optional<User> user = userRepository.findByUsername("Deep Deep");
+        Assertions.assertThat(user.isPresent()).isTrue();
+        IncomeCategory incomeCategory = incomeCategoryRepository.getReferenceById(4L);
+
+        Income income = Income.builder()
+                .user(user.get())
+                .amount(BigDecimal.valueOf(700))
+                .category(incomeCategory)
+                .date(LocalDate.of(2023,10,5))
+                .build();
+
+        incomeRepository.save(income);
+        incomeRepository.deleteById(income.getId());
+
+        Optional<Income> deletedIncome = incomeRepository.findById(income.getId());
+
+        Assertions.assertThat(deletedIncome.isPresent()).isFalse();
+    }
+
 }
