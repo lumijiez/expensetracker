@@ -17,7 +17,7 @@
         };
 
         try {
-            const response = await axios.get('http://localhost:8081/users/get-user-data', config);
+            const response = await axios.get('http://trackio.online:8081/users/get-user-data', config);
             const data = response.data;
             username = data.username;
             console.log(username)
@@ -110,6 +110,7 @@
         justify-content: center;
         align-items: center;
         border-radius: 20px;
+        cursor: pointer;
     }
 
     .sideMenuItem:hover {

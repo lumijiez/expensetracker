@@ -31,11 +31,13 @@
                 };
 
             try {
+                var currentDate = new Date();
+                var currentMonth = currentDate.getMonth() + 1;
                 const [incomeResponse, expenseResponse, incomeTypesResponse, expenseTypesResponse] = await Promise.all([
-                    axios.get('http://localhost:8081/incomes/personal-incomes?month=11', config),
-                    axios.get('http://localhost:8081/expenses/personal-expenses?month=11', config),
-                    axios.get('http://localhost:8081/incomes/categories', config),
-                    axios.get('http://localhost:8081/expenses/categories', config)
+                    axios.get('http://trackio.online:8081/incomes/personal-incomes?month=' + currentMonth , config),
+                    axios.get('http://trackio.online:8081/expenses/personal-expenses?month=' + currentMonth, config),
+                    axios.get('http://trackio.online:8081/incomes/categories', config),
+                    axios.get('http://trackio.online:8081/expenses/categories', config)
                 ]);
 
                 console.log("Data", incomeResponse.data);

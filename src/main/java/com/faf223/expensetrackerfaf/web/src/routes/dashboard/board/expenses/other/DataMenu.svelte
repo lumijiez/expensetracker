@@ -4,7 +4,9 @@
     import Expenses from "../infolists/Expenses.svelte";
     import {globalStyles} from "../../../styles.js";
     import { slide } from 'svelte/transition'
-    import {expenseTypes} from "../../../stores.js";
+    import {expenseTypes, expenseData} from "../../../stores.js";
+    import axios from "axios";
+    import {getCookie} from "svelte-cookie";
 
     let isDateDropdownExpanded = false
     let isCategoryDropdownExpanded = false
@@ -17,6 +19,38 @@
         isCategoryDropdownExpanded = !isCategoryDropdownExpanded;
     }
 
+    async function getToday() {
+        var currentDate = new Date();
+        var currentDay = currentDate.toISOString().split('T')[0];
+        try {
+            const response = await axios.get('http://trackio.online:8081/expenses/personal-expenses?date=' + currentDay, {
+                headers: {
+                    'Authorization': `Bearer ${getCookie('access_token')}`
+                }
+            });
+            expenseData.set(response.data);
+        } catch (error) {
+            console.error("Error fetching expenses:", error);
+        }
+    }
+
+    async function getLastYear() {
+        var currentDate = new Date();
+        var year = currentDate.getFullYear();
+
+        try {
+            const response = await axios.get('http://trackio.online:8081/expenses/personal-expenses?year=' + year, {
+                headers: {
+                    'Authorization': `Bearer ${getCookie('access_token')}`
+                }
+            });
+
+            expenseData.set(response.data);
+        } catch (error) {
+            console.error("Error fetching expenses:", error);
+        }
+    }
+
 </script>
 
 <div id="main-data" style="background-color: {$globalStyles.dashColor}; color: {$globalStyles.color}">
@@ -27,12 +61,12 @@
             <button id="button" on:click={clickHandlerDate}>Filter by Date:</button>
             {#if isDateDropdownExpanded}
                 <div id="date-list" transition:slide>
-                    <div on:click={() => console.log("Today")}>Today</div>
+                    <div on:click={() => getToday()}>Today</div>
                     <div on:click={() => console.log("Yesterday")}>Yesterday</div>
                     <div on:click={() => console.log("Last week")}>Last week</div>
                     <div on:click={() => console.log("Last month")}>Last month</div>
                     <div on:click={() => console.log("Current quarter")}>Current quarter</div>
-                    <div on:click={() => console.log("This year")}>This year</div>
+                    <div on:click={() => getLastYear()}>This year</div>
                 </div>
             {/if}
         </div>
@@ -76,35 +110,49 @@
         flex: 1 1 auto;
     }
 
+    /*#button {*/
+    /*    background-color: #fff000;*/
+    /*    border-radius: 12px;*/
+    /*    color: #000;*/
+    /*    cursor: pointer;*/
+    /*    font-weight: bold;*/
+    /*    padding: 10px 15px;*/
+    /*    text-align: center;*/
+    /*    transition: 200ms;*/
+    /*    width: 100%;*/
+    /*    box-sizing: border-box;*/
+    /*    border: 0;*/
+    /*    font-size: 16px;*/
+    /*    user-select: none;*/
+    /*    -webkit-user-select: none;*/
+    /*    touch-action: manipulation;*/
+    /*}*/
+
+    /*#button:not(:disabled):hover,*/
+    /*#button:not(:disabled):focus {*/
+    /*    outline: 0;*/
+    /*    background: #f4e603;*/
+    /*    box-shadow: 0 0 0 2px rgba(0,0,0,.2), 0 3px 8px 0 rgba(0,0,0,.15);*/
+    /*}*/
+
+    /*#button:disabled {*/
+    /*    filter: saturate(0.2) opacity(0.5);*/
+    /*    -webkit-filter: saturate(0.2) opacity(0.5);*/
+    /*    cursor: not-allowed;*/
+    /*}*/
+
     #button {
-        background-color: #fff000;
-        border-radius: 12px;
-        color: #000;
+        font-size: large;
+        background-color: #007BFF;
+        color: #fff;
+        border: none;
+        border-radius: 20px;
+        line-height: 40px;
         cursor: pointer;
-        font-weight: bold;
-        padding: 10px 15px;
-        text-align: center;
-        transition: 200ms;
-        width: 100%;
-        box-sizing: border-box;
-        border: 0;
-        font-size: 16px;
-        user-select: none;
-        -webkit-user-select: none;
-        touch-action: manipulation;
     }
 
-    #button:not(:disabled):hover,
-    #button:not(:disabled):focus {
-        outline: 0;
-        background: #f4e603;
-        box-shadow: 0 0 0 2px rgba(0,0,0,.2), 0 3px 8px 0 rgba(0,0,0,.15);
-    }
-
-    #button:disabled {
-        filter: saturate(0.2) opacity(0.5);
-        -webkit-filter: saturate(0.2) opacity(0.5);
-        cursor: not-allowed;
+    #button:hover {
+        background-color: #0056b3;
     }
 
 
@@ -131,7 +179,8 @@
         border-top-left-radius: 20px;
         border-top-right-radius: 20px;
         font-size: larger;
-        border: #8BD17C 2px solid;
+        margin-bottom: 5px;
+        /*border: #8BD17C 2px solid;*/
     }
 
     #data-menu {
