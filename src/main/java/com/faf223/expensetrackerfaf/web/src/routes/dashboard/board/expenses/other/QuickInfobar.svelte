@@ -17,11 +17,11 @@
         const expenseDifference = ((lastMonthExpense - totalExpenses) / lastMonthExpense) * 100;
 
         try {
-            infobar1.innerHTML = `<span style="font-size: larger">Total expenses:</span><br><span style="color:red;font-size: 150%">${totalExpenses.toFixed(2)}$</span>`;
-            infobar2.innerHTML = `<span style="font-size: larger">Total incomes:</span><br><span style="color:green;font-size: 150%">${totalIncomes.toFixed(2)}$</span>`;
+            infobar1.innerHTML = `<span style="font-size: larger">Total expenses:</span><br><span style="color:red;font-size: xxx-large">${totalExpenses.toFixed(2)}$</span>`;
+            infobar2.innerHTML = `<span style="font-size: larger">Total incomes:</span><br><span style="color:green;font-size: xxx-large">${totalIncomes.toFixed(2)}$</span>`;
 
-            infobar3.innerHTML = `<span style="font-size: larger">Income by last month:</span><br><span style="color:blue;font-size: 150%">${incomeDifference.toFixed(2)}%</span>`;
-            infobar4.innerHTML = `<span style="font-size: larger">Expense by last month:</span><br><span style="color:orange;font-size: 150%">${expenseDifference.toFixed(2)}%</span>`;
+            infobar3.innerHTML = `<span style="font-size: larger">Income by last month:</span><br><span style="color:blue;font-size: xxx-large">${incomeDifference.toFixed(2)}%</span>`;
+            infobar4.innerHTML = `<span style="font-size: larger">Expense by last month:</span><br><span style="color:orange;font-size: xxx-large">${expenseDifference.toFixed(2)}%</span>`;
         } catch {
             console.log("not yet loaded");
         }

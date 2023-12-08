@@ -34,10 +34,10 @@
                 var currentDate = new Date();
                 var currentMonth = currentDate.getMonth() + 1;
                 const [incomeResponse, expenseResponse, incomeTypesResponse, expenseTypesResponse] = await Promise.all([
-                    axios.get('http://trackio.online:8081/incomes/personal-incomes?month=' + currentMonth , config),
-                    axios.get('http://trackio.online:8081/expenses/personal-expenses?month=' + currentMonth, config),
-                    axios.get('http://trackio.online:8081/incomes/categories', config),
-                    axios.get('http://trackio.online:8081/expenses/categories', config)
+                    axios.get('https://trackio.online:8081/incomes/personal-incomes?month=' + currentMonth , config),
+                    axios.get('https://trackio.online:8081/expenses/personal-expenses?month=' + currentMonth, config),
+                    axios.get('https://trackio.online:8081/incomes/categories', config),
+                    axios.get('https://trackio.online:8081/expenses/categories', config)
                 ]);
 
                 console.log("Data", incomeResponse.data);
@@ -52,6 +52,11 @@
         });
 </script>
 
+<svelte:head>
+    <link rel="icon" type="image/x-icon" href="../favicon.png" />
+    <title>Track.IO</title>
+</svelte:head>
+
 <div id="dashboard" style="background-color: {componentStyles.dashColor}; color: {componentStyles.color}">
                 {#if $selectedTab === 'expenses'}
                         <ExpenseDashboard />
@@ -63,6 +68,7 @@
 </div>
 
 <style>
+
         #dashboard {
                 font-family: 'Source Sans Pro', sans-serif;
                 border-radius: 20px;

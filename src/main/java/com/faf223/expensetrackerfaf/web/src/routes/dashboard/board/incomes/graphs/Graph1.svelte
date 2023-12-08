@@ -60,7 +60,17 @@
 					},
 					options: {
 						responsive: true,
-						maintainAspectRatio: false
+						maintainAspectRatio: false,
+						plugins: {
+							legend: {
+								labels: {
+									font: {
+										weight: 'bold'
+									},
+									color: '#fff'
+								}
+							}
+						}
 					}
 				});
 			} else {

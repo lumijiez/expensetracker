@@ -17,7 +17,7 @@
         };
 
         try {
-            const response = await axios.get('http://trackio.online:8081/users/get-user-data', config);
+            const response = await axios.get('https://trackio.online:8081/users/get-user-data', config);
             const data = response.data;
             username = data.username;
             console.log(username)
