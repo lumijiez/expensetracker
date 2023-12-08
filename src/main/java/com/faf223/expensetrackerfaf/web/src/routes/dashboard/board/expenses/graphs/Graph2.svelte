@@ -1,7 +1,7 @@
 <script>
 	import Chart from 'chart.js/auto';
-	import { onMount } from 'svelte';
-	import { expenseData } from "../../../stores.js";
+	import {onMount} from 'svelte';
+	import {expenseData} from "../../../stores.js";
 	import {globalStyles} from "../../../styles.js";
 
 	let ctx;
@@ -10,26 +10,35 @@
 
 	function groupAndSumByCategory() {
 		const groupedData = new Map();
-		console.log($expenseData)
 		$expenseData.forEach(expense => {
 					const category = expense.expenseCategory.name;
 					if (groupedData.has(category)) {
 						groupedData.set(category, groupedData.get(category) + parseInt(expense.amount));
 					} else {
-						groupedData.set(category, expense.amount);
+						groupedData.set(category, parseInt(expense.amount));
 					}
 				}
 		);
-		return groupedData;
+
+		return new Map([...groupedData.entries()].sort());
 	}
 
 	function createGraph() {
 		try {
 			const groupedExpenseData = groupAndSumByCategory();
+			console.log("============= here start")
+			console.log(groupedExpenseData);
 
-			const chartLabels = Array.from(groupedExpenseData.keys());
-			const chartValues = Array.from(groupedExpenseData.values());
+			const chartLabels = [];
+			const chartValues = [];
 
+			for (const [label, value] of groupedExpenseData.entries()) {
+				chartLabels.push(label);
+				chartValues.push(value);
+			}
+			console.log(chartLabels)
+			console.log(chartValues)
+			console.log("============= here end")
 			ctx = chartCanvas.getContext('2d');
 
 			if (!chart) {

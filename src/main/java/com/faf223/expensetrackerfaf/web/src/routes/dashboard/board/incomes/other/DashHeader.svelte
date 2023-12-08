@@ -1,9 +1,9 @@
 <script>
-
+    import {globalStyles} from "../../../styles.js";
 </script>
 
 <div id="header">
-    <div id="dashboardTitleWrapper">
+    <div id="dashboardTitleWrapper" style="color: {$globalStyles.dashTextColor}">
         <h5>Hello, welcome to your</h5>
         <h1 id="dashboardTitle">Dashboard</h1>
     </div>

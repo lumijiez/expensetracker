@@ -15,6 +15,7 @@
         }
 
         import axios from "axios";
+        import Statistics from "./Statistics.svelte";
 
         onMount(async () => {
                 const token = getCookie('access_token');
@@ -64,6 +65,8 @@
                         <IncomeDashboard />
                 {:else if $selectedTab === 'settings'}
                         <Settings />
+                {:else if $selectedTab === 'statistics'}
+                        <Statistics />
                 {/if}
 </div>
 

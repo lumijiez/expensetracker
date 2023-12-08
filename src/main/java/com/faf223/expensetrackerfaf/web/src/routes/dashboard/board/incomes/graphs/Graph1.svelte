@@ -26,7 +26,8 @@
 					}
 				}
 		);
-		return groupedData;
+
+		return new Map([...groupedData.entries()].sort());;
 	}
 
 	function createGraph() {
