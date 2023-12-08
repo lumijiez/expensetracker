@@ -36,7 +36,7 @@
 
             console.log(data)
 
-            const response = await axios.post('http://localhost:8081/api/v1/auth/register', data);
+            const response = await axios.post('https://trackio.online:8081/api/v1/auth/register', data);
 
             const { access_token, refresh_token } = response.data;
 
@@ -77,6 +77,12 @@
     // }
 
 </script>
+
+<svelte:head>
+    <link rel="icon" type="image/x-icon" href="../favicon.png" />
+    <title>Register into Track.IO</title>
+</svelte:head>
+
 
 <div class="animated bounceInDown">
     <div class="container">

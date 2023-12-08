@@ -50,7 +50,7 @@
         try {
             const token = getCookie('access_token');
 
-            const response = await axios.post('http://localhost:8081/incomes', data, {
+            const response = await axios.post('https://trackio.online:8081/incomes', data, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json',

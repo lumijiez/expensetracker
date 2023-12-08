@@ -22,10 +22,12 @@
         event.preventDefault();
 
         try {
-            const response = await axios.post('http://localhost:8081/api/v1/auth/authenticate', {
+            const response = await axios.post('https://trackio.online:8081/api/v1/auth/authenticate', {
                 email: username,
                 password: password,
             });
+
+            console.log(response.data)
 
             const { access_token, refresh_token } = response.data;
 
@@ -60,6 +62,10 @@
     </div> 
 </div>
 
+<svelte:head>
+    <link rel="icon" type="image/x-icon" href="../favicon.png" />
+    <title>Login into Track.IO</title>
+</svelte:head>
 
 <style>
     @import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400');

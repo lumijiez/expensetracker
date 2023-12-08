@@ -30,23 +30,32 @@
                         }
                 };
 
-                try {
-                        const [incomeResponse, expenseResponse, incomeTypesResponse, expenseTypesResponse] = await Promise.all([
-                                axios.get('http://localhost:8081/incomes/personal-incomes', config),
-                                axios.get('http://localhost:8081/expenses/personal-expenses', config),
-                                axios.get('http://localhost:8081/incomes/categories', config),
-                                axios.get('http://localhost:8081/expenses/categories', config)
-                        ]);
+            try {
+                var currentDate = new Date();
+                var currentMonth = currentDate.getMonth() + 1;
+                const [incomeResponse, expenseResponse, incomeTypesResponse, expenseTypesResponse] = await Promise.all([
+                    axios.get('https://trackio.online:8081/incomes/personal-incomes?month=' + currentMonth , config),
+                    axios.get('https://trackio.online:8081/expenses/personal-expenses?month=' + currentMonth, config),
+                    axios.get('https://trackio.online:8081/incomes/categories', config),
+                    axios.get('https://trackio.online:8081/expenses/categories', config)
+                ]);
 
-                        incomeData.set(incomeResponse.data);
-                        expenseData.set(expenseResponse.data);
-                        incomeTypes.set(incomeTypesResponse.data);
-                        expenseTypes.set(expenseTypesResponse.data);
-                } catch (error) {
-                        console.error('Error:', error);
-                }
+                console.log("Data", incomeResponse.data);
+
+                incomeData.set(incomeResponse.data);
+                expenseData.set(expenseResponse.data);
+                incomeTypes.set(incomeTypesResponse.data);
+                expenseTypes.set(expenseTypesResponse.data);
+            } catch (error) {
+                console.error('Error:', error);
+            }
         });
 </script>
+
+<svelte:head>
+    <link rel="icon" type="image/x-icon" href="../favicon.png" />
+    <title>Track.IO</title>
+</svelte:head>
 
 <div id="dashboard" style="background-color: {componentStyles.dashColor}; color: {componentStyles.color}">
                 {#if $selectedTab === 'expenses'}
@@ -59,6 +68,7 @@
 </div>
 
 <style>
+
         #dashboard {
                 font-family: 'Source Sans Pro', sans-serif;
                 border-radius: 20px;
