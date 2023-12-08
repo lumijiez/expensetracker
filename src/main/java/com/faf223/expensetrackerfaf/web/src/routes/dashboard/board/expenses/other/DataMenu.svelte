@@ -182,7 +182,6 @@
     }
 
     function filterByCategory(category) {
-        console.log(category)
         let tempArr = $tempExpense.filter(expense => expense.expenseCategory.name === category);
         expenseData.set(tempArr);
     }

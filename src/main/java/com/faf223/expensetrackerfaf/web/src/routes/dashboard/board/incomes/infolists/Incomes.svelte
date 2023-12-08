@@ -26,7 +26,7 @@
                         {@html textToIcon[item.incomeCategory.name]}
                     {/if}
                     <span style="font-weight: bold">{item.incomeCategory ? `${item.incomeCategory.name}: ` : `${item.expenseCategory.name}: `}</span>
-                    <span style="margin-right: 10px; color: green; font-size: larger">{item.incomeCategory ? `+${item.amount}$` : `-${item.amount}$`}</span>
+                    <span style="font-weight:bold; margin-right: 10px; color: green; font-size: larger">{item.incomeCategory ? `+${item.amount}$` : `-${item.amount}$`}</span>
                     </span>
                     <span style="">{`${item.date}`}</span>
                 </li>

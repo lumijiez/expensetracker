@@ -6,7 +6,7 @@
     import {expenseTypes, expenseData} from "../../../stores.js";
 
 
-    let showModal;
+    var showModal;
     let amount = '';
     let newData;
 
@@ -17,8 +17,8 @@
         const expenseCategory = $expenseTypes.find(incomeType => incomeType.id === id);
 
         if (expenseCategory) {
-            const newIncome = {
-                incomeId: 0,
+            const newExpense = {
+                expenseId: 0,
                 userDTO: {
                     name: "Dummy",
                     surname: "User",
@@ -30,7 +30,8 @@
             };
 
             newData = $expenseData;
-            newData.push(newIncome);
+            newData.push(newExpense);
+            console.log(newExpense);
             $expenseData = newData;
         } else {
             console.error('Expense category not found for id:', id);
@@ -38,6 +39,7 @@
     }
 
     const createExpense = async () => {
+        showModal = false;
         const selectedExpense = $expenseTypes.find(expense => expense.id === $selectedExpenseId);
         const data = {
             expenseCategory: selectedExpense.id,
@@ -45,7 +47,6 @@
         };
 
         addNewExpense(selectedExpense.id, parseInt(amount));
-
         try {
             const token = getCookie('access_token');
 

@@ -40,7 +40,6 @@
     onMount(() => {
         document.body.addEventListener("click", clickOutsideHandler);
 
-        // Clean up the event listener when the component is destroyed
         return () => {
             document.body.removeEventListener("click", clickOutsideHandler);
         };
