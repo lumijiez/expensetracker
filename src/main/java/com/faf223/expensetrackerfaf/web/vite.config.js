@@ -2,7 +2,7 @@ import fs from 'fs'
 import { defineConfig } from 'vite';
 import { sveltekit } from '@sveltejs/kit/vite';
 
-// ffdddd
+// ffddddd
 export default defineConfig({
 	plugins: [sveltekit()],
 	server: {
