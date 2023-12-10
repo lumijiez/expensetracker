@@ -30,8 +30,7 @@ import {globalStyles} from "../../../styles.js";
     #dashboardTitleWrapper {
         display: flex;
         flex-direction: column;
-        margin:20px;
-        margin-bottom: 0px;
+        margin: 20px 20px 0;
     }
 
     #dashboardTitleWrapper h5 {
