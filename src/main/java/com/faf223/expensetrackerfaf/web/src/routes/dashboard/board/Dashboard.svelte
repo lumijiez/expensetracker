@@ -4,7 +4,17 @@
         import ExpenseDashboard from "./ExpenseDashboard.svelte";
         import IncomeDashboard from "./IncomeDashboard.svelte";
         import Settings from "./Settings.svelte";
-        import { incomeData, expenseData, incomeTypes, expenseTypes, selectedTab } from "../stores.js";
+        import {
+            incomeData,
+            expenseData,
+            incomeTypes,
+            expenseTypes,
+            selectedTab,
+            monthIncome,
+            monthExpense,
+            tempExpense,
+            tempIncome
+        } from "../stores.js";
         import {globalStyles} from "../styles.js";
 
         let componentStyles;
@@ -16,6 +26,8 @@
 
         import axios from "axios";
         import Statistics from "./Statistics.svelte";
+        import AdminPanel from "./AdminPanel.svelte";
+        import Profile from "./Profile.svelte";
 
         onMount(async () => {
                 const token = getCookie('access_token');
@@ -32,8 +44,8 @@
                 };
 
             try {
-                var currentDate = new Date();
-                var currentMonth = currentDate.getMonth() + 1;
+                const currentDate = new Date();
+                const currentMonth = currentDate.getMonth() + 1;
                 const [incomeResponse, expenseResponse, incomeTypesResponse, expenseTypesResponse] = await Promise.all([
                     axios.get('https://trackio.online:8081/incomes/personal-incomes?month=' + currentMonth , config),
                     axios.get('https://trackio.online:8081/expenses/personal-expenses?month=' + currentMonth, config),
@@ -45,8 +57,15 @@
 
                 incomeData.set(incomeResponse.data);
                 expenseData.set(expenseResponse.data);
+
                 incomeTypes.set(incomeTypesResponse.data);
                 expenseTypes.set(expenseTypesResponse.data);
+
+                tempExpense.set(expenseResponse.data);
+                tempIncome.set(incomeResponse.data);
+
+                monthIncome.set(incomeResponse.data);
+                monthExpense.set(expenseResponse.data);
             } catch (error) {
                 console.error('Error:', error);
             }
@@ -67,6 +86,10 @@
                         <Settings />
                 {:else if $selectedTab === 'statistics'}
                         <Statistics />
+                {:else if $selectedTab === 'admin'}
+                        <AdminPanel />
+                {:else if $selectedTab === 'profile'}
+                        <Profile />
                 {/if}
 </div>
 

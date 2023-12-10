@@ -5,24 +5,19 @@
     import {expenseTypes, expenseData, dateText} from "../../../stores.js";
     import { slide } from 'svelte/transition';
 
-    var showModal = false;
+    let showModal = false;
     let amount = '';
     let newData;
 
     const selectedExpenseId = writable('');
 
-    function addNewExpense(id, amount) {
+    function addNewExpense(expid, id, amount) {
         const today = new Date().toISOString().split('T')[0];
         const expenseCategory = $expenseTypes.find(incomeType => incomeType.id === id);
 
         if (expenseCategory) {
             const newExpense = {
-                expenseId: 0,
-                userDTO: {
-                    name: "Dummy",
-                    surname: "User",
-                    username: "dummyuser"
-                },
+                expenseId: expid,
                 expenseCategory: expenseCategory,
                 date: today,
                 amount: parseInt(amount)
@@ -30,7 +25,6 @@
 
             newData = $expenseData;
             newData.push(newExpense);
-            console.log(newExpense);
             $expenseData = newData;
         } else {
             console.error('Expense category not found for id:', id);
@@ -45,7 +39,6 @@
             amount: parseInt(amount),
         };
 
-        addNewExpense(selectedExpense.id, parseInt(amount));
         try {
             const token = getCookie('access_token');
 
@@ -57,7 +50,7 @@
             });
 
             if (response.status === 201) {
-                //console.log("cool");
+                addNewExpense(response.data.expenseId, selectedExpense.id, parseInt(amount));
             } else {
                 console.error('Error:', response.status);
             }
@@ -97,7 +90,11 @@
                 </select>
             </div>
 
-            <button class="btn btn-primary" on:click={createExpense}>Submit</button>
+            <div style="display: flex; justify-content: space-around">
+                <button class="btn btn-primary" on:click={createExpense}>SUBMIT</button>
+                <button class="btn btn-primary" on:click={() => showModal = false}>CANCEL</button>
+            </div>
+
         </div>
     {/if}
 </div>
@@ -107,6 +104,32 @@
     #exp {
         padding: 10px 20px;
         text-align: center;
+    }
+
+    button {
+        background-image: linear-gradient(92.88deg, #455EB5 9.16%, #5643CC 43.89%, #673FD7 64.72%);
+        border-radius: 8px;
+        border-style: none;
+        box-sizing: border-box;
+        color: #FFFFFF;
+        cursor: pointer;
+        flex-shrink: 0;
+        font-family: "Inter UI", "SF Pro Display", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+        font-size: 16px;
+        font-weight: 500;
+        height: 3rem;
+        padding: 0 1.6rem;
+        text-align: center;
+        text-shadow: rgba(0, 0, 0, 0.25) 0 3px 8px;
+        transition: all .5s;
+        user-select: none;
+        -webkit-user-select: none;
+        touch-action: manipulation;
+    }
+
+    button:hover {
+        box-shadow: rgba(80, 63, 205, 0.5) 0 1px 30px;
+        transition-duration: .1s;
     }
 
     #optionField {
@@ -136,8 +159,26 @@
         border-radius: 20px;
         padding: 20px;
         max-width: 400px;
-        margin: 0 auto;
         color: black;
+    }
+
+    input[type=text] {
+        padding: 12px 20px;
+        margin: 8px 0;
+        display: inline-block;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+
+    select {
+        padding: 12px 20px;
+        margin: 8px 0;
+        display: inline-block;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+        font-size: 16px;
     }
 
     h3 {
