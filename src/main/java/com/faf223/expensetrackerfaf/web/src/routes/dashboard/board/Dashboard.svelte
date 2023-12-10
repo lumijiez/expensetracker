@@ -76,7 +76,6 @@
                 font-family: 'Source Sans Pro', sans-serif;
                 border-radius: 20px;
                 margin: 20px;
-                padding: 20px 20px 0;
                 min-width: 100px;
                 display: flex;
                 flex: 1 1 auto;
@@ -84,5 +83,13 @@
                 align-items: stretch;
                 justify-content: stretch;
                 transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+        }
+
+        @media only screen and (max-width: 900px) {
+            #dashboard {
+                margin: 0;
+                flex-wrap: wrap;
+                width: 100%;
+            }
         }
 </style>

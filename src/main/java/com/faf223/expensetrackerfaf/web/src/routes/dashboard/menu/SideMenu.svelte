@@ -91,6 +91,7 @@
 </div>
 
 <style>
+
     #sideMenu {
         font-family: 'Source Sans Pro', sans-serif;
         display: flex;
@@ -99,6 +100,12 @@
         min-width: 150px;
         max-width: 200px;
         margin-left: 20px;
+    }
+
+    @media only screen and (max-width: 900px) {
+        #sideMenu {
+            display: none;
+        }
     }
 
     #iconSpace {

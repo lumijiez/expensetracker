@@ -1,12 +1,11 @@
 <script>
-    import Modal from './Modal.svelte';
     import { writable } from 'svelte/store';
     import axios from 'axios';
     import { getCookie } from "svelte-cookie";
-    import {expenseTypes, expenseData} from "../../../stores.js";
+    import {expenseTypes, expenseData, dateText} from "../../../stores.js";
+    import { slide } from 'svelte/transition';
 
-
-    var showModal;
+    var showModal = false;
     let amount = '';
     let newData;
 
@@ -66,17 +65,21 @@
             console.error('Error:', error);
         }
     };
+
+    function toggleModal() {
+        showModal = !showModal;
+    }
 </script>
 
 <div id="exp">
     <div id="optionField">
-        <h2>Expenses</h2>
-        <div id="openModal" class="plus-button" role="button" tabindex="0" on:click={() => (showModal = true)} on:keydown={() => console.log("keydown")}>
+        <h2>Expenses: {$dateText}</h2>
+        <div id="openModal" class="plus-button" role="button" tabindex="0" on:click={toggleModal} on:keydown={() => console.log("keydown")}>
             +
         </div>
     </div>
-    <Modal bind:showModal>
-        <div class="expense-form">
+        {#if showModal}
+        <div class="expense-form" transition:slide>
             <h3>Expense Details</h3>
             <div class="form-group">
                 <label for="amount">Amount:</label>
@@ -96,7 +99,7 @@
 
             <button class="btn btn-primary" on:click={createExpense}>Submit</button>
         </div>
-    </Modal>
+    {/if}
 </div>
 
 
@@ -134,6 +137,7 @@
         padding: 20px;
         max-width: 400px;
         margin: 0 auto;
+        color: black;
     }
 
     h3 {
