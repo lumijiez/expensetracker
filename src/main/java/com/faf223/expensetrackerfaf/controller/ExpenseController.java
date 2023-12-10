@@ -28,9 +28,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.Month;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
@@ -52,7 +50,7 @@ public class ExpenseController {
     }
 
     @PostMapping()
-    public ResponseEntity<Void> createNewExpense(@RequestBody @Valid ExpenseCreationDTO expenseDTO,
+    public ResponseEntity<Map<String, Long>> createNewExpense(@RequestBody @Valid ExpenseCreationDTO expenseDTO,
                                                        BindingResult bindingResult) {
         if(bindingResult.hasErrors())
             throw new TransactionNotCreatedException("Could not create new expense");
@@ -68,7 +66,9 @@ public class ExpenseController {
             expense.setUser(user);
 
             expenseService.createOrUpdate(expense);
-            return ResponseEntity.status(HttpStatus.CREATED).build();
+            Map<String, Long> response = new HashMap<>();
+            response.put("expenseId", expense.getId());
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
         }
 
         throw new TransactionNotCreatedException("Could not create new expense");
