@@ -12,6 +12,7 @@ import com.faf223.expensetrackerfaf.util.exceptions.UserNotCreatedException;
 import com.faf223.expensetrackerfaf.util.exceptions.UserNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -79,6 +80,15 @@ public class UserController {
         ArrayList<User> users = new ArrayList<>(userService.getUsers());
 
         return ResponseEntity.ok(userMapper.toDto(users));
+    }
+
+    @GetMapping("/delete/{username}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Void> deleteUserByUsername(@PathVariable String username) {
+
+        userService.deleteByUsername(username);
+
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 }
 
