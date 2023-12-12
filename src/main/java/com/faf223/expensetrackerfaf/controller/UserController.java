@@ -59,8 +59,6 @@ public class UserController {
     @PatchMapping("/update-password")
     public ResponseEntity<Void> updateUserPassword(@RequestBody ChangePasswordRequest password) {
 
-        System.out.println("Hi");
-
         authenticationService.updatePassword(password.getPassword());
         return ResponseEntity.status(HttpStatus.OK).build();
     }
@@ -102,5 +100,22 @@ public class UserController {
 
         return ResponseEntity.status(HttpStatus.OK).build();
     }
-}
 
+    @GetMapping("/promote/{email}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Void> promoteUser(@PathVariable String email) {
+
+        userService.promoteUser(email);
+
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    @GetMapping("/demote/{email}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Void> demoteUser(@PathVariable String email) {
+
+        userService.demoteUser(email);
+
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+}
