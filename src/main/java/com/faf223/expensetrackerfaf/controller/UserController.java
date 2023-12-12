@@ -1,8 +1,10 @@
 package com.faf223.expensetrackerfaf.controller;
 
+import com.faf223.expensetrackerfaf.controller.auth.AuthenticationResponse;
 import com.faf223.expensetrackerfaf.controller.auth.ChangePasswordRequest;
 import com.faf223.expensetrackerfaf.dto.UserCreationDTO;
 import com.faf223.expensetrackerfaf.dto.UserDTO;
+import com.faf223.expensetrackerfaf.dto.UserUpdateDTO;
 import com.faf223.expensetrackerfaf.dto.mappers.UserMapper;
 import com.faf223.expensetrackerfaf.model.Credential;
 import com.faf223.expensetrackerfaf.model.User;
@@ -61,6 +63,12 @@ public class UserController {
 
         authenticationService.updatePassword(password.getPassword());
         return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    @PatchMapping("/update-user-data")
+    public ResponseEntity<AuthenticationResponse> updateUserData(@RequestBody UserUpdateDTO userUpdateDTO) {
+
+        return ResponseEntity.ok(userService.updateUser(userUpdateDTO));
     }
 
     @GetMapping("/get-user-data")
