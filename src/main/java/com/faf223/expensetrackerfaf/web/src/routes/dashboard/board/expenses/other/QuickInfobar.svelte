@@ -49,14 +49,17 @@
     #quickInfobar {
         display: flex;
         justify-content: space-between;
+        flex-wrap: wrap;
+        min-height: 0;
+        flex: 1 1 auto;
         margin: 20px;
     }
 
     .infobarElement {
         margin: 10px;
-        width: 200px;
-        min-width: 100px;
-        height: 100px;
+        min-width: 0px;
+        min-height: 0px;
+        flex: 1 1 auto;
         color: white;
         padding: 10px;
         border-radius: 10px;
