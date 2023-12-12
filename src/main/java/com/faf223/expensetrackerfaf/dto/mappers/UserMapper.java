@@ -6,6 +6,7 @@ import com.faf223.expensetrackerfaf.model.User;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Component
 public class UserMapper {
@@ -14,11 +15,9 @@ public class UserMapper {
         return new UserDTO(user.getFirstName(), user.getLastName(), user.getUsername());
     }
 
-    public ArrayList<UserDTO> toDto(ArrayList<User> user) {
-
-        ArrayList<UserDTO> list = new ArrayList<>();
-
-        for (User u: user)
+    public List<UserDTO> toDto(List<User> user) {
+        List<UserDTO> list = new ArrayList<>();
+        for (User u : user)
             list.add(toDto(u));
 
         return list;

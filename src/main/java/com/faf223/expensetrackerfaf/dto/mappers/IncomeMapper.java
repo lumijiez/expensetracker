@@ -2,12 +2,9 @@ package com.faf223.expensetrackerfaf.dto.mappers;
 
 import com.faf223.expensetrackerfaf.dto.IncomeCreationDTO;
 import com.faf223.expensetrackerfaf.dto.IncomeDTO;
-import com.faf223.expensetrackerfaf.model.Expense;
 import com.faf223.expensetrackerfaf.model.Income;
 import com.faf223.expensetrackerfaf.service.IncomeCategoryService;
-import com.faf223.expensetrackerfaf.service.IncomeService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;

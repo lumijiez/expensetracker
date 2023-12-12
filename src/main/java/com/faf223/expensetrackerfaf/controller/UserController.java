@@ -23,10 +23,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 @RequestMapping("/users")
@@ -86,7 +83,7 @@ public class UserController {
 
     @GetMapping()
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ArrayList<UserDTO>> getAllUsers() {
+    public ResponseEntity<List<UserDTO>> getAllUsers() {
         ArrayList<User> users = new ArrayList<>(userService.getUsers());
 
         return ResponseEntity.ok(userMapper.toDto(users));

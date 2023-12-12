@@ -38,9 +38,6 @@ public class Expense implements IMoneyTransaction {
     @DecimalMin(value = "0.0", inclusive = false)
     private BigDecimal amount;
 
-    public Expense(LocalDate date, BigDecimal amount) {
-    }
-
     public Expense(ExpenseCategory expenseCategory, LocalDate date, BigDecimal amount) {
         this.category = expenseCategory;
         this.date = date;

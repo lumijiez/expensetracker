@@ -5,5 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface IncomeCategoryRepository extends JpaRepository<IncomeCategory, Long> {
+public interface FamilyRepository extends JpaRepository<IncomeCategory, Long> {
 }
