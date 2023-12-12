@@ -106,8 +106,6 @@ public class AuthenticationService {
                 .build();
     }
 
-
-
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
 
@@ -153,8 +151,7 @@ public class AuthenticationService {
                 updatedCredential.setPassword(passwordEncoder.encode(newPassword));
                 credentialRepository.save(updatedCredential);
             }
-        }
-
+        } else throw new UserNotFoundException("User not found!");
     }
 
 }
