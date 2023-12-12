@@ -17,5 +17,4 @@ public class UserDTO {
     @NotNull(message = "Username must not be null")
     @NotEmpty(message = "Username must not be empty")
     private String username;
-
 }

@@ -4,6 +4,7 @@ import com.faf223.expensetrackerfaf.model.Credential;
 import com.faf223.expensetrackerfaf.model.User;
 import com.faf223.expensetrackerfaf.repository.CredentialRepository;
 import com.faf223.expensetrackerfaf.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -35,5 +36,21 @@ public class UserService {
             return user.orElse(null);
         }
         return null;
+    }
+
+    @Transactional
+    public void deleteByUsername(String username) {
+
+        Optional<User> user = userRepository.findByUsername(username);
+        if (user.isPresent()) {
+
+            Optional<Credential> credential = credentialRepository.findByUser(user.get());
+
+            if (credential.isPresent()) {
+
+                credentialRepository.deleteByEmail(credential.get().getEmail());
+                userRepository.deleteByUsername(username);
+            }
+        }
     }
 }
