@@ -15,6 +15,8 @@ import com.faf223.expensetrackerfaf.util.exceptions.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -27,6 +29,7 @@ import java.util.Optional;
 public class AuthenticationService {
 
     private final UserRepository userRepository;
+    private final UserService userService;
     private final CredentialRepository credentialRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
@@ -134,6 +137,24 @@ public class AuthenticationService {
         } else {
             throw new UserNotAuthenticatedException("Invalid or expired refresh token");
         }
+    }
+
+    public void updatePassword(String newPassword) {
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication != null && authentication.getPrincipal() instanceof UserDetails userDetails) {
+            User user = userService.getUserByEmail(userDetails.getUsername());
+            Optional<Credential> credential = credentialRepository.findByUser(user);
+
+            if (credential.isPresent()) {
+
+                Credential updatedCredential = credential.get();
+                updatedCredential.setPassword(passwordEncoder.encode(newPassword));
+                credentialRepository.save(updatedCredential);
+            }
+        }
+
     }
 
 }

@@ -1,11 +1,13 @@
 package com.faf223.expensetrackerfaf.controller;
 
+import com.faf223.expensetrackerfaf.controller.auth.ChangePasswordRequest;
 import com.faf223.expensetrackerfaf.dto.UserCreationDTO;
 import com.faf223.expensetrackerfaf.dto.UserDTO;
 import com.faf223.expensetrackerfaf.dto.mappers.UserMapper;
 import com.faf223.expensetrackerfaf.model.Credential;
 import com.faf223.expensetrackerfaf.model.User;
 import com.faf223.expensetrackerfaf.repository.CredentialRepository;
+import com.faf223.expensetrackerfaf.service.AuthenticationService;
 import com.faf223.expensetrackerfaf.service.UserService;
 import com.faf223.expensetrackerfaf.util.errors.ErrorResponse;
 import com.faf223.expensetrackerfaf.util.exceptions.UserNotCreatedException;
@@ -34,11 +36,12 @@ public class UserController {
     private final UserService userService;
     private final UserMapper userMapper;
     private final CredentialRepository credentialRepository;
+    private final AuthenticationService authenticationService;
 
     @PatchMapping()
     public ResponseEntity<UserDTO> updateUser(@RequestBody @Valid UserCreationDTO userDTO,
                                               BindingResult bindingResult) {
-        if(bindingResult.hasErrors())
+        if (bindingResult.hasErrors())
             throw new UserNotCreatedException(ErrorResponse.from(bindingResult).getMessage());
 
         User user = userMapper.toUser(userDTO);
@@ -51,6 +54,15 @@ public class UserController {
         } else {
             throw new UserNotFoundException("The user has not been found");
         }
+    }
+
+    @PatchMapping("/update-password")
+    public ResponseEntity<Void> updateUserPassword(@RequestBody ChangePasswordRequest password) {
+
+        System.out.println("Hi");
+
+        authenticationService.updatePassword(password.getPassword());
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     @GetMapping("/get-user-data")
