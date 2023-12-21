@@ -84,7 +84,8 @@ public class UserController {
                 userData.put("firstname", user.getFirstName());
                 userData.put("lastname", user.getLastName());
                 userData.put("username", user.getUsername());
-                userData.put("userrole", credential.get().getRole().toString()); // Assuming UserRole is an enum
+                userData.put("email", credential.get().getEmail());
+                userData.put("userrole", credential.get().getRole().toString());
 
                 return ResponseEntity.ok(userData);
             }
@@ -94,10 +95,25 @@ public class UserController {
 
     @GetMapping()
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ArrayList<UserDTO>> getAllUsers() {
+    public ResponseEntity<ArrayList<Map<String, String>>> getAllUsers() {
         ArrayList<User> users = new ArrayList<>(userService.getUsers());
 
-        return ResponseEntity.ok(userMapper.toDto(users));
+        ArrayList<Map<String, String>> mappedUsers = new ArrayList<>();
+
+        for (User u: users) {
+            Map<String, String> userData = new HashMap<>();
+            userData.put("firstname", u.getFirstName());
+            userData.put("lastname", u.getLastName());
+            userData.put("username", u.getUsername());
+            Optional<Credential> credential = credentialRepository.findByUser(u);
+            if (credential.isEmpty()) continue;
+            userData.put("email", credential.get().getEmail());
+            userData.put("userrole", credential.get().getRole().toString());
+            mappedUsers.add(userData);
+        }
+
+
+        return ResponseEntity.ok(mappedUsers);
     }
 
     @GetMapping("/delete/{username}")
