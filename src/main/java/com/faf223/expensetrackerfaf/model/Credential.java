@@ -2,6 +2,7 @@ package com.faf223.expensetrackerfaf.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -9,6 +10,7 @@ import lombok.NoArgsConstructor;
 @Entity(name = "credentials")
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Credential {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

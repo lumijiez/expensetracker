@@ -2,6 +2,7 @@ package com.faf223.expensetrackerfaf.repository;
 
 import com.faf223.expensetrackerfaf.model.*;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -13,6 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
+
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class ExpenseRepositoryTest {
@@ -23,11 +26,12 @@ public class ExpenseRepositoryTest {
     private ExpenseCategoryRepository expenseCategoryRepository;
     @Autowired
     private UserRepository userRepository;
+    private User user;
+    private ExpenseCategory expenseCategory;
 
-    @Test
-    public void ExpenseRepository_SaveAll_ReturnExpense() {
-
-        User user = User.builder()
+    @BeforeEach
+    void setUp() {
+        user = User.builder()
                 .firstName("Test")
                 .lastName("TestLast")
                 .username("UserTest")
@@ -36,7 +40,12 @@ public class ExpenseRepositoryTest {
                 .build();
 
         userRepository.save(user);
-        ExpenseCategory expenseCategory = expenseCategoryRepository.getReferenceById(1L);
+
+        expenseCategory = expenseCategoryRepository.getReferenceById(1L);
+    }
+
+    @Test
+    public void ExpenseRepository_SaveAll_ReturnExpense() {
 
         Expense expense = Expense.builder()
                 .user(user)
@@ -53,17 +62,6 @@ public class ExpenseRepositoryTest {
 
     @Test
     public void ExpenseRepository_GateAll_ReturnsMoreThenOneExpense() {
-
-        User user = User.builder()
-                .firstName("Test")
-                .lastName("TestLast")
-                .username("UserTest")
-                .incomes(new ArrayList<>())
-                .expenses(new ArrayList<>())
-                .build();
-
-        userRepository.save(user);
-        ExpenseCategory expenseCategory = expenseCategoryRepository.getReferenceById(1L);
 
         List<Expense> expenseList = expenseRepository.findAll();
         int qtyBefore = expenseList.size();
@@ -87,22 +85,11 @@ public class ExpenseRepositoryTest {
         expenseList = expenseRepository.findAll();
 
         Assertions.assertThat(expenseList).isNotNull();
-        Assertions.assertThat(expenseList.size()).isEqualTo(qtyBefore + 2);
+        assertThat(expenseList).hasSize(qtyBefore + 2);
     }
 
     @Test
     public void ExpenseRepository_FindById_ReturnExpense() {
-
-        User user = User.builder()
-                .firstName("Test")
-                .lastName("TestLast")
-                .username("UserTest")
-                .incomes(new ArrayList<>())
-                .expenses(new ArrayList<>())
-                .build();
-
-        userRepository.save(user);
-        ExpenseCategory expenseCategory = expenseCategoryRepository.getReferenceById(1L);
 
         Expense expense = Expense.builder()
                 .user(user)
@@ -120,10 +107,7 @@ public class ExpenseRepositoryTest {
     @Test
     public void ExpenseRepository_FindByUser_ReturnExpenses() {
 
-        Optional<User> user = userRepository.findByUsername("Balaban");
-        Assertions.assertThat(user.isPresent()).isTrue();
-
-        List<Expense> expenses = expenseRepository.findByUser(user.get());
+        List<Expense> expenses = expenseRepository.findByUser(user);
 
         Assertions.assertThat(expenses).isNotNull();
     }
@@ -139,12 +123,10 @@ public class ExpenseRepositoryTest {
     @Test
     public void ExpenseRepository_UpdateExpense_ReturnExpenseNotNull() {
 
-        Optional<User> user = userRepository.findByUsername("Deep Deep");
-        Assertions.assertThat(user.isPresent()).isTrue();
         ExpenseCategory expenseCategory = expenseCategoryRepository.getReferenceById(4L);
 
         Expense expense = Expense.builder()
-                .user(user.get())
+                .user(user)
                 .amount(BigDecimal.valueOf(700))
                 .category(expenseCategory)
                 .date(LocalDate.of(2023, 10, 5))
@@ -168,12 +150,10 @@ public class ExpenseRepositoryTest {
     @Test
     public void ExpenseRepository_DeleteExpense_ReturnExpenseNull() {
 
-        Optional<User> user = userRepository.findByUsername("Deep Deep");
-        Assertions.assertThat(user.isPresent()).isTrue();
         ExpenseCategory expenseCategory = expenseCategoryRepository.getReferenceById(4L);
 
         Expense expense = Expense.builder()
-                .user(user.get())
+                .user(user)
                 .amount(BigDecimal.valueOf(700))
                 .category(expenseCategory)
                 .date(LocalDate.of(2023, 10, 5))
