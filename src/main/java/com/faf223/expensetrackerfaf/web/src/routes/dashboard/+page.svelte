@@ -8,6 +8,8 @@
 
     function handleTabClick(tab) {
         selectedTab.set(tab);
+        // $isCategorizedIncome = false;
+        // $isCategorizedExpense = false;
     }
 
     let screenWidth;
@@ -39,9 +41,11 @@
 
 <style>
     @import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400');
+    @import url('https://fonts.googleapis.com/css?family=Inconsolata');
 
     #wrapper {
         padding: 0;
+        font-family: Inconsolata,"Source Sans Pro",sans-serif;
         margin: 0;
         display: flex;
         align-items: stretch;

@@ -1,30 +1,23 @@
 <script>
-    import Modal from './Modal.svelte';
     import { writable } from 'svelte/store';
     import axios from 'axios';
     import { getCookie } from "svelte-cookie";
-    import {incomeData, incomeTypes} from "../../../stores.js";
+    import {incomeTypes, incomeData, dateText} from "../../../stores.js";
+    import { slide } from 'svelte/transition';
 
-    let showModal;
+    let showModal = false;
     let amount = '';
     let newData;
 
     const selectedIncomeId = writable('');
 
-    function addNewIncome(id, amount) {
+    function addNewIncome(expid, id, amount) {
         const today = new Date().toISOString().split('T')[0];
         const incomeCategory = $incomeTypes.find(incomeType => incomeType.id === id);
 
-        console.log(amount);
-
         if (incomeCategory) {
             const newIncome = {
-                incomeId: 0,
-                userDTO: {
-                    name: "Dummy",
-                    surname: "User",
-                    username: "dummyuser"
-                },
+                incomeId: expid,
                 incomeCategory: incomeCategory,
                 date: today,
                 amount: parseInt(amount)
@@ -34,18 +27,17 @@
             newData.push(newIncome);
             $incomeData = newData;
         } else {
-            console.error('Income category not found for id:', id);
+            console.error('Expense category not found for id:', id);
         }
     }
 
     const createIncome = async () => {
+        showModal = false;
         const selectedIncome = $incomeTypes.find(income => income.id === $selectedIncomeId);
         const data = {
             incomeCategory: selectedIncome.id,
             amount: parseInt(amount),
         };
-
-        addNewIncome(selectedIncome.id, parseInt(amount));
 
         try {
             const token = getCookie('access_token');
@@ -58,7 +50,7 @@
             });
 
             if (response.status === 201) {
-                //console.log("cool");
+                addNewIncome(response.data.incomeId, selectedIncome.id, parseInt(amount));
             } else {
                 console.error('Error:', response.status);
             }
@@ -66,17 +58,21 @@
             console.error('Error:', error);
         }
     };
+
+    function toggleModal() {
+        showModal = !showModal;
+    }
 </script>
 
-<div id="inc">
+<div id="exp">
     <div id="optionField">
-        <h2>Incomes</h2>
-        <div id="openModal" class="plus-button" role="button" tabindex="0" on:click={() => (showModal = true)} on:keydown={() => console.log("keydown")}>
+        <h2>Incomes: {$dateText}</h2>
+        <div id="openModal" class="plus-button" role="button" tabindex="0" on:click={toggleModal} on:keydown={() => console.log("keydown")}>
             +
         </div>
     </div>
-    <Modal bind:showModal>
-        <div class="income-form">
+        {#if showModal}
+        <div class="income-form" transition:slide>
             <h3>Income Details</h3>
             <div class="form-group">
                 <label for="amount">Amount:</label>
@@ -94,16 +90,46 @@
                 </select>
             </div>
 
-            <button class="btn btn-primary" on:click={createIncome}>Submit</button>
+            <div style="display: flex; justify-content: space-around">
+                <button class="btn btn-primary" on:click={createIncome}>SUBMIT</button>
+                <button class="btn btn-primary" on:click={() => showModal = false}>CANCEL</button>
+            </div>
+
         </div>
-    </Modal>
+    {/if}
 </div>
 
 
 <style>
-    #inc {
+    #exp {
         padding: 10px 20px;
         text-align: center;
+    }
+
+    button {
+        background-image: linear-gradient(92.88deg, #455EB5 9.16%, #5643CC 43.89%, #673FD7 64.72%);
+        border-radius: 8px;
+        border-style: none;
+        box-sizing: border-box;
+        color: #FFFFFF;
+        cursor: pointer;
+        flex-shrink: 0;
+        font-family: "Inter UI", "SF Pro Display", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+        font-size: 16px;
+        font-weight: 500;
+        height: 3rem;
+        padding: 0 1.6rem;
+        text-align: center;
+        text-shadow: rgba(0, 0, 0, 0.25) 0 3px 8px;
+        transition: all .5s;
+        user-select: none;
+        -webkit-user-select: none;
+        touch-action: manipulation;
+    }
+
+    button:hover {
+        box-shadow: rgba(80, 63, 205, 0.5) 0 1px 30px;
+        transition-duration: .1s;
     }
 
     #optionField {
@@ -130,10 +156,29 @@
 
     .income-form {
         background-color: #fff;
-        border-radius: 5px;
+        border-radius: 20px;
         padding: 20px;
         max-width: 400px;
-        margin: 0 auto;
+        color: black;
+    }
+
+    input[type=text] {
+        padding: 12px 20px;
+        margin: 8px 0;
+        display: inline-block;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+
+    select {
+        padding: 12px 20px;
+        margin: 8px 0;
+        display: inline-block;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+        font-size: 16px;
     }
 
     h3 {

@@ -3,32 +3,11 @@
     import axios from 'axios';
     import {deleteCookie, getCookie} from "svelte-cookie";
     import { slide } from 'svelte/transition'
+    import {isAdmin, username} from "../stores.js";
 
     export let onTabClick;
 
     let isMenuDown = false;
-    let isAdmin = true;
-    let username;
-
-    onMount(async () => {
-        const token = getCookie('access_token');
-
-        const config = {
-            headers: {
-                'Authorization': `Bearer ${token}`
-            }
-        };
-
-        try {
-            const response = await axios.get('https://trackio.online:8081/users/get-user-data', config);
-            const data = response.data;
-            username = data.username;
-            console.log(username)
-
-        } catch (error) {
-            console.error('Error:', error);
-        }
-    });
 
     function toggleMenu() {
         isMenuDown = !isMenuDown;
@@ -81,7 +60,7 @@
             {/if}
 
             <div id="profileSpace">
-                <div id="profileInfo">Hello, {username}</div>
+                <div id="profileInfo">Hello, {$username}</div>
                 <div id="logout" role="button"
                      tabindex="0"
                      on:click={() => {

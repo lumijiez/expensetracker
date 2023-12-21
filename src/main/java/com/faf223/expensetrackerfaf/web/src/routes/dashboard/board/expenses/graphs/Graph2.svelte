@@ -1,7 +1,7 @@
 <script>
 	import Chart from 'chart.js/auto';
 	import {onMount} from 'svelte';
-	import {expenseData} from "../../../stores.js";
+	import {monthExpense} from "../../../stores.js";
 	import {globalStyles} from "../../../styles.js";
 
 	let ctx;
@@ -10,7 +10,7 @@
 
 	function groupAndSumByCategory() {
 		const groupedData = new Map();
-		$expenseData.forEach(expense => {
+		$monthExpense.forEach(expense => {
 					const category = expense.expenseCategory.name;
 					if (groupedData.has(category)) {
 						groupedData.set(category, groupedData.get(category) + parseInt(expense.amount));
@@ -26,8 +26,6 @@
 	function createGraph() {
 		try {
 			const groupedExpenseData = groupAndSumByCategory();
-			console.log("============= here start")
-			console.log(groupedExpenseData);
 
 			const chartLabels = [];
 			const chartValues = [];
@@ -36,32 +34,44 @@
 				chartLabels.push(label);
 				chartValues.push(value);
 			}
-			console.log(chartLabels)
-			console.log(chartValues)
-			console.log("============= here end")
+
 			ctx = chartCanvas.getContext('2d');
 
 			if (!chart) {
 				chart = new Chart(ctx, {
-					type: 'bar',
+					type: 'doughnut',
 					data: {
 						labels: chartLabels,
 						datasets: [{
 							label: 'Spendings',
-							backgroundColor: [
-								'rgb(107, 80, 107)',
-								'rgb(171, 61, 169)',
-								'rgb(222, 37, 218)',
-								'rgb(235, 68, 232)',
-								'rgb(255, 128, 255)'],
 							data: chartValues
 						}]
 					},
 					options: {
 						responsive: true,
 						maintainAspectRatio: false,
+						backgroundColor: [
+							'rgb(255, 140, 140)',
+							'rgb(140, 180, 255)',
+							'rgb(255, 200, 140)',
+							'rgb(160, 200, 160)',
+							'rgb(160, 130, 200)',
+							'rgb(255, 160, 140)',
+							'rgb(140, 180, 255)',
+							'rgb(160, 255, 160)',
+							'rgb(255, 140, 120)',
+							'rgb(160, 140, 200)',
+							'rgb(255, 220, 140)',
+							'rgb(140, 255, 255)',
+							'rgb(255, 160, 140)',
+							'rgb(160, 255, 160)',
+							'rgb(160, 160, 255)'
+						],
 						plugins: {
 							legend: {
+								position: 'bottom',
+								align: 'start',
+								fullWidth: false,
 								labels: {
 									font: {
 										weight: 'bold'
@@ -83,7 +93,7 @@
 	}
 
 	$: {
-		if ($expenseData) {
+		if ($monthExpense) {
 			createGraph();
 		}
 	}
@@ -99,16 +109,25 @@
 
 <style>
 	#chart {
-		box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
-		transition: all 0.3s cubic-bezier(.25,.8,.25,1);
-		flex: 1;
-		border-radius: 0 0 10px 10px;
-		margin: 0 0 10px 10px;
 		min-width: 0;
 		min-height:0;
+		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+		transition: all 0.3s cubic-bezier(.25, .8, .25, 1);
+		display: flex;
+		flex: 1 1 auto;
+		flex-grow: 1;
+		padding: 10px;
+		border-radius: 10px;
+		margin: 0 10px 10px;
 	}
 
 	#chart:hover {
-		box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+		box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+	}
+
+	@media only screen and (max-width: 900px) {
+		#chart {
+			min-height: 400px;
+		}
 	}
 </style>

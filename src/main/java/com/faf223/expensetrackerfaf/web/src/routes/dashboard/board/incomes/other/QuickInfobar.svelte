@@ -1,43 +1,52 @@
 <script>
     import { onMount } from 'svelte';
-    import { incomeData, expenseData } from "../../../stores.js";
+    import { incomeData, expenseData, currencyLabel } from "../../../stores.js";
     import {globalStyles} from "../../../styles.js";
-
-    let componentStyles;
-
-    $: {
-        console.log("got here")
-        componentStyles = $globalStyles;
-    }
 
     let infobar1, infobar2, infobar3, infobar4;
     let totalExpenses = 0;
     let totalIncomes = 0;
-    let lastMonthIncome = 800; // Dummy last month's income
-    let lastMonthExpense = 200; // Dummy last month's expense
+    let lastMonthIncome = 800;
+    let lastMonthExpense = 200;
+    let incomeDifference;
+    let expenseDifference;
 
     function updateInfo() {
         totalExpenses = $expenseData.reduce((total, item) => total + parseInt(item.amount), 0);
         totalIncomes = $incomeData.reduce((total, item) => total + parseInt(item.amount), 0);
 
-        const incomeDifference = ((totalIncomes - lastMonthIncome) / lastMonthIncome) * 100;
-        const expenseDifference = ((lastMonthExpense - totalExpenses) / lastMonthExpense) * 100;
-
-        try {
-            infobar1.innerHTML = `<span style="font-size: larger">Total expenses:</span><br><span style="color:red;font-size: xxx-large">${totalExpenses.toFixed(2)}$</span>`;
-            infobar2.innerHTML = `<span style="font-size: larger">Total incomes:</span><br><span style="color:green;font-size: xxx-large">${totalIncomes.toFixed(2)}$</span>`;
-
-            infobar3.innerHTML = `<span style="font-size: larger">Income by last month:</span><br><span style="color:blue;font-size: xxx-large">${incomeDifference.toFixed(2)}%</span>`;
-            infobar4.innerHTML = `<span style="font-size: larger">Expense by last month:</span><br><span style="color:orange;font-size: xxx-large">${expenseDifference.toFixed(2)}%</span>`;
-        } catch {
-            console.log("not yet loaded");
-        }
+        incomeDifference = ((totalIncomes - lastMonthIncome) / lastMonthIncome) * 100;
+        expenseDifference = ((lastMonthExpense - totalExpenses) / lastMonthExpense) * 100;
     }
 
     $: {
+        if ($currencyLabel) {
+            if ($currencyLabel === 'USD') {
+                lastMonthIncome = 800;
+                lastMonthExpense = 200;
+            }
+
+            if ($currencyLabel === 'MDL') {
+                lastMonthIncome = 800 / 0.056;
+                lastMonthExpense = 200 / 0.056;
+            }
+
+            if ($currencyLabel === 'EUR') {
+                lastMonthIncome = 800 / 1.08;
+                lastMonthExpense = 200 / 1.08;
+            }
+
+            if ($currencyLabel === 'GBP') {
+                lastMonthIncome = 800 / 1.26;
+                lastMonthExpense = 200 / 1.26;
+            }
+        }
+
         if ($incomeData || $expenseData) {
             updateInfo();
         }
+
+
     }
 
     onMount(() => {
@@ -46,24 +55,76 @@
 </script>
 
 <div id="quickInfobar">
-    <div class="infobarElement" bind:this={infobar1} style="background-color: {componentStyles.mainColor}"></div>
-    <div class="infobarElement" bind:this={infobar2} style="background-color: {componentStyles.mainColor}"></div>
-    <div class="infobarElement" bind:this={infobar3} style="background-color: {componentStyles.mainColor}"></div>
-    <div class="infobarElement" bind:this={infobar4} style="background-color: {componentStyles.mainColor}"></div>
+    <div class="firstTwo">
+        <div class="infobarElement" bind:this={infobar1} style="background-color: {$globalStyles.mainColor}">
+            <span class="infobarSpan">Total expenses:</span><br><span class="dataSpan" style="color:#ab1a3c">{totalExpenses.toFixed(2)} {$currencyLabel}</span>
+        </div>
+        <div class="infobarElement" bind:this={infobar2} style="background-color: {$globalStyles.mainColor}">
+            <span class="infobarSpan">Total incomes:</span><br><span class="dataSpan" style="color:#38cc1b">{totalIncomes.toFixed(2)} {$currencyLabel}</span>
+        </div>
+    </div>
+
+    <div class="secondTwo">
+        <div class="infobarElement" bind:this={infobar3} style="background-color: {$globalStyles.mainColor}">
+            <span class="infobarSpan">Income by last month:</span><br><span class="dataSpan" style="color:#2763db">{incomeDifference.toFixed(2)}%</span>
+        </div>
+        <div class="infobarElement" bind:this={infobar4} style="background-color: {$globalStyles.mainColor}">
+            <span class="infobarSpan">Expense by last month:</span><br><span class="dataSpan" style="color:#dba527">{expenseDifference.toFixed(2)}%</span>
+        </div>
+    </div>
+
 </div>
 
 <style>
-    #quickInfobar {
+
+    .firstTwo {
         display: flex;
+        flex-wrap: wrap;
         justify-content: space-between;
+    }
+
+    .secondTwo {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+    }
+
+    .infobarSpan {
+        font-size: larger;
+        color: #00FEFC
+    }
+
+    .dataSpan {
+        color:#ab1a3c;
+        font-size: xxx-large;
+    }
+
+    #quickInfobar {
+        /*display: flex;*/
+        /*justify-content: space-between;*/
+        /*flex-wrap: wrap;*/
+        min-height: 0;
+        flex: 1 1 auto;
         margin: 20px;
     }
 
+    @media only screen and (min-width: 768px) and (max-width: 1200px) {
+        .infobarSpan {
+            font-size: medium;
+        }
+
+        .dataSpan {
+            font-size: large;
+        }
+    }
+
     .infobarElement {
+        font-family: Inconsolata,"Source Sans Pro",sans-serif;
+        font-size: larger;
         margin: 10px;
-        width: 200px;
-        min-width: 100px;
-        height: 100px;
+        min-width: 0;
+        min-height: 0;
+        flex: 1 1 auto;
         color: white;
         padding: 10px;
         border-radius: 10px;

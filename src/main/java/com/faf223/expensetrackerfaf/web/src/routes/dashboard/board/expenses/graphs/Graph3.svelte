@@ -1,7 +1,7 @@
 <script>
 	import Chart from 'chart.js/auto';
 	import { onMount } from 'svelte';
-	import {monthIncome, monthExpense, isCategorizedExpense, categorizedExpense} from "../../../stores.js";
+	import {monthIncome, monthExpense, isCategorizedExpense, categorizedExpense, expenseCategoryLabel} from "../../../stores.js";
 	import { globalStyles } from "../../../styles.js";
 
 	let ctx;
@@ -12,19 +12,26 @@
 
 	function createGraph() {
 		try {
-			// const allDates = [...new Set([...$monthIncome, ...$monthExpense].map(item => item.date))];
-			// const uniqueDates = allDates.sort((a, b) => new Date(a) - new Date(b));
-			//
-			// const incomeValues = uniqueDates.map(date => $monthIncome.filter(item => item.date === date).reduce((total, item) => total + item.amount, 0));
-			// const expenseValues = uniqueDates.map(date => $monthExpense.filter(item => item.date === date).reduce((total, item) => total + item.amount, 0));
-
 			if (chartCanvas.getContext('2d') !== undefined) {
 				ctx = chartCanvas.getContext('2d');
 				if (!chart) {
+					console.log(generatedData);
 					chart = new Chart(ctx, {
 						type: 'line',
 						data: generatedData,
 						options: {
+							scales: {
+								y: {
+									ticks: {
+										color: 'rgb(255,255,255)'
+									}
+								},
+								x: {
+									ticks: {
+										color: 'rgb(255,255,255)'
+									}
+								}
+							},
 							responsive: true,
 							maintainAspectRatio: false
 						}
@@ -34,11 +41,10 @@
 						chart.data.labels = generatedData.labels;
 						chart.data.datasets = generatedData.datasets;
 					} else {
-						generatedData.datasets = generatedData.datasets.filter(dataset => dataset.label !== "Category");
+						generatedData.datasets = generatedData.datasets.filter(dataset => dataset.label !== $expenseCategoryLabel);
 						chart.data.labels = generatedData.labels;
 						chart.data.datasets = generatedData.datasets;
 					}
-
 					chart.update();
 				}
 			}
@@ -59,7 +65,7 @@
 				labels: uniqueDates,
 				datasets: [
 					{
-						label: "Category",
+						label: $expenseCategoryLabel,
 						backgroundColor: "rgba(21, 194, 58, 0.4)",
 						borderColor: "rgba(21, 194, 58, 1)",
 						data: categorizedValues,
@@ -75,6 +81,13 @@
 						fill: true
 					}
 				]
+			};
+
+			const tempData = generatedData.datasets.filter(dataset => dataset.label !== undefined);
+
+			generatedData = {
+				labels: generatedData.labels || [],
+				datasets: tempData
 			};
 		} else {
 			const allDates = [...new Set([...$monthExpense].map(item => item.date))];
@@ -93,6 +106,13 @@
 							tension: 0.4,
 							fill: true
 						}
+			};
+
+			const tempData = generatedData.datasets.filter(dataset => dataset.label !== undefined);
+
+			generatedData = {
+				labels: generatedData.labels || [],
+				datasets: tempData
 			};
 		}
 
@@ -118,11 +138,19 @@
 		transition: all 0.3s cubic-bezier(.25, .8, .25, 1);
 		display: flex;
 		flex: 1 1 auto;
-		border-radius: 0 0 10px 10px;
-		margin: 0 0 10px 10px;
+		flex-grow: 2;
+		border-radius: 10px;
+		margin: 0 10px 10px;
+		padding: 10px;
 	}
 
 	#chart:hover {
 		box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+	}
+
+	@media only screen and (max-width: 900px) {
+		#chart {
+			min-height: 400px;
+		}
 	}
 </style>

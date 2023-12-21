@@ -10,7 +10,9 @@
         monthIncome,
         monthExpense,
         isCategorizedExpense,
-        categorizedExpense
+        categorizedExpense,
+        expenseCategoryLabel,
+        currencyLabel, copyExpenseData, copyIncomeData, isCategorizedIncome
     } from "../../../stores.js";
     import {globalStyles} from "../../../styles.js";
     import {onMount} from "svelte";
@@ -36,6 +38,9 @@
 
     let isDateDropdownExpanded = false
     let isCategoryDropdownExpanded = false
+    let isCurrencyDropdownExpanded = false
+    let isFilterDown = false;
+
     let dropdownStates = {};
     let deleteDropdownStates = {}
 
@@ -48,8 +53,27 @@
         });
     }
 
+    function clickFilter() {
+        isDateDropdownExpanded = false;
+        isCategoryDropdownExpanded = false;
+        isFilterDown = !isFilterDown;
+        isCurrencyDropdownExpanded = false;
+    }
     function clickHandlerDate() {
         isDateDropdownExpanded = !isDateDropdownExpanded
+        isCategoryDropdownExpanded = false;
+    }
+
+    function clickHandlerCategory() {
+        isCategoryDropdownExpanded = !isCategoryDropdownExpanded;
+        isDateDropdownExpanded = false;
+    }
+
+    function clickHandlerCurrency() {
+        isCurrencyDropdownExpanded = !isCurrencyDropdownExpanded;
+        isCategoryDropdownExpanded = false;
+        isDateDropdownExpanded = false;
+        isFilterDown = false;
     }
 
     function clickItemHandler(id) {
@@ -62,26 +86,19 @@
         if (dropdownStates[id] === true) dropdownStates[id] = false;
     }
 
-    function clickHandlerCategory() {
-        isCategoryDropdownExpanded = !isCategoryDropdownExpanded;
-    }
-
     function clickOutsideHandler(event) {
-        const isDateButton = event.target.closest("#btn1");
-        const isCategoryButton = event.target.closest("#btn2");
+        const isDateButton = event.target.closest("#expenseInfo");
 
         if (!isDateButton) {
-            isDateDropdownExpanded = false;
-        }
-
-        if (!isCategoryButton) {
+            isFilterDown = false;
             isCategoryDropdownExpanded = false;
+            isDateDropdownExpanded = false;
+            isCurrencyDropdownExpanded = false;
         }
     }
 
     onMount(() => {
         document.body.addEventListener("click", clickOutsideHandler);
-
         return () => {
             document.body.removeEventListener("click", clickOutsideHandler);
         };
@@ -98,6 +115,7 @@
             });
             expenseData.set(response1.data);
             tempExpense.set(response1.data);
+            copyExpenseData.set(response1.data);
             const response2 = await axios.get('https://trackio.online:8081/incomes/personal-incomes?date=' + currentDay, {
                 headers: {
                     'Authorization': `Bearer ${getCookie('access_token')}`
@@ -105,10 +123,12 @@
             });
             incomeData.set(response2.data);
             tempIncome.set(response2.data);
+            copyIncomeData.set(response1.data);
             $dateText = "Today"
 
             $isCategorizedExpense = false;
             categorizedExpense.set([]);
+            changeCurrency($currencyLabel);
         } catch (error) {
             console.error("Error fetching expenses:", error);
         }
@@ -130,6 +150,7 @@
             });
             expenseData.set(response1.data);
             tempExpense.set(response1.data);
+            copyExpenseData.set(response1.data);
             const response2 = await axios.get('https://trackio.online:8081/incomes/personal-incomes?date=' + yesterdayString, {
                 headers: {
                     'Authorization': `Bearer ${getCookie('access_token')}`
@@ -137,7 +158,9 @@
             });
             incomeData.set(response2.data);
             tempIncome.set(response2.data);
+            copyIncomeData.set(response2.data);
             $dateText = "Yesterday"
+            changeCurrency($currencyLabel);
         } catch (error) {
             console.error("Error fetching expenses:", error);
         }
@@ -157,6 +180,7 @@
             expenseData.set(response1.data);
             tempExpense.set(response1.data);
             monthExpense.set(response1.data);
+            copyExpenseData.set(response1.data);
             const response2 = await axios.get('https://trackio.online:8081/incomes/personal-incomes?month=' + year, {
                 headers: {
                     'Authorization': `Bearer ${getCookie('access_token')}`
@@ -166,10 +190,12 @@
             incomeData.set(response2.data);
             tempIncome.set(response2.data);
             monthIncome.set(response2.data);
+            copyIncomeData.set(response2.data);
             $dateText = "This Month"
 
             $isCategorizedExpense = false;
             categorizedExpense.set([]);
+            changeCurrency($currencyLabel);
         } catch (error) {
             console.error("Error fetching expenses:", error);
         }
@@ -189,6 +215,7 @@
             expenseData.set(response1.data);
             tempExpense.set(response1.data)
             monthExpense.set(response1.data);
+            copyExpenseData.set(response1.data);
             const response2 = await axios.get('https://trackio.online:8081/incomes/personal-incomes?month=' + year, {
                 headers: {
                     'Authorization': `Bearer ${getCookie('access_token')}`
@@ -198,10 +225,12 @@
             incomeData.set(response2.data);
             tempIncome.set(response2.data);
             monthIncome.set(response2.data);
+            copyIncomeData.set(response2.data);
             $dateText = "Last Month"
 
             $isCategorizedExpense = false;
             categorizedExpense.set([]);
+            changeCurrency($currencyLabel);
         } catch (error) {
             console.error("Error fetching expenses:", error);
         }
@@ -221,6 +250,7 @@
             expenseData.set(response1.data);
             tempExpense.set(response1.data);
             monthExpense.set(response1.data);
+            copyExpenseData.set(response1.data);
             const response2 = await axios.get('https://trackio.online:8081/incomes/personal-incomes?year=' + year, {
                 headers: {
                     'Authorization': `Bearer ${getCookie('access_token')}`
@@ -230,10 +260,12 @@
             incomeData.set(response2.data);
             tempIncome.set(response2.data);
             monthIncome.set(response2.data);
+            copyIncomeData.set(response2.data);
             $dateText = "This Year"
 
             $isCategorizedExpense = false;
             categorizedExpense.set([]);
+            changeCurrency($currencyLabel);
         } catch (error) {
             console.error("Error fetching expenses:", error);
         }
@@ -241,6 +273,7 @@
 
     function filterByCategory(category) {
         $isCategorizedExpense = true;
+        $expenseCategoryLabel = category;
         console.log($isCategorizedExpense);
         let tempArr = $tempExpense.filter(expense => expense.expenseCategory.name === category);
         categorizedExpense.set(tempArr);
@@ -249,6 +282,7 @@
 
     function getAll() {
         categorizedExpense.set([]);
+        $expenseCategoryLabel = "Category";
         $isCategorizedExpense = false;
         console.log($isCategorizedExpense);
         expenseData.set($tempExpense);
@@ -258,72 +292,161 @@
 
     }
 
+    function changeCurrency(currency) {
+        if (currency === 'USD') {
+            expenseData.set($copyExpenseData);
+            incomeData.set($copyIncomeData);
+            $currencyLabel = "USD";
+        }
+        if (currency === 'MDL') {
+            const tempData1 = $copyExpenseData.map(expense => ({
+                ...expense,
+                amount: expense.amount / 0.056
+            }));
+            expenseData.set(tempData1);
+
+            const tempData2 = $copyIncomeData.map(income => ({
+                ...income,
+                amount: income.amount / 0.056
+            }));
+            incomeData.set(tempData2);
+            $currencyLabel = "MDL";
+        }
+        if (currency === 'EUR') {
+            const tempData1 = $copyExpenseData.map(expense => ({
+                ...expense,
+                amount: expense.amount / 1.08
+            }));
+            expenseData.set(tempData1);
+
+            const tempData2 = $copyIncomeData.map(income => ({
+                ...income,
+                amount: income.amount / 1.08
+            }));
+            incomeData.set(tempData2);
+            $currencyLabel = "EUR";
+        }
+
+        if (currency === 'GBP') {
+            const tempData1 = $copyExpenseData.map(expense => ({
+                ...expense,
+                amount: expense.amount / 1.26
+            }));
+            expenseData.set(tempData1);
+
+            const tempData2 = $copyIncomeData.map(income => ({
+                ...income,
+                amount: income.amount / 1.26
+            }));
+            incomeData.set(tempData2);
+            $currencyLabel = "GBP";
+        }
+    }
 </script>
 
 <div id="expenseInfo" style="background-color: {$globalStyles.mainColor}">
-    <ContentExpense/>
-    <div style="display: flex; justify-content: space-between">
-        <div id="dropdown-date" style="margin: 10px;">
-            <button id="btn1" class="button" on:click={clickHandlerDate}>Filter by Date ▼</button>
-            {#if isDateDropdownExpanded}
-                <div id="date-list" transition:slide>
-                    <div class="date-entry" on:click={() => getToday()} role="button" tabindex="0"
-                         on:keydown={doNothing}>Today
-                    </div>
-                    <div class="date-entry" on:click={() => getYesterday()} role="button" tabindex="0"
-                         on:keydown={doNothing}>Yesterday
-                    </div>
-                    <div class="date-entry" on:click={() => getMonth()} role="button" tabindex="0"
-                         on:keydown={doNothing}>This month
-                    </div>
-                    <div class="date-entry" on:click={() => getLastMonth()} role="button" tabindex="0"
-                         on:keydown={doNothing}>Last month
-                    </div>
-                    <div class="date-entry" on:click={() => getLastYear()} role="button" tabindex="0"
-                         on:keydown={doNothing}>This year
-                    </div>
-                </div>
-            {/if}
+    <ContentExpense />
+    <div style="display: flex; justify-content: space-around">
+
+        <div id="dropdown" style="margin: 10px; display: flex; justify-content: space-between">
+            <button id="btn1" class="button" on:click={clickFilter}>Filter ▼</button>
         </div>
 
-        <div id="dropdown-category" style="margin: 10px;">
-            <button id="btn2" class="button" on:click={clickHandlerCategory}>Filter by Category ▼</button>
-            {#if isCategoryDropdownExpanded}
-                <div id="date-list" transition:slide>
-                    <div class="date-entry" on:click={() => getAll()} role="button"
-                         tabindex="0" on:keydown={doNothing}>All</div>
-                    {#each $expenseTypes as expense (expense.id)}
-                        {#if expense.id !== undefined}
-                            <div class="date-entry" on:click={() => filterByCategory(expense.name)} role="button"
-                                 tabindex="0" on:keydown={doNothing}>{expense.name}</div>
-                        {/if}
-                    {/each}
-                </div>
-            {/if}
+        <div id="dropdown-currency" style="margin: 10px;">
+            <button id="btn2" class="button" on:click={clickHandlerCurrency}>Currency ▼</button>
         </div>
+    </div>
+
+    <div>
+        {#if isFilterDown}
+            <div style="margin: 10px; display: flex; justify-content: space-between" transition:slide>
+                <div id="dropdown-date" style="margin: 10px;">
+                    <button id="btn3" class="button" on:click={clickHandlerDate}>Filter by Date ▼</button></div>
+
+                <div id="dropdown-category" style="margin: 10px;">
+                    <button id="btn4" class="button" on:click={clickHandlerCategory}>Filter by Category ▼</button>
+                </div>
+            </div>
+        {/if}
+
+        {#if isDateDropdownExpanded}
+            <div id="date-list" transition:slide>
+                <div class="date-entry" on:click={() => getToday()} role="button" tabindex="0"
+                     on:keydown={doNothing}>Today
+                </div>
+                <div class="date-entry" on:click={() => getYesterday()} role="button" tabindex="0"
+                     on:keydown={doNothing}>Yesterday
+                </div>
+                <div class="date-entry" on:click={() => getMonth()} role="button" tabindex="0"
+                     on:keydown={doNothing}>This month
+                </div>
+                <div class="date-entry" on:click={() => getLastMonth()} role="button" tabindex="0"
+                     on:keydown={doNothing}>Last month
+                </div>
+                <div class="date-entry" on:click={() => getLastYear()} role="button" tabindex="0"
+                     on:keydown={doNothing}>This year
+                </div>
+            </div>
+        {/if}
+
+        {#if isCategoryDropdownExpanded}
+            <div id="date-list" transition:slide>
+                <div class="date-entry" on:click={() => getAll()} role="button"
+                     tabindex="0" on:keydown={doNothing}>All</div>
+                {#each $expenseTypes as expense (expense.id)}
+                    {#if expense.id !== undefined}
+                        <div class="date-entry" on:click={() => filterByCategory(expense.name)} role="button"
+                             tabindex="0" on:keydown={doNothing}>{expense.name}</div>
+                    {/if}
+                {/each}
+            </div>
+        {/if}
+
+        {#if isCurrencyDropdownExpanded}
+            <div id="date-list" transition:slide>
+                <div class="date-entry" on:click={() => changeCurrency("MDL")} role="button"
+                     tabindex="0" on:keydown={doNothing}>MDL Leu</div>
+                <div class="date-entry" on:click={() => changeCurrency("GBP")} role="button"
+                     tabindex="0" on:keydown={doNothing}>GBP Pound</div>
+                <div class="date-entry" on:click={() => changeCurrency("USD")} role="button"
+                     tabindex="0" on:keydown={doNothing}>USD Dollar</div>
+                <div class="date-entry" on:click={() => changeCurrency("EUR")} role="button"
+                     tabindex="0" on:keydown={doNothing}>EUR Euro</div>
+            </div>
+        {/if}
     </div>
     <div id="listContainer" style="color: {$globalStyles.color}">
         <ul>
             {#each $expenseData.toReversed() as item (item.expenseId)}
                 <li style="display:flex; flex-direction: column; justify-content: space-between; color: {$globalStyles.color}">
                     <div style="display:flex; flex-direction: row; justify-content: space-between; align-items: center;">
-                    <span>
+                    <div>
                         {#if textToIcon[item.expenseCategory.name]}
                         {@html textToIcon[item.expenseCategory.name]}
                     {/if}
                         <span style="font-weight: bold">{item.incomeCategory ? `${item.incomeCategory.name}: ` : `${item.expenseCategory.name}: `}</span>
-                    <span style="font-weight:bold; margin-right: 10px; color: red; font-size: larger">{item.incomeCategory ? `+${item.amount}$` : `-${item.amount}$`}</span>
-                    </span>
-                        <span style="margin-right: 5px;">{`${item.date}`}
-                            <span id="editBtn" role="button" tabindex="0" on:keydown={doNothing}
-                                  on:click={() => clickItemHandler(item.expenseId)}><svg
-                                    xmlns="http://www.w3.org/2000/svg" height="16" width="16" viewBox="0 0 512 512"><path
-                                    d="M471.6 21.7c-21.9-21.9-57.3-21.9-79.2 0L362.3 51.7l97.9 97.9 30.1-30.1c21.9-21.9 21.9-57.3 0-79.2L471.6 21.7zm-299.2 220c-6.1 6.1-10.8 13.6-13.5 21.9l-29.6 88.8c-2.9 8.6-.6 18.1 5.8 24.6s15.9 8.7 24.6 5.8l88.8-29.6c8.2-2.7 15.7-7.4 21.9-13.5L437.7 172.3 339.7 74.3 172.4 241.7zM96 64C43 64 0 107 0 160V416c0 53 43 96 96 96H352c53 0 96-43 96-96V320c0-17.7-14.3-32-32-32s-32 14.3-32 32v96c0 17.7-14.3 32-32 32H96c-17.7 0-32-14.3-32-32V160c0-17.7 14.3-32 32-32h96c17.7 0 32-14.3 32-32s-14.3-32-32-32H96z"/></svg></span>
-                        <span id="deleteBtn" role="button" tabindex="0" on:keydown={doNothing}
-                              on:click={() => clickDeleteHandler(item.expenseId)}><svg
-                                xmlns="http://www.w3.org/2000/svg" height="16" width="14" viewBox="0 0 448 512"><path
-                                d="M135.2 17.7L128 32H32C14.3 32 0 46.3 0 64S14.3 96 32 96H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H320l-7.2-14.3C307.4 6.8 296.3 0 284.2 0H163.8c-12.1 0-23.2 6.8-28.6 17.7zM416 128H32L53.2 467c1.6 25.3 22.6 45 47.9 45H346.9c25.3 0 46.3-19.7 47.9-45L416 128z"/></svg></span>
-                    </span>
+                    <span style="font-weight:bold; margin-right: 10px; color: red; font-size: larger">{item.incomeCategory ? `+${item.amount.toFixed(2)} ${$currencyLabel}` : `-${item.amount.toFixed(2)} ${$currencyLabel}`}</span>
+                    </div>
+                        <div style="margin-right: 5px; display: flex; flex-direction: row">
+
+                            <div>
+                                {`${item.date}`}
+                            </div>
+
+                            <div id="editBtnDiv" role="button" tabindex="0" on:keydown={doNothing}
+                                 on:click={() => clickItemHandler(item.expenseId)}>
+                                <span id="editBtn"><svg
+                                        xmlns="http://www.w3.org/2000/svg" height="16" width="16" viewBox="0 0 512 512"><path
+                                        d="M471.6 21.7c-21.9-21.9-57.3-21.9-79.2 0L362.3 51.7l97.9 97.9 30.1-30.1c21.9-21.9 21.9-57.3 0-79.2L471.6 21.7zm-299.2 220c-6.1 6.1-10.8 13.6-13.5 21.9l-29.6 88.8c-2.9 8.6-.6 18.1 5.8 24.6s15.9 8.7 24.6 5.8l88.8-29.6c8.2-2.7 15.7-7.4 21.9-13.5L437.7 172.3 339.7 74.3 172.4 241.7zM96 64C43 64 0 107 0 160V416c0 53 43 96 96 96H352c53 0 96-43 96-96V320c0-17.7-14.3-32-32-32s-32 14.3-32 32v96c0 17.7-14.3 32-32 32H96c-17.7 0-32-14.3-32-32V160c0-17.7 14.3-32 32-32h96c17.7 0 32-14.3 32-32s-14.3-32-32-32H96z"/></svg></span>
+                            </div>
+
+                            <div id="deleteBtnDiv" role="button" tabindex="0" on:keydown={doNothing}
+                                 on:click={() => clickDeleteHandler(item.expenseId)}>
+                                <span id="deleteBtn"><svg
+                                        xmlns="http://www.w3.org/2000/svg" height="16" width="14" viewBox="0 0 448 512"><path
+                                        d="M135.2 17.7L128 32H32C14.3 32 0 46.3 0 64S14.3 96 32 96H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H320l-7.2-14.3C307.4 6.8 296.3 0 284.2 0H163.8c-12.1 0-23.2 6.8-28.6 17.7zM416 128H32L53.2 467c1.6 25.3 22.6 45 47.9 45H346.9c25.3 0 46.3-19.7 47.9-45L416 128z"/></svg></span>
+                            </div>
+                            </div>
                     </div>
 
                     {#if dropdownStates[item.expenseId]}
@@ -351,6 +474,7 @@
 </div>
 
 <style>
+
     #textf {
         font-family: "Inter UI", "SF Pro Display", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
         font-size: 20px;
@@ -422,7 +546,7 @@
     }
 
     #editBtn {
-        margin-left: 5px;
+        margin-left: 10px;
         margin-right: 5px;
         fill: darkblue;
     }
@@ -440,6 +564,7 @@
 
     #deleteBtn {
         fill: red;
+        margin-left: 5px;
     }
 
     #deleteBtn:hover {
@@ -550,12 +675,10 @@
 
     #date-list {
         background-color: black;
-        position: absolute;
-        margin-top: 20px;
+        margin: 0 20px 20px;
         max-height: 400px;
         overflow-y: scroll;
         border-radius: 20px;
-        z-index: 1;
     }
 
     .date-entry {

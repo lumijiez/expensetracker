@@ -3,6 +3,7 @@
     import QuickInfobar from "./expenses/other/QuickInfobar.svelte";
     import Expenses from "./expenses/infolists/Expenses.svelte";
     import Graph3 from "./expenses/graphs/Graph3.svelte";
+    import Graph2 from "./expenses/graphs/Graph2.svelte";
 </script>
 
 <div class="expenseContainer">
@@ -14,6 +15,7 @@
 
         <div class="graphs">
             <Graph3 />
+            <Graph2 />
         </div>
     </div>
     <Expenses />
@@ -25,6 +27,10 @@
             flex-wrap: wrap;
             flex: 1 1 auto;
             width: 100%;
+        }
+
+        .graphs {
+            flex-wrap: wrap;
         }
     }
 
@@ -42,6 +48,7 @@
     .expenseContainer {
         display: flex;
         height: 100%;
+        background-color: #172233;
         flex-direction: row;
         justify-content: space-between;
     }
@@ -53,7 +60,8 @@
         flex-direction: column;
         flex: 1 1 auto;
         background-color: #212942;
-        padding: 10px;
+        border-radius: 20px;
+        /*padding: 10px;*/
     }
 </style>
 

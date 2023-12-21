@@ -13,7 +13,8 @@
             monthIncome,
             monthExpense,
             tempExpense,
-            tempIncome
+            tempIncome, copyExpenseData, copyIncomeData,
+            isAdmin, username
         } from "../stores.js";
         import {globalStyles} from "../styles.js";
 
@@ -44,6 +45,17 @@
                 };
 
             try {
+
+                try {
+                    const response = await axios.get('https://trackio.online:8081/users/get-user-data', config);
+                    const data = response.data;
+                    $username = data.username;
+                    $isAdmin = data.userrole === 'ROLE_ADMIN';
+
+                } catch (error) {
+                    console.error('Error:', error);
+                }
+
                 const currentDate = new Date();
                 const currentMonth = currentDate.getMonth() + 1;
                 const [incomeResponse, expenseResponse, incomeTypesResponse, expenseTypesResponse] = await Promise.all([
@@ -57,6 +69,9 @@
 
                 incomeData.set(incomeResponse.data);
                 expenseData.set(expenseResponse.data);
+
+                copyExpenseData.set(expenseResponse.data);
+                copyIncomeData.set(incomeResponse.data);
 
                 incomeTypes.set(incomeTypesResponse.data);
                 expenseTypes.set(expenseTypesResponse.data);
