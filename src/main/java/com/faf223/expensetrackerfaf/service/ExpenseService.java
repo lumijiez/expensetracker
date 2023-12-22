@@ -130,6 +130,8 @@ public class ExpenseService implements ITransactionService {
 
             }
 
+            return true;
+
         }
 
         throw new UserNotAuthenticatedException("You are not authenticated");

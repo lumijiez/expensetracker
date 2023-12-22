@@ -98,7 +98,7 @@ public class IncomeController {
 
     @GetMapping("/personal-incomes")
     @Transactional(readOnly = true)
-    public ResponseEntity<List<IncomeDTO>> getIncomesByUser(@RequestParam Optional<LocalDate> date,
+    public ResponseEntity<List<IncomeDTO>> getIncomesByTimeUnits(@RequestParam Optional<LocalDate> date,
                                                              @RequestParam Optional<Integer> month,
                                                              @RequestParam Optional<Integer> startYear,
                                                              @RequestParam Optional<Integer> endYear,

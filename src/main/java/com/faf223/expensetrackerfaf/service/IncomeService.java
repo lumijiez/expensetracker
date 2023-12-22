@@ -129,6 +129,8 @@ public class IncomeService implements ITransactionService {
 
             }
 
+            return true;
+
         }
 
         throw new UserNotAuthenticatedException("You are not authenticated");

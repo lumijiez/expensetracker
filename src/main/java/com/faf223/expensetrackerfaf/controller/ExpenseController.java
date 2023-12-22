@@ -98,7 +98,7 @@ public class ExpenseController {
 
     @GetMapping("/personal-expenses")
     @Transactional(readOnly = true)
-    public ResponseEntity<List<ExpenseDTO>> getExpensesByUser(@RequestParam Optional<LocalDate> date,
+    public ResponseEntity<List<ExpenseDTO>> getExpensesByTimeUnits(@RequestParam Optional<LocalDate> date,
                                                               @RequestParam Optional<Integer> month,
                                                               @RequestParam Optional<Integer> startYear,
                                                               @RequestParam Optional<Integer> endYear,
