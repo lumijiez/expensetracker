@@ -4,6 +4,9 @@
 
 Expense Tracker is a web application that helps you keep track of your expenses and incomes. It provides a user-friendly interface to enter and visualize your financial data, making it easier to manage your finances.
 
+![image](https://github.com/lumijiez/ExpenseTrackerFAF/assets/59575049/c81c16fe-10aa-4198-81e3-864578f73575)
+
+
 ## Features
 
 - Single-page application for a smooth and responsive user experience.
