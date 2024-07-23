@@ -15,7 +15,7 @@ Expense Tracker is a web application that helps you keep track of your expenses 
 - Full-fledged authorization system to secure your data.
 - Hosted database for seamless data storage and retrieval.
 
-## Tech Stack
+## Technological Stack
 
 ### Frontend
 
